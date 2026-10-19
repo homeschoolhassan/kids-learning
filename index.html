@@ -1,10 +1,10 @@
+<!DOCTYPE html>
 <title>Kids Learning Portal</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap">
 
 <style>
-/* Layout: hero band → two full-bleed section stripes → footer
-   Design: deep teal hero, white card zone, subject-coded left-rail cards */
 :root {
   --bg: #f2f6fb;
   --surface: #ffffff;
@@ -16,16 +16,17 @@
   --hero-fg: #ffffff;
   --hero-sub: #a8cce0;
 
-  /* Subject palette */
-  --c-lang: #1d6ef5;     /* language / english */
-  --c-math: #0a8f6c;     /* mathematics */
-  --c-sci:  #c2410c;     /* science */
-  --c-ss:   #7c3aed;     /* social studies */
-  --c-quran:#1a8a4a;     /* quran / arabic */
-  --c-yoruba:#d97706;    /* yoruba */
-  --c-french:#9333ea;    /* french */
-  --c-skills:#0ea5e9;    /* life skills */
-  --c-add:   #94a3b8;    /* add more placeholder */
+  --c-lang: #1d6ef5;
+  --c-math: #0a8f6c;
+  --c-sci:  #c2410c;
+  --c-ss:   #7c3aed;
+  --c-arts: #db2777;
+  --c-health: #0891b2;
+  --c-french: #9333ea;
+  --c-quran: #1a8a4a;
+  --c-yoruba: #d97706;
+  --c-skills: #0ea5e9;
+  --c-add:  #94a3b8;
 
   --pill-radius: 5px;
   --card-radius: 10px;
@@ -35,26 +36,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0c1724;
-    --surface: #162032;
-    --fg: #e2ecf5;
-    --fg2: #8ba3bc;
-    --fg3: #4a6278;
-    --border: #1e3047;
-    --hero-bg: #071524;
-    --hero-sub: #5a8aab;
+    --bg: #0c1724; --surface: #162032; --fg: #e2ecf5;
+    --fg2: #8ba3bc; --fg3: #4a6278; --border: #1e3047;
+    --hero-bg: #071524; --hero-sub: #5a8aab;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0c1724;
-  --surface: #162032;
-  --fg: #e2ecf5;
-  --fg2: #8ba3bc;
-  --fg3: #4a6278;
-  --border: #1e3047;
-  --hero-bg: #071524;
-  --hero-sub: #5a8aab;
+  --bg: #0c1724; --surface: #162032; --fg: #e2ecf5;
+  --fg2: #8ba3bc; --fg3: #4a6278; --border: #1e3047;
+  --hero-bg: #071524; --hero-sub: #5a8aab;
   color-scheme: dark;
 }
 
@@ -65,218 +56,93 @@ body {
   background: var(--bg);
   color: var(--fg);
   line-height: 1.5;
-  padding-left: max(0px, env(safe-area-inset-left, 0px));
-  padding-right: max(0px, env(safe-area-inset-right, 0px));
-  padding-block: 0;
 }
 
-/* ── Hero ── */
 .hero {
   background: var(--hero-bg);
-  padding-block: 40px 44px;
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding: 40px 24px 44px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
 }
-.hero-text {}
 .hero-eyebrow {
-  font-family: var(--f-body);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--hero-sub);
-  margin-bottom: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--hero-sub); margin-bottom: 6px;
 }
 .hero h1 {
   font-family: var(--f-display);
   font-size: clamp(32px, 6vw, 54px);
-  font-weight: 700;
-  color: var(--hero-fg);
-  line-height: 1.1;
-  letter-spacing: -.01em;
-  text-wrap: balance;
+  font-weight: 700; color: var(--hero-fg);
+  line-height: 1.1; letter-spacing: -.01em;
 }
 .hero h1 span { color: #5dcfff; }
-.hero-meta {
-  font-size: 14px;
-  color: var(--hero-sub);
-  margin-top: 10px;
-}
-.hero-stats {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.stat {
-  text-align: right;
-}
-.stat-num {
-  font-family: var(--f-display);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--hero-fg);
-  line-height: 1;
-}
-.stat-label {
-  font-size: 11px;
-  color: var(--hero-sub);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
+.hero-meta { font-size: 14px; color: var(--hero-sub); margin-top: 10px; }
+.hero-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+.stat { text-align: right; }
+.stat-num { font-family: var(--f-display); font-size: 28px; font-weight: 700; color: var(--hero-fg); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--hero-sub); letter-spacing: .04em; text-transform: uppercase; }
 
-/* ── Section wrapper ── */
 .section {
-  padding-block: 44px;
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding: 44px 24px;
   max-width: 1080px;
   margin: 0 auto;
 }
-.section + .section {
-  padding-top: 8px;
-}
+.section + .section { padding-top: 8px; }
+.section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.section-title { font-family: var(--f-display); font-size: 22px; font-weight: 700; }
+.section-sub { font-size: 13px; color: var(--fg2); }
 
-.section-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-.section-title {
-  font-family: var(--f-display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -.01em;
-}
-.section-sub {
-  font-size: 13px;
-  color: var(--fg2);
-}
-
-/* ── Grade group ── */
-.grade-group {
-  margin-bottom: 28px;
-}
+.grade-group { margin-bottom: 28px; }
 .grade-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--fg3);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--fg3); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
 }
-.grade-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
+.grade-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* ── Card grid ── */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px;
 }
 
-/* ── Subject card ── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-  overflow: hidden;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative; overflow: hidden;
   transition: box-shadow .15s, transform .15s;
-  text-decoration: none;
-  color: inherit;
+  text-decoration: none; color: inherit;
 }
 .card::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
-  background: var(--card-color, #ccc);
+  content: ''; position: absolute; inset: 0 auto 0 0;
+  width: 4px; background: var(--card-color, #ccc);
   border-radius: var(--card-radius) 0 0 var(--card-radius);
 }
-.card[href]:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,.1);
-  transform: translateY(-2px);
-}
-.card.soon {
-  opacity: .6;
-  cursor: default;
-  border-style: dashed;
-}
+.card[href]:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); transform: translateY(-2px); }
+.card.soon { opacity: .6; cursor: default; border-style: dashed; }
 .card.soon::before { opacity: .4; }
 .card.add {
-  border-style: dashed;
-  border-color: var(--fg3);
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 100px;
-  cursor: pointer;
-  gap: 6px;
+  border-style: dashed; border-color: var(--fg3);
+  justify-content: center; align-items: center; text-align: center;
+  min-height: 100px; cursor: pointer; gap: 6px;
 }
 .card.add::before { display: none; }
 .card.add:hover { border-color: var(--fg2); background: var(--bg); }
 
-.card-icon {
-  font-size: 26px;
-  line-height: 1;
-}
-.card-subject {
-  font-family: var(--f-display);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-.card-desc {
-  font-size: 12px;
-  color: var(--fg2);
-  line-height: 1.5;
-  flex: 1;
-}
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-}
-.pill {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: var(--pill-radius);
-}
-.pill-ready {
-  background: #dcfce7;
-  color: #15803d;
-}
-.pill-soon {
-  background: var(--bg);
-  color: var(--fg3);
-  border: 1px solid var(--border);
-}
-.pill-new {
-  background: #fef9c3;
-  color: #854d0e;
-}
+.card-icon { font-size: 26px; line-height: 1; }
+.card-subject { font-family: var(--f-display); font-size: 16px; font-weight: 600; line-height: 1.2; }
+.card-desc { font-size: 12px; color: var(--fg2); line-height: 1.5; flex: 1; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+
+.pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: var(--pill-radius); }
+.pill-ready { background: #dcfce7; color: #15803d; }
+.pill-soon { background: var(--bg); color: var(--fg3); border: 1px solid var(--border); }
+.pill-new { background: #fef9c3; color: #854d0e; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .pill-ready { background: #052e16; color: #4ade80; }
@@ -285,80 +151,30 @@ body {
 :root[data-theme="dark"] .pill-ready { background: #052e16; color: #4ade80; }
 :root[data-theme="dark"] .pill-new { background: #1c1507; color: #fbbf24; }
 
-.add-icon {
-  font-size: 28px;
-  color: var(--fg3);
-  line-height: 1;
-}
-.add-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--fg2);
-}
-.add-hint {
-  font-size: 11px;
-  color: var(--fg3);
-}
+.add-icon { font-size: 28px; color: var(--fg3); line-height: 1; }
+.add-label { font-size: 13px; font-weight: 600; color: var(--fg2); }
+.add-hint { font-size: 11px; color: var(--fg3); }
 
-/* ── Divider between sections ── */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 0 max(24px, env(safe-area-inset-left, 0px));
-}
+.divider { height: 1px; background: var(--border); margin: 0 24px; }
 
-/* ── Footer ── */
 footer {
-  padding-block: 28px;
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding: 28px 24px;
   border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  max-width: 1080px;
-  margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  max-width: 1080px; margin: 0 auto;
 }
-footer p {
-  font-size: 12px;
-  color: var(--fg3);
-}
+footer p { font-size: 12px; color: var(--fg3); }
 .theme-toggle {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--fg2);
-  border-radius: 6px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-family: var(--f-body);
-  cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--fg2); border-radius: 6px; padding: 5px 12px;
+  font-size: 12px; font-family: var(--f-body); cursor: pointer;
 }
 .theme-toggle:hover { background: var(--bg); }
 
-/* ── Notice banner ── */
-.notice {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
-  color: #92400e;
-  margin-bottom: 24px;
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .notice { background: #1c1507; border-color: #78350f; color: #fcd34d; }
-}
-:root[data-theme="dark"] .notice { background: #1c1507; border-color: #78350f; color: #fcd34d; }
-
 @media (max-width: 500px) {
-  .hero { padding-block: 28px 32px; }
+  .hero { padding: 28px 16px 32px; }
   .stat { text-align: left; }
-  .hero-stats { gap: 16px; }
   .card-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
@@ -372,8 +188,8 @@ footer p {
   </div>
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-num">2</div>
-      <div class="stat-label">Guides Ready</div>
+      <div class="stat-num">7</div>
+      <div class="stat-label">Grade 1 Guides</div>
     </div>
     <div class="stat">
       <div class="stat-num">1,222+</div>
@@ -389,11 +205,6 @@ footer p {
     <span class="section-sub">Official grade-by-grade guides · All strands included</span>
   </div>
 
-  <div class="notice">
-    <span>📌</span>
-    <span><strong>Links activate once deployed.</strong> Download guides from Claude, place them in the correct folder, then push to Cloudflare. Cards marked <em>Ready</em> will link instantly.</span>
-  </div>
-
   <!-- Grade 1 -->
   <div class="grade-group">
     <div class="grade-label">Grade 1</div>
@@ -402,34 +213,44 @@ footer p {
         <div class="card-icon">🔤</div>
         <div class="card-subject">Language</div>
         <div class="card-desc">Listening, Speaking, Reading, Writing — all strands A–F</div>
-        <div class="card-footer">
-          <span class="pill pill-ready">✓ Ready</span>
-        </div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
       </a>
-      <div class="card soon" style="--card-color:var(--c-math)">
+      <a class="card" href="Ontario-curriculum/Elementary/Grade1/mathematics-grade1-guide.html" style="--card-color:var(--c-math)">
         <div class="card-icon">🔢</div>
         <div class="card-subject">Mathematics</div>
-        <div class="card-desc">Number, Algebra, Data, Spatial, Financial — all strands</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
-      </div>
-      <div class="card soon" style="--card-color:var(--c-sci)">
+        <div class="card-desc">Number, Algebra, Data, Spatial, Financial — all strands A–F</div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+      </a>
+      <a class="card" href="Ontario-curriculum/Elementary/Grade1/Grade%201%20Science.html" style="--card-color:var(--c-sci)">
         <div class="card-icon">🔬</div>
         <div class="card-subject">Science</div>
-        <div class="card-desc">Life, Matter &amp; Energy, Earth &amp; Space Systems</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
-      </div>
-      <div class="card soon" style="--card-color:var(--c-ss)">
+        <div class="card-desc">Life Systems, Matter &amp; Energy, Earth &amp; Space Systems</div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+      </a>
+      <a class="card" href="Ontario-curriculum/Elementary/Grade1/social-studies-grade1-guide.html" style="--card-color:var(--c-ss)">
         <div class="card-icon">🌍</div>
         <div class="card-subject">Social Studies</div>
-        <div class="card-desc">People, Places, Communities</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
-      </div>
+        <div class="card-desc">People, Places &amp; Communities</div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+      </a>
+      <a class="card" href="Ontario-curriculum/Elementary/Grade1/arts-grade1-guide.html" style="--card-color:var(--c-arts)">
+        <div class="card-icon">🎨</div>
+        <div class="card-subject">The Arts</div>
+        <div class="card-desc">Visual Arts, Music, Drama, Dance</div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+      </a>
+      <a class="card" href="Ontario-curriculum/Elementary/Grade1/health-physical-education-grade1-guide.html" style="--card-color:var(--c-health)">
+        <div class="card-icon">🏃</div>
+        <div class="card-subject">Health &amp; PE</div>
+        <div class="card-desc">Active Living, Movement, Healthy Living</div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+      </a>
+      <a class="card" href="Ontario-curriculum/Elementary/Grade1/french-grade1-guide.html" style="--card-color:var(--c-french)">
+        <div class="card-icon">🇫🇷</div>
+        <div class="card-subject">French</div>
+        <div class="card-desc">Listening, Speaking, Reading, Writing en Français</div>
+        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+      </a>
     </div>
   </div>
 
@@ -441,38 +262,35 @@ footer p {
         <div class="card-icon">🔤</div>
         <div class="card-subject">Language</div>
         <div class="card-desc">Listening, Speaking, Reading, Writing — all strands A–F</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
+        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
       </div>
       <div class="card soon" style="--card-color:var(--c-math)">
         <div class="card-icon">🔢</div>
         <div class="card-subject">Mathematics</div>
         <div class="card-desc">Strands A–F · SEL, Number, Algebra, Data, Spatial, Financial</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
+        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
       </div>
       <div class="card soon" style="--card-color:var(--c-sci)">
         <div class="card-icon">🔬</div>
         <div class="card-subject">Science</div>
         <div class="card-desc">Life, Matter &amp; Energy, Earth &amp; Space Systems</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
+        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
       </div>
       <div class="card soon" style="--card-color:var(--c-ss)">
         <div class="card-icon">🌍</div>
         <div class="card-subject">Social Studies</div>
         <div class="card-desc">Changing Family &amp; Community Traditions</div>
-        <div class="card-footer">
-          <span class="pill pill-soon">Coming soon</span>
-        </div>
+        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
+      </div>
+      <div class="card add" onclick="showAddHint('g2')">
+        <div class="add-icon">＋</div>
+        <div class="add-label">Add a subject</div>
+        <div class="add-hint" id="g2-hint">Ask Claude to build it</div>
       </div>
     </div>
   </div>
 
-  <!-- Grade 3 -->
+  <!-- Grade 3+ -->
   <div class="grade-group">
     <div class="grade-label">Grade 3 &amp; Beyond</div>
     <div class="card-grid">
@@ -507,57 +325,36 @@ footer p {
   </div>
 
   <div class="card-grid">
-    <!-- Quran / Arabic -->
     <div class="card soon" style="--card-color:var(--c-quran)">
       <div class="card-icon">📖</div>
       <div class="card-subject">Quran &amp; Arabic</div>
-      <div class="card-desc">Arabic letters → words → Tajwid rules · Iqra Path approach</div>
-      <div class="card-footer">
-        <span class="pill pill-new">🔨 In progress</span>
-      </div>
+      <div class="card-desc">Arabic letters → words → Tajwid rules</div>
+      <div class="card-footer"><span class="pill pill-new">🔨 In progress</span></div>
     </div>
-
-    <!-- Yoruba -->
     <div class="card soon" style="--card-color:var(--c-yoruba)">
       <div class="card-icon">🦊</div>
       <div class="card-subject">Yoruba Language</div>
-      <div class="card-desc">Conversation, stories &amp; culture · Ìjàpá method</div>
-      <div class="card-footer">
-        <span class="pill pill-new">🔨 In progress</span>
-      </div>
+      <div class="card-desc">Conversation, stories &amp; culture</div>
+      <div class="card-footer"><span class="pill pill-new">🔨 In progress</span></div>
     </div>
-
-    <!-- French -->
     <div class="card soon" style="--card-color:var(--c-french)">
       <div class="card-icon">🇫🇷</div>
-      <div class="card-subject">French</div>
-      <div class="card-desc">French Immersion support · vocabulary, phrases, listening</div>
-      <div class="card-footer">
-        <span class="pill pill-soon">Coming soon</span>
-      </div>
+      <div class="card-subject">French (Extra)</div>
+      <div class="card-desc">Vocabulary, phrases &amp; listening beyond school</div>
+      <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
     </div>
-
-    <!-- Life Skills -->
     <div class="card soon" style="--card-color:var(--c-skills)">
       <div class="card-icon">💡</div>
       <div class="card-subject">Life Wisdom</div>
       <div class="card-desc">Character, growth mindset, resilience &amp; values</div>
-      <div class="card-footer">
-        <span class="pill pill-soon">Coming soon</span>
-      </div>
+      <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
     </div>
-
-    <!-- Money for Kids -->
     <div class="card soon" style="--card-color:#b45309">
       <div class="card-icon">💰</div>
       <div class="card-subject">Money for Kids</div>
-      <div class="card-desc">Saving, giving, earning · foundation for financial literacy</div>
-      <div class="card-footer">
-        <span class="pill pill-soon">Coming soon</span>
-      </div>
+      <div class="card-desc">Saving, giving, earning · financial literacy</div>
+      <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
     </div>
-
-    <!-- Add More -->
     <div class="card add" onclick="showAddHint('random')">
       <div class="add-icon">＋</div>
       <div class="add-label">Add a topic</div>
@@ -568,7 +365,7 @@ footer p {
 
 <!-- Footer -->
 <footer>
-  <p>Hassan Family · Kids Learning Portal · Built with Claude · Hosted on Cloudflare Pages</p>
+  <p>Hassan Family · Kids Learning Portal · Built with Claude · Hosted on Cloudflare</p>
   <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
 </footer>
 
@@ -578,15 +375,12 @@ function toggleTheme() {
   r.setAttribute('data-theme', r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   try { localStorage.setItem('portal-theme', r.getAttribute('data-theme')); } catch(e){}
 }
-
 function showAddHint(section) {
-  const id = section + '-hint';
-  const el = document.getElementById(id);
+  const el = document.getElementById(section + '-hint');
   if (!el) return;
   el.textContent = 'Say: "Build a [topic] learning guide"';
   setTimeout(() => { el.textContent = 'Ask Claude to build it'; }, 3000);
 }
-
 try {
   const t = localStorage.getItem('portal-theme');
   if (t) document.documentElement.setAttribute('data-theme', t);
