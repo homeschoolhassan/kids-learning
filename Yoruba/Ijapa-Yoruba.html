@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style id="home-btn-style">
+#home-btn{position:fixed;top:12px;left:12px;z-index:99999;
+  background:#0b3d5e;color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);font-family:'Fredoka One',sans-serif;
+  transition:background .2s;}
+#home-btn:hover{background:#1d6ef5;}
+</style>
+</head><body>
+<a id="home-btn" href="../index.html">🏠 Home</a>
+
+<title>Ìjàpá's Yoruba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@500;700;800&display=swap">
+<style>
+/* Layout: one-screen tablet app. Indigo adire cloth + sunny market colours; Andika for every Yoruba word (built for early readers, full tone-mark support). */
+:root {
+  --sky: #E8EEFF;
+  --paper: #FFFFFF;
+  --ink: #1C2356;
+  --aro: #2B3990;
+  --aro-soft: #DCE3FF;
+  --sun: #FFB020;
+  --sun-soft: #FFF1CF;
+  --leaf: #23955F;
+  --leaf-soft: #D9F5E6;
+  --coral: #F2553F;
+  --coral-soft: #FFE1DC;
+  --muted: #5F6796;
+  --line: #CDD6F5;
+  --shadow: 0 6px 0 rgba(28, 35, 86, .14);
+  --f-yo: 'Andika', 'Noto Sans', 'Segoe UI', sans-serif;
+  --f-ui: 'Baloo 2', 'Trebuchet MS', 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  margin: 0; background-color: var(--sky); color: var(--ink); font-family: var(--f-ui); font-size: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%232B3990' stroke-opacity='.07' stroke-width='3'%3E%3Ccircle cx='30' cy='30' r='14'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3Ccircle cx='90' cy='90' r='14'/%3E%3Ccircle cx='90' cy='90' r='5'/%3E%3Cpath d='M70 20 l20 20 M90 20 l-20 20 M10 80 l20 20 M30 80 l-20 20'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-tap-highlight-color: transparent; overscroll-behavior: none;
+}
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; touch-action: manipulation; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+input, select { font: inherit; color: var(--ink); background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.yo { font-family: var(--f-yo); }
+#app { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 40px; min-height: 100%; }
+
+/* Bars */
+.bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-block: 6px 14px; }
+.bar .grow { flex: 1; min-width: 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--paper); border-radius: 999px; padding: 6px 14px; font-weight: 700; box-shadow: var(--shadow); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.iconbtn { width: 52px; height: 52px; border-radius: 16px; background: var(--paper); box-shadow: var(--shadow); font-size: 26px; display: grid; place-items: center; flex: none; }
+.iconbtn:active, .big:active, .tile:active, .opt:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(28,35,86,.14); }
+.who { display: flex; align-items: center; gap: 10px; background: var(--paper); border-radius: 999px; padding: 4px 16px 4px 4px; box-shadow: var(--shadow); font-weight: 800; font-size: 20px; }
+.who .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 26px; background: var(--sun-soft); }
+
+/* Buttons */
+.big { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 60px; padding: 10px 26px; border-radius: 20px; font-weight: 800; font-size: 22px; background: var(--aro); color: #fff; box-shadow: 0 6px 0 #18205E; }
+.big.sun { background: var(--sun); color: var(--ink); box-shadow: 0 6px 0 #C47F00; }
+.big.leaf { background: var(--leaf); box-shadow: 0 6px 0 #146B42; }
+.big.ghost { background: var(--paper); color: var(--ink); box-shadow: var(--shadow); }
+.big[disabled] { opacity: .45; pointer-events: none; }
+.small { font-size: 15px; color: var(--muted); }
+.link { color: var(--aro); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Headings */
+h1, h2, h3 { margin: 0; line-height: 1.1; text-wrap: balance; }
+h1 { font-size: clamp(30px, 6vw, 46px); font-weight: 800; }
+h2 { font-size: clamp(24px, 4.5vw, 32px); font-weight: 800; }
+h3 { font-size: 21px; font-weight: 800; }
+.eyebrow { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+
+/* Ìjàpá */
+.ijapa { position: relative; width: var(--w, 220px); aspect-ratio: 220 / 150; max-width: 100%; font-size: calc(var(--w, 220px) * .17); flex: none; }
+.ijapa svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.ijapa .acc { position: absolute; line-height: 1; transform: translate(-50%, -50%); pointer-events: none; }
+.ijapa .acc.head { left: 80%; top: 26%; }
+.ijapa .acc.face { left: 85%; top: 52%; font-size: .8em; }
+.ijapa .acc.neck { left: 70%; top: 78%; font-size: .75em; }
+.ijapa .acc.hand { left: 8%; top: 48%; }
+.bob { animation: bob 2.6s ease-in-out infinite; }
+.dance { animation: dance .5s ease-in-out infinite alternate; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+@keyframes dance { from { transform: rotate(-6deg) translateY(0); } to { transform: rotate(6deg) translateY(-10px); } }
+
+/* Speech bubble */
+.bubble { position: relative; background: var(--paper); border-radius: 22px; padding: 14px 18px; box-shadow: var(--shadow); font-size: 22px; }
+.bubble .yo { font-size: 26px; font-weight: 700; }
+
+/* Profile picker */
+.kids { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; margin-top: 22px; }
+.kidcard { background: var(--paper); border-radius: 28px; padding: 22px 12px; box-shadow: var(--shadow); display: grid; justify-items: center; gap: 8px; font-weight: 800; font-size: 24px; }
+.kidcard .av { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; font-size: 58px; background: var(--sun-soft); }
+.kidcard.add { border: 3px dashed var(--line); background: transparent; box-shadow: none; color: var(--muted); }
+
+/* Home */
+.hero { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-block: 6px 18px; }
+.hero .bubble { flex: 1; min-width: 220px; }
+.cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-block: 18px; }
+.card { background: var(--paper); border-radius: 24px; padding: 16px 18px; box-shadow: var(--shadow); text-align: left; display: flex; align-items: center; gap: 14px; }
+.card .ic { font-size: 40px; flex: none; }
+.card b { display: block; font-size: 21px; }
+.card span.small { display: block; }
+.goal { height: 12px; border-radius: 99px; background: var(--aro-soft); overflow: hidden; margin-top: 6px; }
+.goal i { display: block; height: 100%; background: var(--leaf); border-radius: 99px; }
+
+.season { background: var(--aro); color: #fff; border-radius: 28px; padding: 18px 20px; margin-top: 8px; }
+.season .eyebrow { color: #BFC9FF; }
+.path { position: relative; display: grid; gap: 4px; justify-items: center; padding-block: 20px 6px; }
+.stop { position: relative; display: flex; align-items: center; gap: 14px; width: min(100%, 460px); text-align: left; color: #fff; }
+.stop:nth-child(4n+2) { transform: translateX(14%); }
+.stop:nth-child(4n) { transform: translateX(-14%); }
+.stop .disc { width: 84px; height: 84px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 40px; background: var(--c, var(--sun)); box-shadow: 0 6px 0 rgba(0,0,0,.25), inset 0 -6px 0 rgba(0,0,0,.12); position: relative; }
+.stop .disc .wk { position: absolute; bottom: -6px; right: -6px; background: #fff; color: var(--ink); font-size: 13px; font-weight: 800; border-radius: 99px; padding: 1px 8px; }
+.stop .lbl { min-width: 0; }
+.stop .lbl .yo { display: block; font-size: 24px; font-weight: 700; }
+.stop .lbl .small { color: #C8D0FF; }
+.stop.locked .disc { background: #5A66B5; filter: grayscale(.4); }
+.stop.locked { opacity: .7; }
+.stars { letter-spacing: 2px; color: var(--sun); font-size: 16px; }
+
+/* Unit */
+.unithead { border-radius: 28px; padding: 18px 20px; color: #fff; background: var(--c); display: flex; gap: 16px; align-items: center; box-shadow: inset 0 -8px 0 rgba(0,0,0,.12); }
+.unithead .pic { font-size: 64px; }
+.unithead .yo { font-size: clamp(30px, 6vw, 44px); font-weight: 700; display: block; }
+.note { background: var(--sun-soft); border-radius: 20px; padding: 14px 18px; margin-block: 14px; font-size: 17px; line-height: 1.45; }
+.acts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.tile { background: var(--paper); border-radius: 24px; padding: 16px 10px 12px; box-shadow: var(--shadow); display: grid; justify-items: center; gap: 4px; text-align: center; }
+.tile .ic { font-size: 44px; line-height: 1.1; }
+.tile .yo { font-weight: 700; font-size: 21px; }
+.tile .small { line-height: 1.2; }
+.tile.done { background: var(--leaf-soft); }
+.tile.next { outline: 4px solid var(--sun); }
+
+/* Game */
+.gamebar { display: flex; align-items: center; gap: 12px; padding-block: 4px 16px; }
+.prog { flex: 1; height: 18px; border-radius: 99px; background: var(--paper); overflow: hidden; box-shadow: inset 0 2px 0 rgba(0,0,0,.06); }
+.prog i { display: block; height: 100%; background: var(--leaf); border-radius: 99px; transition: width .4s; }
+.stage { display: grid; justify-items: center; gap: 18px; text-align: center; }
+.prompt { font-size: 22px; font-weight: 700; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.prompt .yo { color: var(--ink); }
+.say { width: 120px; height: 120px; border-radius: 50%; background: var(--aro); color: #fff; font-size: 54px; display: grid; place-items: center; box-shadow: 0 8px 0 #18205E; }
+.say.sm { width: 64px; height: 64px; font-size: 30px; box-shadow: 0 5px 0 #18205E; }
+.say.drum { background: var(--sun); color: var(--ink); box-shadow: 0 8px 0 #C47F00; }
+.say.playing { animation: pulse .6s ease-in-out infinite alternate; }
+@keyframes pulse { to { transform: scale(1.07); } }
+.flash { background: var(--paper); border-radius: 32px; padding: 26px 22px; box-shadow: var(--shadow); width: min(100%, 560px); display: grid; justify-items: center; gap: 12px; }
+.flash .pic { font-size: 110px; line-height: 1.1; }
+.flash .word { font-family: var(--f-yo); font-size: clamp(38px, 9vw, 62px); font-weight: 700; line-height: 1.15; overflow-wrap: anywhere; }
+.flash .en { font-size: 20px; color: var(--muted); }
+.num { display: inline-grid; place-items: center; width: 1.25em; height: 1.25em; border-radius: 30%; background: var(--sun); color: var(--ink); font-family: var(--f-ui); font-weight: 800; font-size: .8em; line-height: 1; }
+.tonestrip { display: flex; align-items: flex-end; gap: 8px; height: 64px; padding: 6px 14px; border-radius: 16px; background: var(--aro-soft); }
+.tonestrip i { width: 22px; height: 22px; border-radius: 50%; background: var(--aro); font-style: normal; color: #fff; font-size: 0; }
+.tonestrip i.H { margin-bottom: 30px; background: var(--coral); }
+.tonestrip i.M { margin-bottom: 15px; background: var(--sun); }
+.tonestrip i.L { margin-bottom: 0; background: var(--aro); }
+.tonestrip i.on { transform: scale(1.4); }
+.tonekey { font-size: 14px; color: var(--muted); }
+.tonekey b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; width: min(100%, 720px); }
+.opt { background: var(--paper); border-radius: 24px; padding: 14px 10px; box-shadow: var(--shadow); display: grid; justify-items: center; align-content: center; gap: 4px; min-height: 120px; border: 4px solid transparent; }
+.opt .pic { font-size: 64px; line-height: 1.1; }
+.opt .yo { font-size: 28px; font-weight: 700; overflow-wrap: anywhere; }
+.opt.right { border-color: var(--leaf); background: var(--leaf-soft); }
+.opt.wrong { border-color: var(--coral); background: var(--coral-soft); animation: shake .4s; }
+.opt.dim { opacity: .35; }
+@keyframes shake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+.bigpic { font-size: 130px; line-height: 1.1; }
+.count { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; font-size: 54px; max-width: 520px; background: var(--paper); border-radius: 28px; padding: 18px; box-shadow: var(--shadow); }
+.letter { font-family: var(--f-yo); font-size: 130px; font-weight: 700; line-height: 1; color: var(--aro); }
+.letter small { font-size: .6em; color: var(--coral); margin-left: 12px; }
+mark { background: var(--sun); color: var(--ink); border-radius: 6px; padding: 0 2px; }
+
+/* Build */
+.slots { min-height: 84px; width: min(100%, 720px); border-radius: 22px; border: 3px dashed var(--line); padding: 10px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,.5); }
+.slots.right { border-color: var(--leaf); background: var(--leaf-soft); }
+.slots.wrong { border-color: var(--coral); animation: shake .4s; }
+.tiles { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: min(100%, 720px); }
+.wt { font-family: var(--f-yo); font-size: 28px; font-weight: 700; background: var(--paper); border-radius: 16px; padding: 10px 18px; box-shadow: var(--shadow); }
+.wt.used { visibility: hidden; }
+
+/* Memory */
+.mem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: min(100%, 720px); }
+.mc { aspect-ratio: 3 / 4; border-radius: 20px; background: var(--aro); box-shadow: var(--shadow); display: grid; place-items: center; font-size: 34px; color: #fff; padding: 6px; perspective: 600px; }
+.mc .face { display: none; }
+.mc.open, .mc.got { background: var(--paper); color: var(--ink); }
+.mc.open .face, .mc.got .face { display: block; }
+.mc.open .back, .mc.got .back { display: none; }
+.mc.got { background: var(--leaf-soft); }
+.mc .face.yo { font-size: clamp(16px, 3.6vw, 26px); font-weight: 700; overflow-wrap: anywhere; }
+.mc .face.pic { font-size: clamp(36px, 8vw, 60px); }
+.mc .back { font-size: 40px; opacity: .9; }
+
+/* Talk */
+.scene { width: min(100%, 720px); display: grid; gap: 12px; text-align: left; }
+.scenehead { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 22px; }
+.scenehead .bg { font-size: 44px; }
+.line { display: flex; gap: 10px; align-items: flex-end; animation: pop .35s ease-out; }
+.line.me { flex-direction: row-reverse; }
+.line .face { font-size: 44px; flex: none; }
+.line .bubble { max-width: 80%; min-width: 0; }
+.line.me .bubble { background: var(--leaf-soft); }
+.line .who-n { font-size: 14px; color: var(--muted); font-weight: 700; }
+.line .yo { display: block; font-size: 26px; font-weight: 700; overflow-wrap: anywhere; }
+.line .en { font-size: 16px; color: var(--muted); }
+.line .linepic { font-size: 54px; }
+.bubtools { display: flex; gap: 8px; margin-top: 6px; }
+.mini { background: var(--aro-soft); color: var(--aro); border-radius: 99px; padding: 4px 12px; font-weight: 800; font-size: 15px; }
+@keyframes pop { from { transform: scale(.85); opacity: 0; } }
+.choices { display: grid; gap: 12px; }
+.choice { display: flex; align-items: center; gap: 10px; background: var(--paper); border-radius: 20px; box-shadow: var(--shadow); padding: 8px; border: 4px solid transparent; }
+.choice .pick { flex: 1; text-align: left; padding: 8px 10px; font-family: var(--f-yo); font-size: 24px; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.choice.wrong { border-color: var(--coral); opacity: .55; }
+.hint { background: var(--coral-soft); border-radius: 16px; padding: 10px 14px; font-weight: 700; }
+.sayit { display: grid; justify-items: center; gap: 10px; background: var(--sun-soft); border-radius: 24px; padding: 16px; }
+
+/* Done */
+.done { display: grid; justify-items: center; gap: 16px; text-align: center; padding-top: 20px; }
+.bigstars { font-size: 64px; letter-spacing: 6px; }
+.bigstars .off { filter: grayscale(1); opacity: .3; }
+.reward { font-size: 28px; font-weight: 800; }
+.cowrie { display: inline-block; }
+.rain { position: fixed; top: -40px; font-size: 34px; pointer-events: none; animation: fall linear forwards; z-index: 5; }
+@keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+
+/* Shop */
+.shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.item { background: var(--paper); border-radius: 22px; padding: 14px; box-shadow: var(--shadow); display: grid; justify-items: center; gap: 4px; }
+.item .e { font-size: 54px; }
+.item .yo { font-weight: 700; font-size: 22px; }
+.item.wearing { background: var(--leaf-soft); }
+
+/* Year */
+.seasons { display: grid; gap: 16px; }
+.seasoncard { background: var(--paper); border-radius: 24px; padding: 18px; box-shadow: var(--shadow); }
+.seasoncard .goalline { margin-block: 6px 12px; color: var(--muted); }
+.weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.wkk { border-radius: 14px; padding: 8px 10px; background: var(--sky); font-size: 15px; line-height: 1.3; }
+.wkk b { font-variant-numeric: tabular-nums; }
+.wkk.ready { background: var(--leaf-soft); }
+.wkk.now { outline: 3px solid var(--sun); }
+
+/* Parent corner */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-block: 8px 16px; }
+.tab { padding: 8px 16px; border-radius: 99px; background: var(--paper); font-weight: 700; box-shadow: var(--shadow); }
+.tab.on { background: var(--aro); color: #fff; }
+.panel { background: var(--paper); border-radius: 24px; padding: 18px; box-shadow: var(--shadow); display: grid; gap: 14px; }
+.panel p { margin: 0; line-height: 1.5; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.row > .grow { flex: 1; min-width: 160px; }
+.list { display: grid; gap: 8px; }
+.vrow { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; padding: 10px 12px; border-radius: 14px; background: var(--sky); }
+.vrow .yo { font-size: 20px; font-weight: 700; overflow-wrap: anywhere; }
+.vrow .small { display: block; }
+.vrow .acts2 { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.pill { display: inline-block; font-size: 13px; font-weight: 800; border-radius: 99px; padding: 2px 10px; }
+.pill.ok { background: var(--leaf-soft); color: #146B42; }
+.pill.no { background: var(--coral-soft); color: #A42F1E; }
+.pill.fix { background: var(--sun-soft); color: #8A5A00; }
+.btn-s { background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 6px 12px; font-weight: 700; font-size: 15px; }
+.btn-s.pri { background: var(--aro); color: #fff; border-color: var(--aro); }
+.btn-s.danger { color: var(--coral); }
+details.unitv { border-radius: 16px; background: var(--paper); border: 2px solid var(--line); padding: 10px 14px; }
+details.unitv summary { font-weight: 800; cursor: pointer; }
+.statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.stat { background: var(--sky); border-radius: 16px; padding: 12px; }
+.stat b { display: block; font-size: 28px; font-variant-numeric: tabular-nums; }
+.avpick { display: flex; gap: 8px; flex-wrap: wrap; }
+.avpick button { width: 54px; height: 54px; border-radius: 50%; font-size: 30px; background: var(--sky); border: 3px solid transparent; }
+.avpick button.on { border-color: var(--aro); background: var(--sun-soft); }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 16px; font-weight: 700; z-index: 10; max-width: calc(100% - 32px); }
+.center { display: grid; justify-items: center; gap: 14px; text-align: center; padding-top: 8vh; }
+.guide ol, .guide ul { margin: 0; padding-left: 22px; line-height: 1.55; }
+.guide li + li { margin-top: 6px; }
+@media (max-width: 520px) {
+  .mem { grid-template-columns: repeat(3, 1fr); }
+  .stop:nth-child(4n+2), .stop:nth-child(4n) { transform: none; }
+  .flash .pic { font-size: 84px; }
+  .say { width: 96px; height: 96px; font-size: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+</style>
+<div id="app"></div>
+<script>
+/* Ìjàpá's Yoruba — course content. Words: [yo, en, picture]. Phrases: [yo, en].
+   Talk lines: [speakerKey, yo, en, picture?]  or  ['you', [[yo, en, correct(1/0), hint?], ...]]
+   Letters: [letter, word, en, picture]. {name}/{age} are filled from the child's profile. */
+window.YO = {
+  version: 1,
+  ui: [
+    ['Tẹ́tí sílẹ̀!', 'Listen!'],
+    ['Wò ó!', 'Look!'],
+    ['Yan èyí tó tọ́.', 'Choose the right one.'],
+    ['O ṣe dáadáa!', 'You did well!'],
+    ['Ó dáa púpọ̀!', 'Very good!'],
+    ['Gbìyànjú lẹ́ẹ̀kan sí i.', 'Try again.'],
+    ['Sọ ọ́ sókè!', 'Say it out loud!'],
+    ['Káàbọ̀!', 'Welcome!']
+  ],
+  ages: { 4: 'mẹ́rin', 5: 'márùn-ún', 6: 'mẹ́fà', 7: 'méje', 8: 'mẹ́jọ', 9: 'mẹ́sàn-án', 10: 'mẹ́wàá' },
+  people: {
+    M: ['Màámi', '👩🏾'], B: ['Bàbá', '👨🏾'], G: ['Ìyá Àgbà', '👵🏾'],
+    T: ['Tèmi', '👧🏾'], I: ['Ìyá Ọlọ́jà', '👩🏿'], J: ['Ìjàpá', '🐢']
+  },
+  units: [
+    {
+      id: 'u1', wk: 1, yo: 'Ẹ káàbọ̀', en: 'Greetings', pic: '👋🏾', col: '#FFB020',
+      words: [
+        ['Ẹ káàárọ̀', 'Good morning (to an elder)', '🌅'],
+        ['Káàárọ̀', 'Good morning (to a friend)', '☀️'],
+        ['Ẹ káàsán', 'Good afternoon (to an elder)', '🌤️'],
+        ['Ẹ kú ìrọ̀lẹ́', 'Good evening (to an elder)', '🌇'],
+        ['Ó dàárọ̀', 'Good night', '🌙'],
+        ['Ẹ ṣé', 'Thank you (to an elder)', '🙏🏾'],
+        ['Bẹ́ẹ̀ni', 'Yes', '👍🏾'],
+        ['Rárá', 'No', '👎🏾'],
+        ['Ó dàbọ̀', 'Goodbye', '👋🏾']
+      ],
+      phrases: [
+        ['Ẹ káàárọ̀ Màámi.', 'Good morning, Mummy.'],
+        ['Ẹ káàárọ̀ Bàbá.', 'Good morning, Daddy.'],
+        ['Ẹ ṣé Màámi.', 'Thank you, Mummy.'],
+        ['Bẹ́ẹ̀ni mà.', 'Yes, ma.'],
+        ['Ó dàbọ̀ Bàbá.', 'Goodbye, Daddy.']
+      ],
+      talk: {
+        place: 'Good morning at home', bg: '🏠', lines: [
+          ['M', 'Káàárọ̀ ọmọ mi.', 'Good morning, my child.'],
+          ['you', [['Ẹ káàárọ̀ Màámi.', 'Good morning, Mummy.', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'It is morning! Say good morning.'], ['Ó dàbọ̀.', 'Goodbye.', 0, 'Mummy said hello, not goodbye.']]],
+          ['M', 'Ṣé o sùn dáadáa?', 'Did you sleep well?'],
+          ['you', [['Bẹ́ẹ̀ni mà.', 'Yes, ma.', 1], ['Ẹ kú ìrọ̀lẹ́.', 'Good evening.', 0, 'Mummy asked if you slept well.']]],
+          ['M', 'Ó dáa. Wá jẹun.', 'Good. Come and eat.'],
+          ['you', [['Ẹ ṣé Màámi.', 'Thank you, Mummy.', 1], ['Rárá.', 'No.', 0, 'Breakfast is ready! Say thank you.']]]
+        ]
+      },
+      letters: [['A', 'ajá', 'dog', '🐕'], ['B', 'bàtà', 'shoes', '👟'], ['D', 'dígí', 'mirror', '🪞']],
+      mission: 'Tomorrow morning, greet Mummy and Daddy with “Ẹ káàárọ̀” before anything else.',
+      culture: 'Yoruba children greet elders first. Boys bow or lie down (dọ̀bálẹ̀), girls kneel (kúnlẹ̀). “Ẹ” at the start shows respect.'
+    },
+    {
+      id: 'u2', wk: 2, yo: 'Ìdílé mi', en: 'My family', pic: '👨‍👩‍👧‍👦', col: '#FF6B57',
+      words: [
+        ['Bàbá', 'Father, Daddy', '👨🏾'],
+        ['Ìyá', 'Mother', '👩🏾'],
+        ['Màámi', 'My mummy', '🤱🏾'],
+        ['Ìyá àgbà', 'Grandmother', '👵🏾'],
+        ['Bàbá àgbà', 'Grandfather', '👴🏾'],
+        ['Ẹ̀gbọ́n', 'Older brother or sister', '🧑🏾'],
+        ['Àbúrò', 'Younger brother or sister', '👶🏾'],
+        ['Ọmọ', 'Child', '🧒🏾'],
+        ['Ìdílé', 'Family', '👨‍👩‍👧‍👦'],
+        ['Ọ̀rẹ́', 'Friend', '🤝🏾']
+      ],
+      phrases: [
+        ['Èyí ni bàbá mi.', 'This is my daddy.'],
+        ['Èyí ni ìyá mi.', 'This is my mother.'],
+        ['Ta ni èyí?', 'Who is this?'],
+        ['Àbúrò mi ni.', 'That is my younger sibling.'],
+        ['Mo nífẹ̀ẹ́ yín.', 'I love you (to an elder).']
+      ],
+      talk: {
+        place: 'Video call with Grandma', bg: '📱', lines: [
+          ['G', 'Káàsán o, ọmọ mi!', 'Good afternoon, my child!'],
+          ['you', [['Ẹ káàsán Ìyá Àgbà.', 'Good afternoon, Grandma.', 1], ['Káàsán.', 'Good afternoon (to a friend).', 0, 'Grandma is an elder. Start with “Ẹ”!']]],
+          ['G', 'Ta ni èyí?', 'Who is this?', '👶🏾'],
+          ['you', [['Àbúrò mi ni.', 'That is my younger sibling.', 1], ['Bàbá àgbà ni.', 'That is Grandpa.', 0, 'Look: it is a little baby!']]],
+          ['G', 'Mo nífẹ̀ẹ́ rẹ o!', 'I love you!'],
+          ['you', [['Èmi náà nífẹ̀ẹ́ yín.', 'I love you too.', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'Grandma said “I love you”. Say it back!']]]
+        ]
+      },
+      letters: [['E', 'ewúrẹ́', 'goat', '🐐'], ['Ẹ', 'ẹyin', 'egg', '🥚'], ['F', 'fìlà', 'cap', '🧢']],
+      mission: 'Call a grandparent or aunty and say “Mo nífẹ̀ẹ́ yín” (I love you).',
+      culture: 'Yoruba has no separate words for brother and sister. Ẹ̀gbọ́n is anyone older than you and àbúrò is anyone younger. Age matters!'
+    },
+    {
+      id: 'u3', wk: 3, yo: 'Èmi', en: 'All about me', pic: '🙋🏾', col: '#2BA36B',
+      words: [
+        ['Báwo ni?', 'Hi! How are you?', '🙂'],
+        ['Dáadáa ni', 'I am fine', '😊'],
+        ['Orúkọ', 'Name', '🏷️'],
+        ['Ọmọkùnrin', 'Boy', '👦🏾'],
+        ['Ọmọbìnrin', 'Girl', '👧🏾'],
+        ['Ọmọ ọdún márùn-ún', 'Five years old', '#5'],
+        ['Ọmọ ọdún mẹ́fà', 'Six years old', '#6'],
+        ['Ọmọ ọdún méje', 'Seven years old', '#7']
+      ],
+      phrases: [
+        ['Kí ni orúkọ rẹ?', 'What is your name?'],
+        ['Orúkọ mi ni Ayọ̀.', 'My name is Ayọ̀.'],
+        ['Ọmọ ọdún mélòó ni ọ́?', 'How old are you?'],
+        ['Ọmọ ọdún mẹ́fà ni mí.', 'I am six years old.'],
+        ['Mo wà dáadáa.', 'I am well.'],
+        ['Jẹ́ ká ṣeré!', 'Let’s play!']
+      ],
+      talk: {
+        place: 'A new friend at the park', bg: '🌳', lines: [
+          ['T', 'Báwo ni?', 'Hi! How are you?'],
+          ['you', [['Dáadáa ni.', 'I am fine.', 1], ['Ó dàbọ̀.', 'Goodbye.', 0, 'You just met! Say you are fine.']]],
+          ['T', 'Kí ni orúkọ rẹ?', 'What is your name?'],
+          ['you', [['Orúkọ mi ni {name}.', 'My name is {name}.', 1], ['Ọmọ ọdún méje ni mí.', 'I am seven years old.', 0, 'Tèmi asked your name.']]],
+          ['T', 'Orúkọ mi ni Tèmi. Ọmọ ọdún mélòó ni ọ́?', 'My name is Tèmi. How old are you?'],
+          ['you', [['Ọmọ ọdún {age} ni mí.', 'I am {agen} years old.', 1], ['Orúkọ mi ni Tèmi.', 'My name is Tèmi.', 0, 'Tèmi asked how old you are.']]],
+          ['T', 'Jẹ́ ká ṣeré!', 'Let’s play!'],
+          ['you', [['Ó dáa!', 'Okay!', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'It is playtime, not bedtime!']]]
+        ]
+      },
+      letters: [['G', 'gúgúrú', 'popcorn', '🍿'], ['Gb', 'gbá bọ́ọ̀lù', 'kick a ball', '⚽'], ['H', 'ahọ́n', 'tongue', '👅']],
+      mission: 'Introduce yourself to someone at home: “Orúkọ mi ni …, ọmọ ọdún … ni mí.”',
+      culture: 'Every Yoruba name has a meaning. Ayọ̀ means joy. Ask Mummy or Daddy what your Yoruba name means!'
+    },
+    {
+      id: 'u4', wk: 4, yo: 'Ònkà', en: 'Counting 1 to 10', pic: '🔢', col: '#3D6BFF', special: 'count',
+      words: [
+        ['Ení', 'One', '#1'], ['Èjì', 'Two', '#2'], ['Ẹ̀ta', 'Three', '#3'], ['Ẹ̀rin', 'Four', '#4'], ['Àrún', 'Five', '#5'],
+        ['Ẹ̀fà', 'Six', '#6'], ['Èje', 'Seven', '#7'], ['Ẹ̀jọ', 'Eight', '#8'], ['Ẹ̀sán', 'Nine', '#9'], ['Ẹ̀wá', 'Ten', '#10']
+      ],
+      phrases: [
+        ['Mélòó ni?', 'How many?'],
+        ['Mo fẹ́ ọ̀gẹ̀dẹ̀.', 'I want bananas.'],
+        ['Ọ̀gẹ̀dẹ̀ méjì.', 'Two bananas.'],
+        ['Ẹyin mẹ́ta.', 'Three eggs.'],
+        ['Ẹ ṣé mà!', 'Thank you, ma!']
+      ],
+      talk: {
+        place: 'At the market', bg: '🧺', lines: [
+          ['I', 'Káàbọ̀! Kí lo fẹ́?', 'Welcome! What would you like?'],
+          ['you', [['Mo fẹ́ ọ̀gẹ̀dẹ̀.', 'I want bananas.', 1], ['Orúkọ mi ni {name}.', 'My name is {name}.', 0, 'She asked what you want to buy.']]],
+          ['I', 'Mélòó?', 'How many?', '🍌🍌'],
+          ['you', [['Méjì.', 'Two.', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'Tell her a number!']]],
+          ['I', 'Ó dáa. Ọ̀gẹ̀dẹ̀ méjì nìyí.', 'Okay. Here are two bananas.'],
+          ['you', [['Ẹ ṣé mà!', 'Thank you, ma!', 1], ['Rárá.', 'No.', 0, 'She gave you the bananas. Say thank you!']]]
+        ]
+      },
+      letters: [['I', 'ilé', 'house', '🏠'], ['J', 'jẹun', 'eat', '🍽️'], ['K', 'kẹ̀kẹ́', 'bicycle', '🚲']],
+      mission: 'Count 10 stairs or 10 toys out loud with a parent: ení, èjì, ẹ̀ta…',
+      culture: 'Counting out loud uses ení, èjì, ẹ̀ta. Counting things uses méjì, mẹ́ta (two bananas: ọ̀gẹ̀dẹ̀ méjì). Later you will learn that 16 is said as “twenty minus four”!'
+    },
+    {
+      id: 'u5', wk: 5, yo: 'Ara mi', en: 'My body', pic: '🙆🏾', col: '#B455E0', special: 'simon',
+      words: [
+        ['Orí', 'Head', '🙆🏾'],
+        ['Ojú', 'Eyes, face', '👀'],
+        ['Imú', 'Nose', '👃🏾'],
+        ['Etí', 'Ear', '👂🏾'],
+        ['Ẹnu', 'Mouth', '👄'],
+        ['Ehín', 'Teeth', '🦷'],
+        ['Irun', 'Hair', '💇🏾'],
+        ['Ọwọ́', 'Hand', '✋🏾'],
+        ['Ẹsẹ̀', 'Leg, foot', '🦶🏾']
+      ],
+      phrases: [
+        ['Fọwọ́ kan orí rẹ.', 'Touch your head.'],
+        ['Fọwọ́ kan imú rẹ.', 'Touch your nose.'],
+        ['Pa ojú rẹ dé.', 'Close your eyes.'],
+        ['Ṣí ojú rẹ.', 'Open your eyes.'],
+        ['Gbé ọwọ́ rẹ sókè.', 'Put your hands up.'],
+        ['Fò sókè!', 'Jump!']
+      ],
+      talk: {
+        place: 'Playing with Daddy', bg: '🛋️', lines: [
+          ['B', 'Níbo ni imú rẹ wà?', 'Where is your nose?'],
+          ['you', [['Imú mi nìyí!', 'Here is my nose!', 1], ['Etí mi nìyí!', 'Here is my ear!', 0, 'Daddy asked for your nose: imú.']]],
+          ['B', 'Níbo ni etí rẹ wà?', 'Where is your ear?'],
+          ['you', [['Etí mi nìyí!', 'Here is my ear!', 1], ['Ẹsẹ̀ mi nìyí!', 'Here is my foot!', 0, 'Etí is your ear.']]],
+          ['B', 'Ó dáa púpọ̀! O gbọ́n gan-an!', 'Very good! You are so clever!'],
+          ['you', [['Ẹ ṣé Bàbá!', 'Thank you, Daddy!', 1], ['Rárá.', 'No.', 0, 'Daddy praised you. Say thank you!']]]
+        ]
+      },
+      letters: [['L', 'labalábá', 'butterfly', '🦋'], ['M', 'màlúù', 'cow', '🐄'], ['N', 'náírà', 'naira', '💵']],
+      mission: 'Play “Ìjàpá sọ pé” (Simon says) for 5 minutes. A parent gives the commands in Yoruba.',
+      culture: 'Ojú means eye and also face. Yoruba uses ojú in lots of sayings, like ojú ọjọ́ (the weather, “the face of the day”).'
+    },
+    {
+      id: 'u6', wk: 6, yo: 'Oúnjẹ', en: 'Food', pic: '🍲', col: '#E8833A',
+      words: [
+        ['Oúnjẹ', 'Food', '🍲'],
+        ['Omi', 'Water', '💧'],
+        ['Ìrẹsì', 'Rice', '🍚'],
+        ['Ẹ̀wà', 'Beans', '🫘'],
+        ['Búrẹ́dì', 'Bread', '🍞'],
+        ['Ẹja', 'Fish', '🐟'],
+        ['Ẹran', 'Meat', '🍖'],
+        ['Ọ̀gẹ̀dẹ̀', 'Banana, plantain', '🍌'],
+        ['Ọsàn', 'Orange', '🍊'],
+        ['Àgbàdo', 'Corn', '🌽']
+      ],
+      phrases: [
+        ['Ebi ń pa mí.', 'I am hungry.'],
+        ['Òùngbẹ ń gbẹ mí.', 'I am thirsty.'],
+        ['Mo fẹ́ omi.', 'I want water.'],
+        ['Ó dùn!', 'It is tasty!'],
+        ['Mo ti yó.', 'I am full.'],
+        ['Ṣé o ti jẹun?', 'Have you eaten?']
+      ],
+      talk: {
+        place: 'Dinner time', bg: '🍽️', lines: [
+          ['M', 'Ṣé ebi ń pa ọ́?', 'Are you hungry?'],
+          ['you', [['Bẹ́ẹ̀ni mà, ebi ń pa mí.', 'Yes ma, I am hungry.', 1], ['Ẹ káàsán.', 'Good afternoon.', 0, 'Mummy asked if you are hungry.']]],
+          ['M', 'Kí lo fẹ́ jẹ?', 'What would you like to eat?'],
+          ['you', [['Mo fẹ́ ìrẹsì àti ẹja.', 'I want rice and fish.', 1], ['Orí mi nìyí.', 'Here is my head.', 0, 'Choose some food!']]],
+          ['M', 'Ṣé ó dùn?', 'Is it tasty?'],
+          ['you', [['Bẹ́ẹ̀ni, ó dùn gan-an!', 'Yes, it is very tasty!', 1], ['Ọmọ ọdún méje ni mí.', 'I am seven years old.', 0, 'Mummy asked about the food.']]],
+          ['M', 'Jẹun dáadáa, ọmọ mi.', 'Eat well, my child.'],
+          ['you', [['Ẹ ṣé Màámi.', 'Thank you, Mummy.', 1], ['Ó dàbọ̀.', 'Goodbye.', 0, 'Say thank you for the food.']]]
+        ]
+      },
+      letters: [['O', 'ológbò', 'cat', '🐈'], ['Ọ', 'ọ̀bọ', 'monkey', '🐒'], ['P', 'pupa', 'red', '🔴']],
+      mission: 'At dinner, ask for water in Yoruba: “Mo fẹ́ omi.” Say “Ó dùn!” if you like the food.',
+      culture: 'After a meal, Yoruba children thank whoever cooked: “Ẹ ṣé Màámi.” Saying thank you to elders is a big part of good manners (ìwà ọmọlúàbí).'
+    },
+    {
+      id: 'u7', wk: 7, yo: 'Àwọ̀', en: 'Colours & things', pic: '🎨', col: '#E0457B',
+      words: [
+        ['Pupa', 'Red', '🔴'],
+        ['Funfun', 'White', '⚪'],
+        ['Dúdú', 'Black', '⚫'],
+        ['Ofeefee', 'Yellow', '🟡'],
+        ['Aláwọ̀ ewé', 'Green', '🟢'],
+        ['Búlúù', 'Blue', '🔵'],
+        ['Bọ́ọ̀lù', 'Ball', '⚽'],
+        ['Aṣọ', 'Clothes', '👕'],
+        ['Ìwé', 'Book', '📖'],
+        ['Ọkọ̀', 'Car', '🚗']
+      ],
+      phrases: [
+        ['Kí ni èyí?', 'What is this?'],
+        ['Bọ́ọ̀lù ni.', 'It is a ball.'],
+        ['Kí ni àwọ̀ rẹ̀?', 'What colour is it?'],
+        ['Pupa ni.', 'It is red.'],
+        ['Bọ́ọ̀lù pupa', 'A red ball'],
+        ['Aṣọ funfun', 'White clothes']
+      ],
+      talk: {
+        place: 'Toy box with Tèmi', bg: '🧸', lines: [
+          ['T', 'Kí ni èyí?', 'What is this?', '⚽'],
+          ['you', [['Bọ́ọ̀lù ni.', 'It is a ball.', 1], ['Ìwé ni.', 'It is a book.', 0, 'It is round and you kick it!']]],
+          ['T', 'Kí ni àwọ̀ rẹ̀?', 'What colour is it?', '🔴'],
+          ['you', [['Pupa ni.', 'It is red.', 1], ['Funfun ni.', 'It is white.', 0, 'The ball is red: pupa.']]],
+          ['T', 'Jẹ́ ká gbá bọ́ọ̀lù!', 'Let’s play ball!'],
+          ['you', [['Ó dáa, jẹ́ ká lọ!', 'Okay, let’s go!', 1], ['Mo ti yó.', 'I am full.', 0, 'Tèmi wants to play!']]]
+        ]
+      },
+      letters: [['R', 'ràkúnmí', 'camel', '🐪'], ['S', 'sálúbàtà', 'slippers', '🩴'], ['Ṣ', 'ṣíbí', 'spoon', '🥄']],
+      mission: 'Find 3 red things at home. Point and say “Pupa ni!” for each one.',
+      culture: 'Ọkọ̀ (car), ọkọ (husband) and ọkọ́ (hoe) are spelled with the same letters. Only the tones change the meaning. That is why we listen so carefully!'
+    },
+    {
+      id: 'u8', wk: 8, yo: 'Ẹranko', en: 'Animals', pic: '🦁', col: '#1FA3A3',
+      words: [
+        ['Ajá', 'Dog', '🐕'],
+        ['Ológbò', 'Cat', '🐈'],
+        ['Ewúrẹ́', 'Goat', '🐐'],
+        ['Adìẹ', 'Chicken', '🐔'],
+        ['Ẹyẹ', 'Bird', '🐦'],
+        ['Erin', 'Elephant', '🐘'],
+        ['Kìnnìún', 'Lion', '🦁'],
+        ['Ọ̀bọ', 'Monkey', '🐒'],
+        ['Àgùntàn', 'Sheep', '🐑'],
+        ['Ìjàpá', 'Tortoise', '🐢']
+      ],
+      phrases: [
+        ['Mo rí ajá kan.', 'I see a dog.'],
+        ['Erin tóbi gan-an.', 'The elephant is very big.'],
+        ['Ìjàpá ń lọ díẹ̀díẹ̀.', 'The tortoise walks slowly.'],
+        ['Ẹranko wo lo fẹ́ràn?', 'Which animal do you like?'],
+        ['Mo fẹ́ràn ológbò.', 'I like cats.']
+      ],
+      talk: {
+        place: 'At the zoo with Daddy', bg: '🦓', lines: [
+          ['B', 'Wò ó! Kí ni ìyẹn?', 'Look! What is that?', '🐘'],
+          ['you', [['Erin ni!', 'It is an elephant!', 1], ['Ajá ni!', 'It is a dog!', 0, 'It has a very long nose…']]],
+          ['B', 'Ṣé erin tóbi?', 'Is the elephant big?'],
+          ['you', [['Bẹ́ẹ̀ni, ó tóbi gan-an!', 'Yes, it is very big!', 1], ['Rárá, ó kéré.', 'No, it is small.', 0, 'Elephants are huge!']]],
+          ['B', 'Ẹranko wo lo fẹ́ràn jù?', 'Which animal do you like best?'],
+          ['you', [['Mo fẹ́ràn ìjàpá!', 'I like the tortoise!', 1], ['Mo fẹ́ omi.', 'I want water.', 0, 'Name an animal you like.']]],
+          ['B', 'Èmi náà! Ìjàpá gbọ́n.', 'Me too! The tortoise is clever.'],
+          ['you', [['Ẹ ṣé Bàbá!', 'Thank you, Daddy!', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'Say thank you to Daddy.']]]
+        ]
+      },
+      letters: [['T', 'tòlótòló', 'turkey', '🦃'], ['U', 'ìlù', 'drum', '🥁'], ['W', 'wàrà', 'milk', '🥛'], ['Y', 'yànmùyánmú', 'mosquito', '🦟']],
+      mission: 'Animal charades: a parent says an animal in Yoruba and you act it out. Then swap!',
+      culture: 'Ìjàpá the tortoise is the star of many Yoruba folktales (àlọ́). He is clever and a little bit naughty. Ask a grandparent for an Ìjàpá story!'
+    }
+  ],
+  year: [
+    { yo: 'Ìgbà Kìíní: Ilé wa', en: 'Season 1 · Me and my home', weeks: 'Weeks 1–12', goal: 'Greets elders properly, introduces self and family, knows about 120 words, answers 10 everyday questions.',
+      units: ['Ẹ káàbọ̀ · Greetings', 'Ìdílé mi · Family', 'Èmi · All about me', 'Ònkà · Counting', 'Ara mi · My body', 'Oúnjẹ · Food', 'Àwọ̀ · Colours & things', 'Ẹranko · Animals', 'Inú mi · Feelings', 'Ohun tí mo ń ṣe · Action words', 'Ilé wa · Rooms at home', 'Ìtàn àkọ́kọ́ · First story + family show'] },
+    { yo: 'Ìgbà Kejì: Ọjọ́ mi', en: 'Season 2 · My day', weeks: 'Weeks 13–24', goal: 'Talks through a whole day, asks where / when / what, uses “I am going”, “I went”, “I will”.',
+      units: ['Àkókò · Time of day', 'Ọjọ́ ọ̀sẹ̀ · Days of the week', 'Ilé ìwé · School', 'Aṣọ · Clothes', 'Ojú ọjọ́ · Weather', 'Níbo? · Where things are', 'Mo ń lọ · Going places', 'Ọjà · Market & money', 'Mo fẹ́ràn · Likes & dislikes', 'Àná àti ọ̀la · Yesterday & tomorrow', 'Ìbéèrè · Asking questions', 'Ọjọ́ kan · A day in Yoruba'] },
+    { yo: 'Ìgbà Kẹta: Ìtàn', en: 'Season 3 · Stories', weeks: 'Weeks 25–36', goal: 'Describes and compares, retells a short folktale, holds a 3–4 minute chat.',
+      units: ['Bí ó ṣe rí · Describing', 'Tóbi, kéré · Comparing', 'Ìjàpá àti Erin · Folktale', 'Orin · Songs & rhymes', 'Ohun tó ṣẹlẹ̀ · What happened', 'Àlọ́ · Riddles', 'Òwe · Proverbs for kids', 'Ìpè · Phone call with Grandma', 'Ayẹyẹ · Celebrations', 'Iṣẹ́ · Jobs', 'Ìrìn àjò · Travel', 'Ìtàn mi · My own story'] },
+    { yo: 'Ìgbà Kẹrin: Ọ̀rọ̀ sísọ', en: 'Season 4 · Real conversation', weeks: 'Weeks 37–48', goal: 'Gives opinions and reasons, 10-minute conversation with grandparents, Yoruba is normal at home.',
+      units: ['Èrò mi · My opinion', 'Nítorí pé · Because…', 'Ìbọ̀wọ̀ · Respect', 'Ìrànlọ́wọ́ · Helping', 'Eré · Sports & games', 'Ilẹ̀ Yorùbá · Yorubaland', 'Oúnjẹ ìbílẹ̀ · Cooking together', 'Ìròyìn · Sharing news', 'Ìjíròrò · Friendly debate', 'Lẹ́tà · Writing a letter', 'Eré oníṣe · Drama', 'Àyájọ́ · Graduation show'] }
+  ],
+  shop: [
+    { id: 'fila', yo: 'Fìlà', en: 'Cap', e: '🧢', cost: 15, slot: 'head' },
+    { id: 'balloon', yo: 'Bálúùnù', en: 'Balloon', e: '🎈', cost: 15, slot: 'hand' },
+    { id: 'gele', yo: 'Gèlè', en: 'Head-tie', e: '🎀', cost: 20, slot: 'head' },
+    { id: 'ileke', yo: 'Ìlẹ̀kẹ̀', en: 'Beads', e: '📿', cost: 25, slot: 'neck' },
+    { id: 'ilu', yo: 'Ìlù', en: 'Drum', e: '🥁', cost: 30, slot: 'hand' },
+    { id: 'gilasi', yo: 'Gíláàsì', en: 'Glasses', e: '🕶️', cost: 35, slot: 'face' },
+    { id: 'agboorun', yo: 'Agbòórùn', en: 'Umbrella', e: '☂️', cost: 40, slot: 'hand' },
+    { id: 'ade', yo: 'Adé', en: 'Crown', e: '👑', cost: 60, slot: 'head' }
+  ]
+};
+
+/* Shared helpers for the app and the Recording Studio */
+window.YK = (function () {
+  const MARK = /[̀-ͯ]/;
+  function key(s) {
+    return String(s).normalize('NFC').toLowerCase()
+      .replace(/[.,!?“”"’‘…:;]/g, '').replace(/\s+/g, ' ').trim();
+  }
+  // Tone of each syllable: H (mí), M (rè), L (dò)
+  function tones(s) {
+    const d = String(s).normalize('NFD'); const out = [];
+    for (let i = 0; i < d.length; i++) {
+      const lc = d[i].toLowerCase();
+      const vowel = 'aeiou'.includes(lc), nasal = lc === 'n' || lc === 'm';
+      if (!vowel && !nasal) continue;
+      let j = i + 1, t = vowel ? 'M' : null;
+      while (j < d.length && MARK.test(d[j])) {
+        if (d[j] === '́') t = 'H';
+        if (d[j] === '̀') t = 'L';
+        j++;
+      }
+      if (t) { out.push(t); i = j - 1; }
+    }
+    return out;
+  }
+  function hash(s) { let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+  function hasSlot(s) { return /\{(name|age|agen)\}/.test(s); }
+  // Every distinct thing a parent can record, grouped for the studio and the parent corner
+  function allItems(YO) {
+    const groups = []; const seen = new Set();
+    function add(list, yo, en, kind, pic) {
+      if (hasSlot(yo)) return; const k = key(yo); if (!k || seen.has(k)) return;
+      seen.add(k); list.push({ key: k, yo, en, kind, pic: pic || '' });
+    }
+    YO.units.forEach(u => {
+      const items = [];
+      u.words.forEach(w => add(items, w[0], w[1], 'Word', w[2]));
+      u.phrases.forEach(p => add(items, p[0], p[1], 'Sentence'));
+      u.talk.lines.forEach(l => {
+        if (l[0] === 'you') l[1].forEach(o => add(items, o[0], o[1], 'Talk · child'));
+        else add(items, l[1], l[2], 'Talk · ' + YO.people[l[0]][0]);
+      });
+      u.letters.forEach(l => add(items, l[1], l[2], 'Letter ' + l[0], l[3]));
+      groups.push({ id: u.id, title: 'Week ' + u.wk + ' · ' + u.yo + ' (' + u.en + ')', items });
+    });
+    const ui = []; YO.ui.forEach(p => add(ui, p[0], p[1], 'Praise & instructions'));
+    groups.push({ id: 'ui', title: 'Ìjàpá’s praise & instructions', items: ui });
+    return groups;
+  }
+  return { key, tones, hash, hasSlot, allItems };
+})();
+
+(function () {
+'use strict';
+const YO = window.YO, YK = window.YK;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const app = $('#app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const yesterday = () => { const d = new Date(Date.now() - 864e5); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const AVATARS = [['🦁', 'Kìnnìún'], ['🐘', 'Erin'], ['🐢', 'Ìjàpá'], ['🐒', 'Ọ̀bọ'], ['🦋', 'Labalábá'], ['🐦', 'Ẹyẹ'], ['🐈', 'Ológbò'], ['🐐', 'Ewúrẹ́']];
+const DAILY_GOAL = 3;
+let toastT;
+function toast(msg) { let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); } t.textContent = msg; clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3200); }
+
+/* ---------------- Sound: talking drum + effects ---------------- */
+const Snd = {
+  ctx: null,
+  c() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } } if (this.ctx.state === 'suspended') this.ctx.resume(); return this.ctx; },
+  F: { L: 118, M: 157, H: 210 },
+  hit(t0, f, prev, len = .26, vol = .55) {
+    const c = this.ctx; const o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(prev || f * 1.06, t0); o.frequency.exponentialRampToValueAtTime(f, t0 + .05);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + .008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+    o.connect(g).connect(c.destination); o.start(t0); o.stop(t0 + len + .02);
+    const n = c.createBufferSource(), b = c.createBuffer(1, c.sampleRate * .04, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; const ng = c.createGain(); ng.gain.value = .25;
+    n.buffer = b; n.connect(lp).connect(ng).connect(c.destination); n.start(t0);
+  },
+  melody(tones, onStep) {
+    const c = this.c(); if (!c || !tones.length) return Promise.resolve();
+    let t = c.currentTime + .05, prev = null; const step = .24;
+    tones.forEach((tn, i) => { const f = this.F[tn]; this.hit(t, f, prev); prev = f; if (onStep) setTimeout(() => onStep(i), (t - c.currentTime) * 1000); t += step; });
+    return sleep((t - c.currentTime) * 1000 + 120);
+  },
+  ok() { const c = this.c(); if (!c) return; const t = c.currentTime + .02; this.hit(t, this.F.M, null, .2, .5); this.hit(t + .12, this.F.H, this.F.M, .35, .55); },
+  no() { const c = this.c(); if (!c) return; const t = c.currentTime + .02; this.hit(t, this.F.M, null, .2, .35); this.hit(t + .14, this.F.L * .9, this.F.M, .3, .35); },
+  coin() { const c = this.c(); if (!c) return; const t = c.currentTime; [880, 1320].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(.0001, t + i * .07); g.gain.exponentialRampToValueAtTime(.2, t + i * .07 + .01); g.gain.exponentialRampToValueAtTime(.0001, t + i * .07 + .25); o.connect(g).connect(c.destination); o.start(t + i * .07); o.stop(t + i * .07 + .3); }); },
+  fanfare() { const c = this.c(); if (!c) return; const seq = ['L', 'M', 'H', 'M', 'H', 'H']; let t = c.currentTime + .05, p = null; seq.forEach((s, i) => { const f = this.F[s]; this.hit(t, f, p, .3, .6); p = f; t += i === 4 ? .12 : .18; }); }
+};
+
+/* ---------------- Store: shared db when available, this device otherwise ---------------- */
+const Store = {
+  db: null, kids: {}, settings: { main: {}, voice: { map: {} }, fixes: { map: {} } }, onChange: null, q: {},
+  async init() {
+    let db = null;
+    try { if (window.claude && window.claude.use) db = await Promise.race([window.claude.use('db'), sleep(10000).then(() => null)]); } catch (e) { db = null; }
+    this.db = db;
+    if (!db) { this.loadLocal(); return; }
+    await new Promise(resolve => {
+      const got = new Set(); let ready = false;
+      const first = n => { got.add(n); if (!ready && got.size === 4) { ready = true; resolve(); } };
+      setTimeout(() => { if (!ready) { ready = true; resolve(); } }, 6000);
+      db.collection('kids').onSnapshot(s => {
+        const k = {}; s.docs.forEach(d => { if (d.exists) k[d.id] = JSON.parse(JSON.stringify(d.data())); });
+        if (s.metadata && s.metadata.hasPendingWrites) Object.assign(this.kids, k); else this.kids = k;
+        if (ready) this.changed('kids'); else first('kids');
+      }, () => first('kids'));
+      ['main', 'voice', 'fixes'].forEach(n => db.doc('settings/' + n).onSnapshot(s => {
+        const base = n === 'main' ? {} : { map: {} };
+        this.settings[n] = s.exists ? Object.assign(base, JSON.parse(JSON.stringify(s.data()))) : base;
+        if (ready) this.changed(n); else first(n);
+      }, () => first(n)));
+    });
+  },
+  loadLocal() {
+    try { const s = JSON.parse(localStorage.getItem('ijapa-yo') || '{}'); this.kids = s.kids || {}; if (s.settings) Object.assign(this.settings, s.settings); } catch (e) {}
+  },
+  saveLocal() { try { localStorage.setItem('ijapa-yo', JSON.stringify({ kids: this.kids, settings: { main: this.settings.main, fixes: this.settings.fixes } })); } catch (e) {} },
+  changed(what) { if (this.onChange) this.onChange(what); },
+  write(path, data) {
+    // one write at a time per document, coalescing to the latest body
+    const q = this.q[path] || (this.q[path] = { busy: false, next: null });
+    q.next = data;
+    if (q.busy) return;
+    const run = async () => {
+      q.busy = true;
+      while (q.next) {
+        const body = q.next; q.next = null;
+        try { await this.db.doc(path).set(body); }
+        catch (e) {
+          if (e && e.code === 'unavailable') { await sleep(800 + Math.random() * 800); try { await this.db.doc(path).set(body); } catch (e2) { toast('Could not save just now. Progress is kept on this screen.'); } }
+          else if (e && e.code === 'quota_exceeded') toast('Storage is full. Remove a child or some voices in the Parents corner.');
+          else toast('Could not save. Check you are signed in.');
+        }
+      }
+      q.busy = false;
+    };
+    run();
+  },
+  saveKid(k) { this.kids[k.id] = k; if (this.db) this.write('kids/' + k.id, k); else this.saveLocal(); },
+  async deleteKid(id) { delete this.kids[id]; if (this.db) { try { await this.db.doc('kids/' + id).delete(); } catch (e) { toast('Could not delete. Try again.'); } } else this.saveLocal(); },
+  saveSetting(n, data) { this.settings[n] = data; if (this.db) this.write('settings/' + n, data); else this.saveLocal(); }
+};
+
+/* ---------------- Voices recorded by Mummy & Daddy ---------------- */
+const Voice = {
+  packs: {}, urls: {}, loading: {}, local: {},
+  ref(k) { return (Store.settings.voice.map || {})[k]; },
+  has(k) { return !!(this.local[k] || this.ref(k)); },
+  count(keys) { return keys.filter(k => this.has(k)).length; },
+  async pack(id) {
+    if (this.packs[id]) return this.packs[id];
+    if (!this.loading[id]) this.loading[id] = fetch('/_blob/' + id).then(r => { if (!r.ok) throw new Error('missing'); return r.json(); }).then(j => (this.packs[id] = j.clips || {})).catch(() => (this.packs[id] = {}));
+    return this.loading[id];
+  },
+  async url(k) {
+    if (this.local[k]) return this.local[k];
+    const ref = this.ref(k); if (!ref) return null;
+    const ck = k + '|' + ref; if (this.urls[ck]) return this.urls[ck];
+    let clip = null;
+    if (ref.startsWith('a:')) { const p = await this.pack(ref.slice(2)); clip = p[k]; }
+    else if (ref.startsWith('d:') && Store.db) { try { const s = await Store.db.doc('clips/' + ref.slice(2)).get(); if (s.exists) clip = s.data(); } catch (e) {} }
+    if (!clip || !clip.b64) return null;
+    const url = URL.createObjectURL(b64Blob(clip.b64, clip.mime));
+    this.urls[ck] = url; return url;
+  },
+  prefetch() { Object.values(Store.settings.voice.map || {}).forEach(r => { if (r && r.startsWith('a:')) this.pack(r.slice(2)); }); },
+  cur: null,
+  async play(k) {
+    const url = await this.url(k); if (!url) return false;
+    try { if (this.cur) this.cur.pause(); const a = new Audio(url); this.cur = a; await a.play(); await new Promise(r => { a.onended = r; a.onerror = r; setTimeout(r, 12000); }); return true; } catch (e) { return false; }
+  }
+};
+function b64Blob(b64, mime) { const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Blob([u], { type: mime || 'audio/webm' }); }
+function blobB64(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); }); }
+
+// Speak an item: parent's voice if recorded, otherwise the talking-drum melody of its tones
+async function speak(yoText, btn, strip) {
+  const k = YK.key(yoText);
+  if (btn) btn.classList.add('playing');
+  let ok = false;
+  if (Voice.has(k)) ok = await Voice.play(k);
+  if (!ok) {
+    const ts = YK.tones(fixed(yoText));
+    const dots = strip ? $$('i', strip) : [];
+    await Snd.melody(ts, i => { dots.forEach(d => d.classList.remove('on')); if (dots[i]) dots[i].classList.add('on'); });
+    dots.forEach(d => d.classList.remove('on'));
+  }
+  if (btn) btn.classList.remove('playing');
+}
+function fixed(yo) { const f = (Store.settings.fixes.map || {})[YK.key(yo)]; return f && f.yo ? f.yo : yo; }
+function fixedEn(yo, en) { const f = (Store.settings.fixes.map || {})[YK.key(yo)]; return f && f.en ? f.en : en; }
+function toneStrip(yo) { const ts = YK.tones(fixed(yo)); return '<div class="tonestrip" aria-label="Tone melody">' + ts.map(t => '<i class="' + t + '">' + t + '</i>').join('') + '</div>'; }
+function picHTML(p) { if (!p) return ''; if (p[0] === '#') return '<span class="num">' + esc(p.slice(1)) + '</span>'; return esc(p); }
+function sayBtn(yo, cls = '') { const k = YK.key(yo); const has = Voice.has(k); return '<button class="say ' + cls + (has ? '' : ' drum') + '" data-say="' + esc(yo) + '" aria-label="' + (has ? 'Hear it' : 'Hear the drum') + '">' + (has ? '🔊' : '🥁') + '</button>'; }
+
+/* ---------------- Kid helpers ---------------- */
+let kidId = null;
+const kid = () => Store.kids[kidId];
+function personal(s, k) {
+  k = k || kid() || {}; const age = k.age || 6;
+  return s.replace(/\{name\}/g, k.name || 'Ayọ̀').replace(/\{age\}/g, YO.ages[age] || YO.ages[6]).replace(/\{agen\}/g, String(age));
+}
+function newKid(name, age, av) { return { id: 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, age, av, cowries: 0, streak: 0, lastDay: '', today: { day: '', n: 0 }, acts: {}, str: {}, owned: [], wear: {}, created: today() }; }
+function unitDone(k, u) { return ACTS(u).filter(a => (k.acts || {})[u.id + '.' + a.k] > 0).length; }
+function unitOpen(k, i) {
+  if (i === 0 || Store.settings.main.unlockAll) return true;
+  const prev = YO.units[i - 1]; return unitDone(k, prev) >= 5;
+}
+function ACTS(u) {
+  const a = [
+    { k: 'learn', yo: 'Kọ́', en: 'Learn the words', ic: '🃏' },
+    { k: 'listen', yo: 'Gbọ́', en: 'Listen & tap', ic: '👂🏾' },
+    { k: 'read', yo: 'Kà á', en: 'Read & pick', ic: '📖' },
+    { k: 'letters', yo: 'Ábídí', en: 'Letters', ic: '🔤' },
+    { k: 'phrases', yo: 'Gbólóhùn', en: 'Sentences', ic: '💬' },
+    { k: 'build', yo: 'Tò ó', en: 'Build a sentence', ic: '🧩' },
+    { k: 'match', yo: 'Rántí', en: 'Memory match', ic: '🎴' }
+  ];
+  if (u.special === 'count') a.push({ k: 'count', yo: 'Ka á', en: 'Count with me', ic: '🔢' });
+  if (u.special === 'simon') a.push({ k: 'simon', yo: 'Ìjàpá sọ pé', en: 'Simon says', ic: '🐢' });
+  a.push({ k: 'talk', yo: 'Ẹ jẹ́ ká sọ̀rọ̀', en: 'Let’s talk', ic: '🗣️' });
+  a.push({ k: 'mission', yo: 'Iṣẹ́ ilé', en: 'Home mission', ic: '🏡' });
+  return a;
+}
+const words = u => u.words.map(w => ({ yo: w[0], en: w[1], pic: w[2], key: YK.key(w[0]) }));
+
+/* ---------------- Ìjàpá the tortoise ---------------- */
+function ijapa(w = 220, extra = '', k) {
+  k = k || kid() || {}; const wear = k.wear || {};
+  const acc = Object.entries(wear).map(([slot, id]) => { const it = YO.shop.find(s => s.id === id); return it ? '<span class="acc ' + slot + '">' + it.e + '</span>' : ''; }).join('');
+  return '<div class="ijapa ' + extra + '" style="--w:' + w + 'px" aria-label="Ìjàpá the tortoise"><svg viewBox="0 0 220 150" aria-hidden="true">' +
+    '<ellipse cx="108" cy="140" rx="86" ry="8" fill="#1C2356" opacity=".12"/>' +
+    '<g fill="#9DBB5C"><rect x="44" y="96" width="26" height="40" rx="12"/><rect x="138" y="96" width="26" height="40" rx="12"/><rect x="76" y="100" width="22" height="34" rx="10" fill="#87A64A"/><rect x="112" y="100" width="22" height="34" rx="10" fill="#87A64A"/><path d="M22 100 q-14 4 -12 -8 q8 -2 16 2z"/></g>' +
+    '<g><ellipse cx="180" cy="80" rx="31" ry="27" fill="#A9C766"/><circle cx="188" cy="72" r="9" fill="#fff"/><circle cx="191" cy="72" r="5" fill="#1C2356"/><circle cx="192.5" cy="70" r="1.8" fill="#fff"/><path d="M178 92 q12 9 24 -1" stroke="#1C2356" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="202" cy="86" r="4.5" fill="#F2553F" opacity=".45"/></g>' +
+    '<path d="M26 104 Q28 22 108 20 Q186 22 188 104 Z" fill="#2B3990"/>' +
+    '<g fill="none" stroke="#DCE3FF" stroke-width="3" opacity=".9"><circle cx="108" cy="58" r="16"/><circle cx="108" cy="58" r="6" fill="#DCE3FF"/><circle cx="64" cy="76" r="11"/><circle cx="152" cy="76" r="11"/><path d="M63 40 l6 7 l-6 7 l-6 -7z M153 40 l6 7 l-6 7 l-6 -7z" fill="#DCE3FF"/><path d="M40 96 q16 -10 32 0 q16 10 32 0 q16 -10 32 0 q16 10 32 0" /></g>' +
+    '<g fill="#FFB020"><circle cx="86" cy="36" r="3"/><circle cx="130" cy="36" r="3"/><circle cx="108" cy="88" r="3"/></g>' +
+    '<rect x="18" y="100" width="176" height="11" rx="5.5" fill="#1C2356"/>' +
+    '</svg>' + acc + '</div>';
+}
+
+/* ---------------- Router ---------------- */
+let view = 'start', viewArgs = [], inGame = false;
+function go(v, ...args) { view = v; viewArgs = args; inGame = false; window.scrollTo(0, 0); render(); }
+function render() {
+  const V = { start: vStart, pick: vPick, home: vHome, unit: vUnit, shop: vShop, year: vYear, gate: vGate, parent: vParent };
+  (V[view] || vPick)(...viewArgs);
+}
+Store.onChange = what => {
+  if (what === 'voice') Voice.prefetch();
+  if (inGame) return;
+  if (view === 'parent' && $('input:focus, select:focus')) return;
+  if (view === 'home' || view === 'unit') { if (!kid()) return go('pick'); }
+  render();
+};
+app.addEventListener('click', e => {
+  const s = e.target.closest('[data-say]');
+  if (s) { e.stopPropagation(); const strip = s.closest('.flash, .stage, .line, .vrow, .item') ? $('.tonestrip', s.closest('.flash, .stage, .line, .vrow, .item')) : null; speak(s.dataset.say, s, strip); }
+});
+
+/* ---------------- Screens ---------------- */
+function vStart() {
+  app.innerHTML = '<div class="center">' + ijapa(240, 'bob', {}) + '<h1 class="yo">Ìjàpá ń jí…</h1><p class="small">Ìjàpá is waking up</p></div>';
+}
+function vPick() {
+  const ks = Object.values(Store.kids).sort((a, b) => (a.created || '').localeCompare(b.created || '') || a.name.localeCompare(b.name));
+  app.innerHTML = '<div class="hero">' + ijapa(200, 'bob', {}) + '<div class="bubble"><span class="yo">Káàbọ̀!</span><br>' +
+    (ks.length ? 'Who is learning today? Tap your picture.' : 'Hello Mummy and Daddy! Add your children to start.') + '</div></div>' +
+    '<h1 class="yo">Ta ló fẹ́ kọ́ èdè Yorùbá?</h1><p class="small" style="margin:4px 0 0">Who wants to learn Yoruba?</p>' +
+    '<div class="kids">' + ks.map(k => '<button class="kidcard" data-kid="' + k.id + '"><span class="av">' + esc(k.av || '🦁') + '</span>' + esc(k.name) + '<span class="chip">🐚 ' + (k.cowries || 0) + '</span></button>').join('') +
+    '<button class="kidcard add" data-add>＋<span style="font-size:17px">Add a child<br><span class="small">(grown-ups)</span></span></button></div>' +
+    '<div class="row" style="margin-top:22px;justify-content:center"><button class="big ghost" data-parent>👪🏾 Parents’ corner</button><button class="big ghost" data-year>🗺️ Our year</button></div>';
+  $$('[data-kid]').forEach(b => b.onclick = () => { Snd.c(); kidId = b.dataset.kid; go('home'); });
+  $('[data-add]').onclick = () => go('gate', 'kids');
+  $('[data-parent]').onclick = () => go('gate', 'guide');
+  $('[data-year]').onclick = () => go('year');
+}
+
+function greetNow() { const h = new Date().getHours(); return h < 12 ? ['Káàárọ̀', 'Good morning'] : h < 16 ? ['Káàsán', 'Good afternoon'] : h < 20 ? ['Kú ìrọ̀lẹ́', 'Good evening'] : ['Kú alẹ́', 'Good night-time']; }
+function vHome() {
+  const k = kid(); if (!k) return go('pick');
+  const g = greetNow(); const td = k.today && k.today.day === today() ? k.today.n : 0;
+  const nextU = YO.units.findIndex((u, i) => unitOpen(k, i) && unitDone(k, u) < ACTS(u).length);
+  app.innerHTML =
+    '<div class="bar"><button class="who" data-switch><span class="av">' + esc(k.av) + '</span>' + esc(k.name) + '</button><span class="grow"></span>' +
+    '<span class="chip" title="Cowries">🐚 ' + (k.cowries || 0) + '</span><span class="chip" title="Days in a row">🥁 ' + (k.streak || 0) + ' ọjọ́</span></div>' +
+    '<div class="hero">' + ijapa(210, 'bob') + '<div class="bubble"><button data-say="' + esc(g[0]) + '" class="yo" style="font-size:30px;font-weight:700">' + esc(g[0]) + ', ' + esc(k.name) + '!</button><br><span class="small">' + g[1] + ', ' + esc(k.name) + '!</span>' +
+    '<div style="margin-top:10px;font-size:17px"><b>Today:</b> ' + Math.min(td, DAILY_GOAL) + ' of ' + DAILY_GOAL + ' games</div><div class="goal"><i style="width:' + Math.min(100, td / DAILY_GOAL * 100) + '%"></i></div></div></div>' +
+    (nextU >= 0 ? '<button class="big sun" data-continue style="width:100%">▶ Continue: <span class="yo">' + esc(YO.units[nextU].yo) + '</span></button>' : '') +
+    '<div class="season"><div class="eyebrow">' + esc(YO.year[0].en) + '</div><h2 class="yo">' + esc(YO.year[0].yo) + '</h2><div class="path">' +
+    YO.units.map((u, i) => { const open = unitOpen(k, i), d = unitDone(k, u), n = ACTS(u).length; return '<button class="stop' + (open ? '' : ' locked') + '" data-unit="' + i + '"><span class="disc" style="--c:' + u.col + '">' + (open ? u.pic : '🔒') + '<span class="wk">Wk ' + u.wk + '</span></span><span class="lbl"><span class="yo">' + esc(u.yo) + '</span><span class="small">' + esc(u.en) + ' · ' + d + '/' + n + '</span></span></button>'; }).join('') +
+    YO.year[0].units.slice(YO.units.length).map((t, i) => '<div class="stop locked"><span class="disc">🌱<span class="wk">Wk ' + (YO.units.length + i + 1) + '</span></span><span class="lbl"><span class="yo">' + esc(t.split(' · ')[0]) + '</span><span class="small">' + esc(t.split(' · ')[1]) + ' · coming soon</span></span></div>').join('') +
+    '</div></div>' +
+    '<div class="cards3"><button class="card" data-review><span class="ic">🔁</span><span><b class="yo">Atúnyẹ̀wò</b><span class="small">Practise tricky words</span></span></button>' +
+    '<button class="card" data-shop><span class="ic">🛍️</span><span><b class="yo">Ọjà Ìjàpá</b><span class="small">Dress up Ìjàpá with your cowries</span></span></button>' +
+    '<button class="card" data-year><span class="ic">🗺️</span><span><b class="yo">Ọdún wa</b><span class="small">Our whole year</span></span></button></div>';
+  $('[data-switch]').onclick = () => go('pick');
+  const c = $('[data-continue]'); if (c) c.onclick = () => go('unit', nextU);
+  $$('[data-unit]').forEach(b => b.onclick = () => { const i = +b.dataset.unit; if (unitOpen(k, i)) go('unit', i); else { Snd.no(); toast('Finish 5 games in week ' + (i) + ' to open this one!'); } });
+  $('[data-review]').onclick = () => startGame(null, 'review');
+  $('[data-shop]').onclick = () => go('shop');
+  $('[data-year]').onclick = () => go('year');
+}
+
+function vUnit(i) {
+  const k = kid(); if (!k) return go('pick'); const u = YO.units[i];
+  const acts = ACTS(u); const firstTodo = acts.findIndex(a => !(k.acts || {})[u.id + '.' + a.k]);
+  app.innerHTML = '<div class="bar"><button class="iconbtn" data-back aria-label="Back">⬅️</button><span class="grow"></span><span class="chip">🐚 ' + (k.cowries || 0) + '</span></div>' +
+    '<div class="unithead" style="--c:' + u.col + '"><span class="pic">' + u.pic + '</span><span><span class="eyebrow" style="color:rgba(255,255,255,.8)">Week ' + u.wk + '</span><span class="yo">' + esc(u.yo) + '</span><span>' + esc(u.en) + '</span></span></div>' +
+    '<div class="note"><b>Ṣé o mọ̀? Did you know?</b> ' + esc(u.culture) + '</div>' +
+    '<div class="acts">' + acts.map((a, j) => { const st = (k.acts || {})[u.id + '.' + a.k] || 0; return '<button class="tile' + (st ? ' done' : '') + (j === firstTodo ? ' next' : '') + '" data-act="' + a.k + '"><span class="ic">' + a.ic + '</span><span class="yo">' + esc(a.yo) + '</span><span class="small">' + esc(a.en) + '</span><span class="stars">' + (st ? '★'.repeat(st) + '☆'.repeat(3 - st) : '☆☆☆') + '</span></button>'; }).join('') + '</div>';
+  $('[data-back]').onclick = () => go('home');
+  $$('[data-act]').forEach(b => b.onclick = () => startGame(i, b.dataset.act));
+}
+
+/* ---------------- Game runner ---------------- */
+function gameShell(title, total) {
+  inGame = true;
+  app.innerHTML = '<div class="gamebar"><button class="iconbtn" data-quit aria-label="Stop">✖️</button><div class="prog"><i style="width:0%"></i></div><span class="chip">' + esc(title) + '</span></div><div class="stage" id="stage"></div>';
+  $('[data-quit]').onclick = () => { if (Voice.cur) Voice.cur.pause(); quitTo(); };
+  return { stage: $('#stage'), prog: n => { const i = $('.prog i'); if (i) i.style.width = Math.round(n / total * 100) + '%'; } };
+}
+let quitTo = () => go('home');
+function startGame(ui, k) {
+  const u = ui === null ? null : YO.units[ui];
+  quitTo = () => (u ? go('unit', ui) : go('home'));
+  const G = { learn: gLearn, listen: gListen, read: gRead, letters: gLetters, phrases: gPhrases, build: gBuild, match: gMatch, count: gCount, simon: gSimon, talk: gTalk, mission: gMission, review: gReview };
+  G[k](u, res => finish(ui, k, res));
+}
+function starsFor(wrong) { return wrong === 0 ? 3 : wrong <= 2 ? 2 : 1; }
+function finish(ui, act, res) {
+  const k = kid(); const u = ui === null ? null : YO.units[ui];
+  const stars = res.stars != null ? res.stars : starsFor(res.wrong || 0);
+  const id = u ? u.id + '.' + act : null;
+  const prev = id ? (k.acts || {})[id] || 0 : 0;
+  let earn = stars * 3 + (prev ? 0 : 5) + (res.bonus || 0);
+  k.acts = k.acts || {}; if (id) k.acts[id] = Math.max(prev, stars);
+  k.str = k.str || {}; Object.entries(res.items || {}).forEach(([key, d]) => { k.str[key] = Math.max(0, Math.min(5, (k.str[key] || 0) + d)); });
+  const td = today();
+  if (k.lastDay !== td) { k.streak = k.lastDay === yesterday() ? (k.streak || 0) + 1 : 1; k.lastDay = td; }
+  if (!k.today || k.today.day !== td) k.today = { day: td, n: 0 };
+  k.today.n++; if (k.today.n === DAILY_GOAL) earn += 10;
+  k.cowries = (k.cowries || 0) + earn;
+  Store.saveKid(k);
+  inGame = true;
+  const praise = stars === 3 ? YO.ui[4] : YO.ui[3];
+  const goalHit = k.today.n === DAILY_GOAL;
+  app.innerHTML = '<div class="done">' + ijapa(220, 'dance') +
+    '<div class="bigstars">' + [1, 2, 3].map(n => '<span class="' + (n <= stars ? '' : 'off') + '">⭐</span>').join('') + '</div>' +
+    '<button class="yo" style="font-size:40px;font-weight:700" data-say="' + esc(praise[0]) + '">' + esc(praise[0]) + '</button><div class="small">' + esc(praise[1]) + '</div>' +
+    '<div class="reward">+' + earn + ' 🐚</div>' + (goalHit ? '<div class="note"><b>Daily goal done!</b> Ìjàpá is so proud of you. +10 bonus cowries.</div>' : '') +
+    '<div class="row" style="justify-content:center">' + (u ? '<button class="big ghost" data-again>🔁 Again</button>' : '') + '<button class="big leaf" data-next>Next ➜</button></div></div>';
+  Snd.fanfare(); setTimeout(() => speak(praise[0]), 900);
+  rain(Math.min(16, 4 + earn / 2));
+  const again = $('[data-again]'); if (again) again.onclick = () => startGame(ui, act);
+  $('[data-next]').onclick = () => {
+    if (!u) return go('home');
+    const acts = ACTS(u); const nx = acts.find(a => !(k.acts || {})[u.id + '.' + a.k]);
+    if (nx) startGame(ui, nx.k); else go('unit', ui);
+  };
+}
+function rain(n) { for (let i = 0; i < n; i++) { const s = document.createElement('span'); s.className = 'rain'; s.textContent = i % 3 ? '🐚' : '⭐'; s.style.left = Math.random() * 96 + 'vw'; s.style.animationDuration = 1.6 + Math.random() * 1.6 + 's'; s.style.animationDelay = Math.random() * .6 + 's'; document.body.appendChild(s); setTimeout(() => s.remove(), 4000); } }
+
+/* Shared multiple-choice round engine */
+async function choiceRounds(title, rounds, done) {
+  const g = gameShell(title, rounds.length); let wrong = 0; const items = {};
+  for (let r = 0; r < rounds.length; r++) {
+    g.prog(r);
+    const R = rounds[r]; let misses = 0;
+    g.stage.innerHTML = R.prompt + '<div class="opts">' + R.options.map((o, i) => '<button class="opt" data-o="' + i + '">' + o.html + '</button>').join('') + '</div>';
+    if (R.onShow) R.onShow(g.stage);
+    await new Promise(next => {
+      $$('[data-o]', g.stage).forEach(b => b.onclick = async () => {
+        const o = R.options[+b.dataset.o];
+        if (b.classList.contains('right') || b.classList.contains('dim')) return;
+        if (o.ok) {
+          b.classList.add('right'); $$('[data-o]', g.stage).forEach(x => { if (x !== b) x.classList.add('dim'); });
+          Snd.ok(); if (misses === 0) items[R.key] = (items[R.key] || 0) + 1;
+          await sleep(250); await speak(R.yo); await sleep(350); next();
+        } else {
+          b.classList.add('wrong'); Snd.no(); misses++; wrong++; items[R.key] = -1;
+          setTimeout(() => { b.classList.remove('wrong'); b.classList.add('dim'); }, 450);
+          if (misses >= 2) { const rb = $$('[data-o]', g.stage).find(x => R.options[+x.dataset.o].ok); if (rb) rb.classList.add('right'); }
+        }
+      });
+    });
+  }
+  g.prog(rounds.length); await sleep(200);
+  done({ wrong, items });
+}
+function pickOthers(pool, target, n) { return shuffle(pool.filter(p => p.key !== target.key && p.en !== target.en)).slice(0, n); }
+
+function listenRound(t, pool) {
+  const has = Voice.has(t.key);
+  return {
+    key: t.key, yo: t.yo,
+    prompt: '<div class="prompt">' + (has ? '🔊 Listen, then tap the picture' : '<span class="yo" style="font-size:44px">' + esc(fixed(t.yo)) + '</span>') + '</div>' + sayBtn(t.yo) + (has ? '' : toneStrip(t.yo)),
+    onShow: st => setTimeout(() => speak(t.yo, $('.say', st), $('.tonestrip', st)), 350),
+    options: shuffle([t, ...pickOthers(pool, t, 3)]).map(o => ({ ok: o.key === t.key, html: '<span class="pic">' + picHTML(o.pic) + '</span>' }))
+  };
+}
+function readRound(t, pool) {
+  return {
+    key: t.key, yo: t.yo,
+    prompt: '<div class="bigpic">' + picHTML(t.pic) + '</div><div class="prompt">Which word is it?</div>',
+    options: shuffle([t, ...pickOthers(pool, t, 2)]).map(o => ({ ok: o.key === t.key, html: '<span class="yo">' + esc(fixed(o.yo)) + '</span>' }))
+  };
+}
+
+/* Learn cards (words or sentences) */
+function cards(title, list, done) {
+  const g = gameShell(title, list.length); let i = 0; const items = {};
+  function show() {
+    g.prog(i);
+    const t = list[i];
+    g.stage.innerHTML = '<div class="flash">' + (t.pic ? '<div class="pic">' + picHTML(t.pic) + '</div>' : '<div class="pic">💬</div>') +
+      '<div class="word">' + esc(fixed(personal(t.yo))) + '</div>' + toneStrip(t.yo) +
+      '<div class="tonekey"><b style="background:var(--coral)"></b>high (mí) &nbsp; <b style="background:var(--sun)"></b>middle (rè) &nbsp; <b style="background:var(--aro)"></b>low (dò)</div>' +
+      '<div class="en">' + esc(fixedEn(t.yo, personal(t.en))) + '</div>' + sayBtn(t.yo) + '</div>' +
+      '<div class="row" style="justify-content:center">' + (i ? '<button class="big ghost" data-prev>⬅</button>' : '') + '<button class="big leaf" data-nx>' + (i === list.length - 1 ? 'Done ✓' : 'Next ➜') + '</button></div>';
+    setTimeout(() => speak(t.yo, $('.say', g.stage), $('.tonestrip', g.stage)), 300);
+    const p = $('[data-prev]'); if (p) p.onclick = () => { i--; show(); };
+    $('[data-nx]').onclick = () => { items[t.key] = 0; if (++i >= list.length) { g.prog(i); done({ stars: 3, items }); } else show(); };
+  }
+  show();
+}
+function gLearn(u, done) { cards('Kọ́', words(u), done); }
+function gPhrases(u, done) { cards('Gbólóhùn', u.phrases.map(p => ({ yo: p[0], en: p[1], key: YK.key(p[0]) })), done); }
+function gListen(u, done) { const pool = words(u); choiceRounds('Gbọ́', shuffle(pool).slice(0, 6).map(t => listenRound(t, pool)), done); }
+function gRead(u, done) { const pool = words(u); choiceRounds('Kà á', shuffle(pool).slice(0, 6).map(t => readRound(t, pool)), done); }
+
+function gLetters(u, done) {
+  const L = u.letters; const g = gameShell('Ábídí', L.length * 2); let i = 0;
+  const hl = (word, letter) => { const w = fixed(word); const idx = w.toLowerCase().normalize('NFC').indexOf(letter.toLowerCase()); return idx < 0 ? esc(w) : esc(w.slice(0, idx)) + '<mark>' + esc(w.slice(idx, idx + letter.length)) + '</mark>' + esc(w.slice(idx + letter.length)); };
+  function show() {
+    g.prog(i); const l = L[i];
+    g.stage.innerHTML = '<div class="flash"><div class="letter">' + esc(l[0]) + '<small>' + esc(l[0].toLowerCase()) + '</small></div><div class="pic">' + l[3] + '</div><div class="word">' + hl(l[1], l[0]) + '</div><div class="en">' + esc(l[2]) + '</div>' + sayBtn(l[1]) + '</div><button class="big leaf" data-nx>Next ➜</button>';
+    setTimeout(() => speak(l[1], $('.say', g.stage)), 300);
+    $('[data-nx]').onclick = () => { if (++i >= L.length) quiz(); else show(); };
+  }
+  async function quiz() {
+    const all = []; YO.units.slice(0, YO.units.indexOf(u) + 1).forEach(x => x.letters.forEach(l => all.push({ L: l[0], yo: l[1], en: l[2], pic: l[3], key: YK.key(l[1]) })));
+    const rounds = shuffle(all.filter(a => L.some(l => l[0] === a.L))).map(t => ({
+      key: t.key, yo: t.yo,
+      prompt: '<div class="prompt">Which word has this letter?</div><div class="letter">' + esc(t.L) + '<small>' + esc(t.L.toLowerCase()) + '</small></div>',
+      options: shuffle([t, ...shuffle(all.filter(a => a.L !== t.L && !a.yo.toLowerCase().includes(t.L.toLowerCase()))).slice(0, 2)]).map(o => ({ ok: o.key === t.key, html: '<span class="pic">' + o.pic + '</span><span class="yo">' + esc(fixed(o.yo)) + '</span>' }))
+    }));
+    choiceRounds('Ábídí', rounds, done);
+  }
+  show();
+}
+
+function gBuild(u, done) {
+  const list = shuffle(u.phrases.filter(p => p[0].split(' ').length > 1)).slice(0, 4);
+  const g = gameShell('Tò ó', list.length); let r = 0, wrong = 0; const items = {};
+  function show() {
+    g.prog(r); const p = list[r]; const target = fixed(p[0]).split(' '); const tiles = shuffle(target.map((w, i) => ({ w, i })));
+    let placed = []; let miss = 0;
+    g.stage.innerHTML = '<div class="prompt">Put the words in order:</div><div class="bubble" style="font-size:22px">“' + esc(fixedEn(p[0], p[1])) + '”</div>' + sayBtn(p[0], 'sm') +
+      '<div class="slots" id="slots"></div><div class="tiles" id="tiles">' + tiles.map((t, j) => '<button class="wt" data-t="' + j + '">' + esc(t.w) + '</button>').join('') + '</div><button class="big leaf" id="chk" disabled>Check ✓</button>';
+    setTimeout(() => speak(p[0], $('.say', g.stage)), 300);
+    const slots = $('#slots'), chk = $('#chk');
+    function draw() {
+      slots.innerHTML = placed.map((j, n) => '<button class="wt" data-s="' + n + '">' + esc(tiles[j].w) + '</button>').join('');
+      $$('[data-t]').forEach(b => b.classList.toggle('used', placed.includes(+b.dataset.t)));
+      $$('[data-s]', slots).forEach(b => b.onclick = () => { placed.splice(+b.dataset.s, 1); slots.className = 'slots'; draw(); });
+      chk.disabled = placed.length !== tiles.length;
+    }
+    $$('[data-t]').forEach(b => b.onclick = () => { const j = +b.dataset.t; if (placed.includes(j)) return; placed.push(j); Snd.hit && Snd.c() && Snd.hit(Snd.ctx.currentTime, Snd.F.M, null, .12, .25); draw(); });
+    chk.onclick = async () => {
+      const ok = placed.map(j => tiles[j].w).join(' ') === target.join(' ');
+      if (ok) { slots.className = 'slots right'; Snd.ok(); items[YK.key(p[0])] = miss ? 0 : 1; chk.disabled = true; await speak(p[0]); await sleep(400); r++; if (r >= list.length) { g.prog(r); done({ wrong, items }); } else show(); }
+      else { slots.className = 'slots wrong'; Snd.no(); wrong++; miss++; items[YK.key(p[0])] = -1; placed = placed.filter((j, n) => tiles[j].w === target[n] && placed.slice(0, n).every((jj, nn) => tiles[jj].w === target[nn])); setTimeout(draw, 450); }
+    };
+    draw();
+  }
+  show();
+}
+
+function gMatch(u, done) {
+  const pairs = shuffle(words(u)).slice(0, window.innerWidth < 520 ? 3 : 4);
+  const deck = shuffle(pairs.flatMap((p, i) => [{ i, t: 'pic', p }, { i, t: 'yo', p }]));
+  const g = gameShell('Rántí', pairs.length); let open = [], got = 0, wrong = 0, lock = false; const items = {};
+  g.stage.innerHTML = '<div class="prompt">Find the pairs: picture + word</div><div class="mem">' + deck.map((c, j) => '<button class="mc" data-c="' + j + '"><span class="back">🐢</span><span class="face ' + c.t + '">' + (c.t === 'pic' ? picHTML(c.p.pic) : esc(fixed(c.p.yo))) + '</span></button>').join('') + '</div>';
+  $$('[data-c]').forEach(b => b.onclick = async () => {
+    const j = +b.dataset.c; if (lock || b.classList.contains('open') || b.classList.contains('got')) return;
+    b.classList.add('open'); open.push(j); Snd.c() && Snd.hit(Snd.ctx.currentTime, Snd.F.M, null, .1, .2);
+    if (deck[j].t === 'yo') speak(deck[j].p.yo);
+    if (open.length === 2) {
+      lock = true; const [a, c] = open; const A = deck[a], C = deck[c];
+      if (A.i === C.i && A.t !== C.t) { await sleep(300); $$('[data-c]').filter(x => +x.dataset.c === a || +x.dataset.c === c).forEach(x => { x.classList.remove('open'); x.classList.add('got'); }); Snd.ok(); speak(A.p.yo); got++; items[A.p.key] = 1; g.prog(got); open = []; lock = false; if (got === pairs.length) { await sleep(1200); done({ wrong: Math.max(0, wrong - pairs.length), items }); } }
+      else { wrong++; await sleep(900); $$('[data-c]').filter(x => +x.dataset.c === a || +x.dataset.c === c).forEach(x => x.classList.remove('open')); open = []; lock = false; }
+    }
+  });
+}
+
+function gCount(u, done) {
+  const pool = words(u); const things = ['🍊', '🥚', '⭐', '🐟', '🍌', '🎈', '🐚'];
+  const ns = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).slice(0, 6);
+  choiceRounds('Ka á', ns.map(n => { const t = pool[n - 1]; const th = things[Math.floor(Math.random() * things.length)];
+    return { key: t.key, yo: t.yo, prompt: '<div class="prompt">How many? Count in Yoruba!</div><div class="count">' + th.repeat(n).match(/./gu).map(x => '<span>' + x + '</span>').join('') + '</div>',
+      options: shuffle([t, ...shuffle(pool.filter(p => p.key !== t.key)).slice(0, 2)]).map(o => ({ ok: o.key === t.key, html: '<span class="yo">' + esc(fixed(o.yo)) + '</span>' })) };
+  }), done);
+}
+
+function gSimon(u, done) {
+  const list = shuffle(u.phrases); const g = gameShell('Ìjàpá sọ pé', list.length); let i = 0; const items = {};
+  function show() {
+    g.prog(i); const p = list[i];
+    g.stage.innerHTML = ijapa(200, 'dance') + '<div class="prompt"><span class="yo" style="font-size:22px">Ìjàpá sọ pé…</span></div><div class="flash"><div class="word">' + esc(fixed(p[0])) + '</div>' + toneStrip(p[0]) + '<div class="en">' + esc(fixedEn(p[0], p[1])) + '</div>' + sayBtn(p[0]) + '</div><button class="big leaf" data-did>✅ <span class="yo">Mo ti ṣe é!</span> (I did it!)</button>';
+    setTimeout(() => speak(p[0], $('.say', g.stage), $('.tonestrip', g.stage)), 300);
+    $('[data-did]').onclick = () => { Snd.ok(); items[YK.key(p[0])] = 1; if (++i >= list.length) { g.prog(i); done({ stars: 3, items }); } else show(); };
+  }
+  show();
+}
+
+function gTalk(u, done) {
+  const T = u.talk; const g = gameShell('Sọ̀rọ̀', T.lines.length); const k = kid(); let i = 0, wrong = 0; const items = {};
+  g.stage.innerHTML = '<div class="scene"><div class="scenehead"><span class="bg">' + T.bg + '</span><span>' + esc(T.place) + '</span></div><div id="log" style="display:grid;gap:12px"></div><div id="turn"></div></div>';
+  const log = $('#log'), turn = $('#turn');
+  function bubble(who, face, yo, en, me, pic) {
+    const d = document.createElement('div'); d.className = 'line' + (me ? ' me' : '');
+    d.innerHTML = '<span class="face">' + face + '</span><div class="bubble"><span class="who-n">' + esc(who) + '</span><span class="yo">' + esc(fixed(personal(yo))) + '</span>' + (pic ? '<span class="linepic">' + pic + '</span>' : '') +
+      '<div class="bubtools"><button class="mini" data-say="' + esc(yo) + '">' + (Voice.has(YK.key(yo)) ? '🔊 Hear' : '🥁 Drum') + '</button><button class="mini" data-en>EN</button></div><div class="en" hidden>' + esc(fixedEn(yo, personal(en))) + '</div></div>';
+    $('[data-en]', d).onclick = () => { const e = $('.en', d); e.hidden = !e.hidden; };
+    log.appendChild(d); d.scrollIntoView({ behavior: 'smooth', block: 'end' }); return d;
+  }
+  async function step() {
+    g.prog(i);
+    if (i >= T.lines.length) { turn.innerHTML = ''; await sleep(500); return done({ wrong, items }); }
+    const L = T.lines[i];
+    if (L[0] !== 'you') {
+      const P = YO.people[L[0]]; const d = bubble(P[0], P[1], L[1], L[2], false, L[3]);
+      turn.innerHTML = '';
+      await sleep(250); await speak(L[1], $('.mini', d)); await sleep(300); i++; return step();
+    }
+    const opts = shuffle(L[1]); let miss = 0;
+    turn.innerHTML = '<div class="prompt" style="justify-content:flex-start">Your turn! What do you say? <span class="small">(tap 🔊 to hear each one)</span></div><div class="choices">' +
+      opts.map((o, j) => '<div class="choice" data-c="' + j + '">' + (YK.hasSlot(o[0]) ? '' : sayBtn(o[0], 'sm')) + '<button class="pick" data-p="' + j + '">' + esc(fixed(personal(o[0]))) + '</button></div>').join('') + '</div><div id="hint"></div>';
+    $$('[data-p]', turn).forEach(b => b.onclick = async () => {
+      const o = opts[+b.dataset.p]; const box = b.closest('.choice');
+      if (box.classList.contains('wrong')) return;
+      if (o[2]) {
+        Snd.ok(); const key = YK.key(o[0]); if (!YK.hasSlot(o[0])) items[key] = miss ? 0 : 1;
+        turn.innerHTML = '';
+        const d = bubble(k.name, k.av, o[0], o[1], true);
+        if (!YK.hasSlot(o[0])) await speak(o[0], $('.mini', d));
+        turn.innerHTML = '<div class="sayit"><b class="yo" style="font-size:24px">' + esc(YO.ui[6][0]) + '</b><span>Say it out loud, like a real conversation!</span><span class="yo" style="font-size:26px">“' + esc(fixed(personal(o[0]))) + '”</span><button class="big sun" data-said>🗣️ I said it!</button></div>';
+        $('[data-said]').onclick = () => { Snd.coin(); i++; step(); };
+      } else {
+        box.classList.add('wrong'); Snd.no(); miss++; wrong++;
+        $('#hint').innerHTML = '<div class="hint">💡 ' + esc(personal(o[3] || 'Try another one!')) + '</div>';
+      }
+    });
+  }
+  step();
+}
+
+function gMission(u, done) {
+  const g = gameShell('Iṣẹ́ ilé', 1);
+  g.stage.innerHTML = ijapa(180, 'bob') + '<div class="flash" style="text-align:left;justify-items:start"><span class="eyebrow">This week’s home mission</span><h2 style="font-size:28px">' + esc(u.mission) + '</h2><p class="small" style="margin:0">Real conversations with family make Yoruba stick. Do it today, then ask a grown-up to confirm.</p></div>' +
+    '<button class="big sun" id="hold" style="touch-action:none;user-select:none">👪🏾 Grown-up: press and hold</button><div class="goal" style="width:min(100%,360px)"><i id="hp" style="width:0%"></i></div><button class="link" data-later>Not yet, we will do it later</button>';
+  const b = $('#hold'), hp = $('#hp'); let t0 = 0, raf = 0;
+  const tick = () => { const p = Math.min(1, (Date.now() - t0) / 2000); hp.style.width = p * 100 + '%'; if (p >= 1) { cancel(); g.prog(1); Snd.ok(); done({ stars: 3, bonus: 10, items: {} }); } else raf = requestAnimationFrame(tick); };
+  const startH = e => { e.preventDefault(); t0 = Date.now(); raf = requestAnimationFrame(tick); };
+  const cancel = () => { cancelAnimationFrame(raf); if (hp.style.width !== '100%') hp.style.width = '0%'; };
+  b.addEventListener('pointerdown', startH); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, cancel));
+  $('[data-later]').onclick = () => quitTo();
+}
+
+function gReview(u, done) {
+  const k = kid(); const pool = [];
+  YO.units.forEach((x, i) => { if (unitOpen(k, i)) words(x).forEach(w => pool.push(w)); });
+  const seen = pool.filter(w => k.str && k.str[w.key] != null);
+  const base = (seen.length >= 6 ? seen : pool);
+  const pick = shuffle(base).sort((a, b) => ((k.str || {})[a.key] || 0) - ((k.str || {})[b.key] || 0)).slice(0, 8);
+  choiceRounds('Atúnyẹ̀wò', pick.map((t, i) => (i % 2 ? readRound(t, pool) : listenRound(t, pool))), done);
+}
+
+/* ---------------- Shop ---------------- */
+function vShop() {
+  const k = kid(); if (!k) return go('pick'); k.owned = k.owned || []; k.wear = k.wear || {};
+  app.innerHTML = '<div class="bar"><button class="iconbtn" data-back aria-label="Back">⬅️</button><h2 class="yo grow">Ọjà Ìjàpá</h2><span class="chip">🐚 ' + (k.cowries || 0) + '</span></div>' +
+    '<div class="hero">' + ijapa(220, 'bob') + '<div class="bubble">Long ago, Yoruba people used <b>cowrie shells (owó ẹyọ)</b> as money. Spend yours to dress up Ìjàpá! Tap a name to hear it.</div></div>' +
+    '<div class="shop">' + YO.shop.map(it => { const own = k.owned.includes(it.id), wearing = k.wear[it.slot] === it.id;
+      return '<div class="item' + (wearing ? ' wearing' : '') + '"><span class="e">' + it.e + '</span><button class="yo" data-say="' + esc(it.yo) + '">' + esc(it.yo) + '</button><span class="small">' + esc(it.en) + '</span>' +
+        (own ? '<button class="btn-s' + (wearing ? '' : ' pri') + '" data-wear="' + it.id + '">' + (wearing ? 'Take off' : 'Wear') + '</button>' : '<button class="btn-s pri" data-buy="' + it.id + '"' + ((k.cowries || 0) < it.cost ? ' disabled style="opacity:.45"' : '') + '>Buy · ' + it.cost + ' 🐚</button>') + '</div>'; }).join('') + '</div>';
+  $('[data-back]').onclick = () => go('home');
+  $$('[data-buy]').forEach(b => b.onclick = () => { const it = YO.shop.find(s => s.id === b.dataset.buy); if ((k.cowries || 0) < it.cost) return; k.cowries -= it.cost; k.owned.push(it.id); k.wear[it.slot] = it.id; Snd.coin(); Store.saveKid(k); vShop(); speak(it.yo); });
+  $$('[data-wear]').forEach(b => b.onclick = () => { const it = YO.shop.find(s => s.id === b.dataset.wear); if (k.wear[it.slot] === it.id) delete k.wear[it.slot]; else k.wear[it.slot] = it.id; Store.saveKid(k); vShop(); });
+}
+
+/* ---------------- Year map ---------------- */
+function vYear() {
+  const k = kid(); let curWk = 0;
+  if (k) { const i = YO.units.findIndex((u, j) => unitOpen(k, j) && unitDone(k, u) < ACTS(u).length); curWk = i >= 0 ? YO.units[i].wk : 0; }
+  app.innerHTML = '<div class="bar"><button class="iconbtn" data-back aria-label="Back">⬅️</button><span class="grow"></span></div>' +
+    '<span class="eyebrow">48 weeks · 15–20 minutes a day</span><h1 class="yo">Ọdún wa pẹ̀lú Yorùbá</h1><p class="small" style="margin:6px 0 18px">Our year with Yoruba: from first greetings to real conversations with Grandma.</p>' +
+    '<div class="seasons">' + YO.year.map((s, si) => '<div class="seasoncard"><span class="eyebrow">' + esc(s.weeks) + '</span><h2 class="yo">' + esc(s.yo) + '</h2><div><b>' + esc(s.en) + '</b></div><div class="goalline">By the end: ' + esc(s.goal) + '</div><div class="weeks">' +
+      s.units.map((t, wi) => { const wk = si * 12 + wi + 1; const ready = YO.units.some(u => u.wk === wk); return '<div class="wkk' + (ready ? ' ready' : '') + (wk === curWk ? ' now' : '') + '"><b>Wk ' + wk + '</b> <span class="yo">' + esc(t.split(' · ')[0]) + '</span><br><span class="small">' + esc(t.split(' · ')[1] || '') + (ready ? ' · ready' : '') + '</span></div>'; }).join('') + '</div></div>').join('') + '</div>';
+  $('[data-back]').onclick = () => go(kid() ? 'home' : 'pick');
+}
+
+/* ---------------- Parents ---------------- */
+function vGate(dest) {
+  const pairs = [[7, 8], [6, 9], [8, 4], [9, 7], [6, 7]]; const [a, b] = pairs[Math.floor(Math.random() * pairs.length)]; const ans = a * b;
+  const opts = shuffle([ans, ans + a, ans - b, ans + 2]);
+  app.innerHTML = '<div class="bar"><button class="iconbtn" data-back aria-label="Back">⬅️</button></div><div class="center"><span style="font-size:60px">👪🏾</span><h2>Grown-ups only</h2><p>To open the Parents’ corner, tap the answer to <b>' + a + ' × ' + b + '</b>.</p><div class="row" style="justify-content:center">' + opts.map(o => '<button class="big ghost" data-a="' + o + '">' + o + '</button>').join('') + '</div></div>';
+  $('[data-back]').onclick = () => go(kid() ? 'home' : 'pick');
+  $$('[data-a]').forEach(x => x.onclick = () => { if (+x.dataset.a === ans) go('parent', dest || 'guide'); else { Snd.no(); go(kid() ? 'home' : 'pick'); } });
+}
+
+let ptab = 'guide';
+function vParent(tab) {
+  if (tab) ptab = tab;
+  const T = [['guide', 'How it works'], ['kids', 'Children'], ['voices', 'Voices & words'], ['progress', 'Progress'], ['year', 'Year plan']];
+  app.innerHTML = '<div class="bar"><button class="iconbtn" data-back aria-label="Back">⬅️</button><h2 class="grow">Parents’ corner</h2></div><div class="tabs">' + T.map(t => '<button class="tab' + (t[0] === ptab ? ' on' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><div id="pbody"></div>';
+  $('[data-back]').onclick = () => go(kid() ? 'home' : 'pick');
+  $$('[data-tab]').forEach(b => b.onclick = () => { if (b.dataset.tab === 'year') return go('year'); vParent(b.dataset.tab); });
+  ({ guide: pGuide, kids: pKids, voices: pVoices, progress: pProgress })[ptab]($('#pbody'));
+}
+function pGuide(el) {
+  const groups = YK.allItems(YO); const keys = groups.flatMap(g => g.items.map(i => i.key)); const rec = Voice.count(keys);
+  el.innerHTML = '<div class="panel guide"><h3>Your daily rhythm</h3><ol>' +
+    '<li><b>15–20 minutes a day, one week per unit.</b> Each unit has about 10 short games. Three games a day is the daily goal.</li>' +
+    '<li><b>Record your voices first.</b> Children copy the tones they hear. Until a word has your voice, the app plays its tone melody on a talking drum instead. ' + rec + ' of ' + keys.length + ' clips are recorded so far.</li>' +
+    '<li><b>Do the home mission every week.</b> It turns the app’s words into real talk with you and with grandparents.</li>' +
+    '<li><b>Have a Yoruba-only time each day</b>, for example breakfast or the drive to school. Use the week’s phrases even if the children answer in English at first.</li>' +
+    '<li><b>Celebrate speaking, not perfection.</b> In the talk game, the children say each answer out loud before moving on.</li></ol>' +
+    '<h3>What each game does</h3><ul><li><b>Kọ́ / Gbólóhùn</b>: learn words and sentences with your voice and the tone dots (high, middle, low).</li><li><b>Gbọ́ / Kà á / Rántí</b>: listening, reading and memory practice.</li><li><b>Ábídí</b>: the 25 letters of the Yoruba alphabet, three or four a week.</li><li><b>Tò ó</b>: put words in order to build sentences.</li><li><b>Ẹ jẹ́ ká sọ̀rọ̀</b>: a conversation where your child chooses and says the replies.</li><li><b>Atúnyẹ̀wò</b>: brings back the words each child finds hardest.</li></ul>' +
+    '<h3>Fix anything</h3><p>If a spelling, tone mark or meaning is not how your family says it, open <b>Voices & words</b> and tap Edit. Your version is used everywhere in the app.</p>' +
+    '<div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="unl"' + (Store.settings.main.unlockAll ? ' checked' : '') + ' style="width:24px;height:24px"> Open all weeks (skip the 5-game rule)</label></div>' +
+    (Store.db ? '' : '<p class="pill no" style="font-size:14px;padding:8px 12px;border-radius:12px">Saving on this device only. Open this app while signed in to keep progress in sync across your tablets and laptop.</p>') + '</div>';
+  $('#unl').onchange = e => Store.saveSetting('main', Object.assign({}, Store.settings.main, { unlockAll: e.target.checked }));
+}
+function pKids(el) {
+  const ks = Object.values(Store.kids);
+  let av = AVATARS[0][0]; let confirmDel = null;
+  el.innerHTML = '<div class="panel"><h3>Your children</h3><div class="list" id="klist"></div><h3>Add a child</h3>' +
+    '<div class="row"><input id="kname" class="grow" placeholder="Name, e.g. Ayọ̀" maxlength="20"><select id="kage">' + [4, 5, 6, 7, 8, 9, 10].map(a => '<option value="' + a + '"' + (a === 6 ? ' selected' : '') + '>' + a + ' years</option>').join('') + '</select></div>' +
+    '<div class="avpick" id="avp">' + AVATARS.map(a => '<button data-av="' + a[0] + '" title="' + a[1] + '">' + a[0] + '</button>').join('') + '</div><div><button class="big" id="kadd">＋ Add child</button></div></div>';
+  const list = $('#klist');
+  function drawList() {
+    list.innerHTML = ks.length ? Object.values(Store.kids).map(k => '<div class="vrow"><div><span style="font-size:28px">' + esc(k.av) + '</span> <b>' + esc(k.name) + '</b> <span class="small" style="display:inline">· ' + (k.age || '?') + ' years · 🐚 ' + (k.cowries || 0) + '</span></div><div class="acts2"><select data-age="' + k.id + '">' + [4, 5, 6, 7, 8, 9, 10].map(a => '<option value="' + a + '"' + (a === k.age ? ' selected' : '') + '>' + a + ' yrs</option>').join('') + '</select><button class="btn-s danger" data-del="' + k.id + '">' + (confirmDel === k.id ? 'Tap again to delete' : 'Delete') + '</button></div></div>').join('') : '<p class="small">No children yet.</p>';
+    $$('[data-age]').forEach(s => s.onchange = () => { const k = Store.kids[s.dataset.age]; k.age = +s.value; Store.saveKid(k); toast('Saved'); });
+    $$('[data-del]').forEach(b => b.onclick = async () => { if (confirmDel === b.dataset.del) { await Store.deleteKid(b.dataset.del); if (kidId === b.dataset.del) kidId = null; confirmDel = null; vParent('kids'); } else { confirmDel = b.dataset.del; drawList(); } });
+  }
+  drawList();
+  const drawAv = () => $$('[data-av]').forEach(b => b.classList.toggle('on', b.dataset.av === av)); drawAv();
+  $$('[data-av]').forEach(b => b.onclick = () => { av = b.dataset.av; drawAv(); });
+  $('#kadd').onclick = () => { const n = $('#kname').value.trim(); if (!n) { toast('Type a name first'); return; } const k = newKid(n, +$('#kage').value, av); Store.saveKid(k); toast(n + ' added'); vParent('kids'); };
+}
+function pProgress(el) {
+  const ks = Object.values(Store.kids);
+  if (!ks.length) { el.innerHTML = '<div class="panel"><p>Add a child first.</p></div>'; return; }
+  const allWords = YO.units.flatMap(u => words(u));
+  el.innerHTML = ks.map(k => {
+    const totalActs = YO.units.reduce((s, u) => s + ACTS(u).length, 0); const doneActs = YO.units.reduce((s, u) => s + unitDone(k, u), 0);
+    const str = k.str || {}; const mastered = allWords.filter(w => (str[w.key] || 0) >= 3).length;
+    const weak = allWords.filter(w => str[w.key] != null && str[w.key] < 2).slice(0, 8);
+    return '<div class="panel" style="margin-bottom:14px"><h3>' + esc(k.av) + ' ' + esc(k.name) + '</h3><div class="statgrid">' +
+      '<div class="stat"><b>' + (k.streak || 0) + '</b>days in a row</div><div class="stat"><b>' + doneActs + '/' + totalActs + '</b>games done</div><div class="stat"><b>' + mastered + '/' + allWords.length + '</b>words mastered</div><div class="stat"><b>' + (k.cowries || 0) + '</b>cowries</div></div>' +
+      '<div><b>Units:</b> ' + YO.units.map(u => '<span class="pill ' + (unitDone(k, u) === ACTS(u).length ? 'ok' : unitDone(k, u) ? 'fix' : 'no') + '" style="margin:2px">Wk ' + u.wk + ' ' + unitDone(k, u) + '/' + ACTS(u).length + '</span>').join(' ') + '</div>' +
+      '<div><b>Practise together:</b> ' + (weak.length ? weak.map(w => '<span class="yo pill fix" style="margin:2px;font-size:15px">' + esc(fixed(w.yo)) + '</span>').join(' ') : '<span class="small">Nothing tricky yet.</span>') + '</div></div>';
+  }).join('');
+}
+
+/* Voices & words */
+let assetsNS;
+async function getAssets() { if (assetsNS !== undefined) return assetsNS; try { assetsNS = window.claude && window.claude.use ? await window.claude.use('assets') : null; } catch (e) { assetsNS = null; } return assetsNS; }
+async function storeClips(clips) {
+  // clips: {key: {mime, b64}} — saved as one pack asset, falling back to one db doc per clip
+  const keys = Object.keys(clips); if (!keys.length) return 0;
+  const map = Object.assign({}, Store.settings.voice.map || {});
+  const A = await getAssets();
+  if (A) {
+    try {
+      const blob = new Blob([JSON.stringify({ app: 'ijapa-yoruba', v: 1, clips })], { type: 'application/json' });
+      const r = await A.upload(blob, { type: 'application/json' });
+      Voice.packs[r.id] = clips; keys.forEach(k => { map[k] = 'a:' + r.id; delete Voice.local[k]; });
+      Store.saveSetting('voice', { map }); return keys.length;
+    } catch (e) { if (e && e.code === 'too_large') { toast('That pack is over 20 MB. Export it in two parts from the studio.'); return 0; } }
+  }
+  if (Store.db) {
+    let n = 0;
+    for (const k of keys) { const id = YK.hash(k); try { await Store.db.doc('clips/' + id).set(clips[k]); map[k] = 'd:' + id; n++; } catch (e) { toast('Some clips could not be saved.'); break; } }
+    Store.saveSetting('voice', { map }); return n;
+  }
+  keys.forEach(k => { Voice.local[k] = URL.createObjectURL(b64Blob(clips[k].b64, clips[k].mime)); });
+  const saved = await LocalVoices.put(clips);
+  if (!saved) toast('Voices work until this page is closed.');
+  return keys.length;
+}
+function pVoices(el) {
+  const groups = YK.allItems(YO); const keys = groups.flatMap(g => g.items.map(i => i.key)); const rec = Voice.count(keys);
+  const fx = Store.settings.fixes.map || {};
+  el.innerHTML = '<div class="panel"><h3>Your voices: ' + rec + ' of ' + keys.length + ' recorded</h3><div class="goal"><i style="width:' + (rec / keys.length * 100) + '%"></i></div>' +
+    '<p><b>Fastest way:</b> open the <b>Recording Studio</b> on the laptop in Chrome or Edge. It shows each word big, you press Record, say it, and move on. When you finish a week or two, export the voice pack and add it here. Every tablet then plays your voices.</p>' +
+    '<div class="row"><button class="big sun" id="getstudio">⬇ Get the Recording Studio</button><label class="big ghost" style="cursor:pointer">📦 Add voice pack<input type="file" id="pack" accept=".json,application/json" hidden></label></div>' +
+    '<p class="small">You can also upload a single recording for any line below (a voice memo from your phone works).</p></div>' +
+    '<div class="list" style="margin-top:14px">' + groups.map(g => '<details class="unitv"><summary>' + esc(g.title) + ' · ' + Voice.count(g.items.map(i => i.key)) + '/' + g.items.length + '</summary><div class="list" style="margin-top:10px">' +
+      g.items.map(it => { const f = fx[it.key]; return '<div class="vrow" data-k="' + esc(it.key) + '"><div><span class="yo">' + esc(f && f.yo ? f.yo : it.yo) + '</span><span class="small">' + esc(f && f.en ? f.en : it.en) + ' · ' + esc(it.kind) + '</span>' +
+        (Voice.has(it.key) ? '<span class="pill ok">your voice</span>' : '<span class="pill no">no voice yet</span>') + (f ? ' <span class="pill fix">edited</span>' : '') + '</div><div class="acts2">' +
+        '<button class="btn-s" data-say="' + esc(it.yo) + '">▶</button><label class="btn-s" style="cursor:pointer">⬆ Upload<input type="file" accept="audio/*,video/mp4,video/webm" data-up hidden></label><button class="btn-s" data-edit>Edit</button></div></div>'; }).join('') + '</div></details>').join('') + '</div>';
+  $('#getstudio').onclick = async () => {
+    try {
+      const D = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+      const r = await fetch('studio.html'); if (!r.ok) throw 0; const html = await r.text();
+      if (!D) throw 0; await D.save({ filename: 'Ijapa-Recording-Studio.html', data: html });
+    } catch (e) { if (!(e && e.code === 'declined')) toast(Store.db ? 'Download not available here. The studio file is also in your Claude chat.' : 'Open “Ijapa-Recording-Studio.html” from the same folder as this app.'); }
+  };
+  $('#pack').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return; toast('Adding voices…');
+    try { const j = JSON.parse(await f.text()); if (!j.clips) throw 0; const n = await storeClips(j.clips); if (n) toast(n + ' voices added'); vParent('voices'); }
+    catch (err) { toast('That file is not a voice pack from the Recording Studio.'); }
+  };
+  $$('[data-up]').forEach(inp => inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return; const k = inp.closest('.vrow').dataset.k;
+    if (f.size > 4e6) { toast('Keep recordings short (under 4 MB).'); return; }
+    const mime = f.type || (/\.m4a$/i.test(f.name) ? 'audio/mp4' : 'audio/mpeg');
+    const n = await storeClips({ [k]: { mime, b64: await blobB64(f) } }); if (n) { toast('Voice saved'); vParent('voices'); }
+  });
+  $$('[data-edit]').forEach(b => b.onclick = () => {
+    const row = b.closest('.vrow'); const k = row.dataset.k; const it = groups.flatMap(g => g.items).find(x => x.key === k); const f = fx[k] || {};
+    row.innerHTML = '<div style="grid-column:1/-1;display:grid;gap:8px"><input class="yo" id="ey" value="' + esc(f.yo || it.yo) + '" aria-label="Yoruba"><input id="ee" value="' + esc(f.en || it.en) + '" aria-label="English"><div class="row"><button class="btn-s pri" id="es">Save</button><button class="btn-s" id="er">Use original</button><span class="small">Tip: type tone marks with a Yoruba keyboard, or copy from here: ẹ ọ ṣ á à é è í ì ó ò ú ù ń</span></div></div>';
+    $('#es', row).onclick = () => { const map = Object.assign({}, fx); map[k] = { yo: $('#ey', row).value.trim(), en: $('#ee', row).value.trim() }; Store.saveSetting('fixes', { map }); toast('Saved. Used everywhere in the app.'); vParent('voices'); };
+    $('#er', row).onclick = () => { const map = Object.assign({}, fx); delete map[k]; Store.saveSetting('fixes', { map }); vParent('voices'); };
+  });
+}
+
+
+/* Voices kept in this browser when there is no shared store (the offline copy on your computer) */
+const LocalVoices = {
+  open() { return new Promise(res => { try { const r = indexedDB.open('ijapa-app-voices', 1); r.onupgradeneeded = () => r.result.createObjectStore('clips'); r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch (e) { res(null); } }); },
+  async put(clips) { const d = await this.open(); if (!d) return false; return new Promise(res => { try { const tx = d.transaction('clips', 'readwrite'); Object.entries(clips).forEach(([k, v]) => tx.objectStore('clips').put(v, k)); tx.oncomplete = () => res(true); tx.onerror = () => res(false); } catch (e) { res(false); } }); },
+  async load() { const d = await this.open(); if (!d) return; await new Promise(res => { try { const c = d.transaction('clips').objectStore('clips').openCursor(); c.onsuccess = () => { const x = c.result; if (x) { if (x.value && x.value.b64) Voice.local[x.key] = URL.createObjectURL(b64Blob(x.value.b64, x.value.mime)); x.continue(); } else res(); }; c.onerror = () => res(); } catch (e) { res(); } }); }
+};
+
+/* ---------------- Boot ---------------- */
+vStart();
+Store.init().then(async () => {
+  if (!Store.db) await LocalVoices.load();
+  Voice.prefetch();
+  go('pick');
+});
+})();
+
+</script>
+</body></html>

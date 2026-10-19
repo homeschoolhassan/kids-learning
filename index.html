@@ -318,7 +318,13 @@ const SITE = [
       {
         name: 'Quran',
         units: [
-          { name: 'Iqra — Beginner',      desc: 'Letters & basic reading', items: [] },
+          { name: 'Iqra — Beginner',      desc: 'Letters & basic reading',
+            path: 'Islam/Arabic/Quran Reader',
+            items: [
+              { name: 'Iqra Path', icon: '📖', color: '#059669',
+                desc: 'Full Quran reader — 114 surahs with Arabic text & audio',
+                file: 'Iqra Path.html', status: 'ready' },
+            ] },
           { name: 'Iqra — Intermediate',  desc: 'Words & short surahs',    items: [] },
           { name: 'Tajwid',               desc: 'Proper recitation rules', items: [] },
           { name: 'Memorization (Hifz)',  desc: 'Surah memorization',      items: [] },
@@ -347,6 +353,17 @@ const SITE = [
       {
         name: 'Language Learning',
         units: [
+          { name: 'Ìjàpá Yoruba App', icon: '🐢', color: '#d97706',
+            desc: 'Interactive Yoruba learning game with Ìjàpá the tortoise',
+            path: 'Yoruba',
+            items: [
+              { name: 'Ìjàpá Yoruba App', icon: '🐢', color: '#d97706',
+                desc: 'Vocabulary, pronunciation & Yoruba phrases — all levels',
+                file: 'Ijapa-Yoruba.html', status: 'ready' },
+              { name: 'Recording Studio', icon: '🎙️', color: '#d97706',
+                desc: 'Record your own Yoruba practice sessions',
+                file: 'Ijapa-Recording-Studio_1.html', status: 'ready' },
+            ] },
           { name: 'Greetings & Basics',  desc: 'Hello, please, thank you', items: [] },
           { name: 'Numbers & Counting',  desc: '1–100 in Yoruba',          items: [] },
           { name: 'Colours & Objects',   desc: 'Everyday vocabulary',      items: [] },
@@ -422,6 +439,14 @@ const SITE = [
         name: 'Reading',
         units: [
           { name: 'Story Books',    desc: 'Picture books & early readers', items: [] },
+          { name: 'Life Wisdom Book', icon: '💡', color: '#64748b',
+            desc: 'Little Laws, Big Lessons — Murphy's Laws adapted for kids',
+            path: 'Library',
+            items: [
+              { name: 'Little Laws, Big Lessons', icon: '💡', color: '#64748b',
+                desc: 'Fun life lessons, principles & wisdom for curious kids',
+                file: 'Murphy-laws.html', status: 'ready' },
+            ] },
           { name: 'Reading Log',    desc: 'Track books read',              items: [] },
         ]
       }

@@ -1,2 +1,7 @@
 dist/
 .wrangler/
+
+# Large audio assets — host elsewhere (e.g. CDN) instead of git
+Islam/Arabic/Quran Reader/*.mp3
+Islam/Arabic/Quran Reader/audio/
+Islam/Arabic/Quran Reader/ayah/

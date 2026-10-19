@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ìjàpá Recording Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@500;700;800&display=swap">
+<style>:root{--sky:#E8EEFF;--paper:#fff;--ink:#1C2356;--aro:#2B3990;--sun:#FFB020;--leaf:#23955F;--coral:#F2553F;--muted:#5F6796;--line:#CDD6F5;color-scheme:light}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--sky);color:var(--ink);font-family:'Baloo 2','Segoe UI',sans-serif;font-size:17px}
+.yo{font-family:'Andika','Noto Sans','Segoe UI',sans-serif}
+header{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px 20px;background:var(--aro);color:#fff}
+header h1{margin:0;font-size:26px}header .grow{flex:1}
+#bar{height:10px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden;width:220px}#bar i{display:block;height:100%;background:var(--sun)}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px;padding:20px;max-width:1300px;margin:0 auto;height:calc(100% - 70px)}
+#list{overflow:auto;background:var(--paper);border-radius:20px;padding:12px}
+#list h2{font-size:17px;margin:14px 6px 6px}.cnt{color:var(--muted);font-weight:500}
+.row{display:grid;grid-template-columns:1fr auto;gap:0 10px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:12px;cursor:pointer;font:inherit;color:inherit}
+.row .yo{font-size:19px;font-weight:700}.row .en{grid-column:1;color:var(--muted);font-size:14px}.row .st{grid-row:1/3;grid-column:2;align-self:center;color:var(--leaf);font-weight:800;font-size:20px}
+.row.cur{background:#FFF1CF}.row.has .yo{color:var(--leaf)}
+#side{display:grid;gap:16px;align-content:start}
+#card{background:var(--paper);border-radius:28px;padding:28px;display:grid;gap:12px;justify-items:center;text-align:center;border:5px solid transparent}
+#card.live{border-color:var(--coral)}
+.kind{color:var(--muted);font-weight:700}.big{font-size:clamp(34px,5vw,60px);font-weight:700;line-height:1.15}.en{color:var(--muted);font-size:20px}
+.tones{display:flex;gap:8px;align-items:flex-end;height:44px}.tones i{width:16px;height:16px;border-radius:50%}.tones .H{margin-bottom:24px;background:var(--coral)}.tones .M{margin-bottom:12px;background:var(--sun)}.tones .L{background:var(--aro)}
+.ctl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.ctl button,.exp button{font:inherit;font-weight:800;font-size:20px;border:0;border-radius:16px;padding:12px 22px;background:var(--aro);color:#fff;cursor:pointer}
+.ctl .rec{background:var(--coral)}.ctl .ghost{background:var(--sky);color:var(--ink)}.ctl button[disabled]{opacity:.4}
+.hint{color:var(--muted);font-size:15px}
+.exp{background:var(--paper);border-radius:20px;padding:18px;display:grid;gap:10px}
+.exp select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line)}
+.exp button{background:var(--leaf)}
+#msg{background:#FFF1CF;border-radius:14px;padding:12px 16px;font-weight:700}
+@media (max-width:800px){main{grid-template-columns:1fr;height:auto}#list{max-height:50vh}}
+</style><style id="home-btn-style">
+#home-btn{position:fixed;top:12px;left:12px;z-index:99999;
+  background:#0b3d5e;color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);font-family:'Fredoka One',sans-serif;
+  transition:background .2s;}
+#home-btn:hover{background:#1d6ef5;}
+</style>
+</head>
+<body>
+<a id="home-btn" href="../index.html">🏠 Home</a>
+
+<header><h1>🎙️ Ìjàpá Recording Studio</h1><span class="grow">Record each word once in your own voice. The children will hear you in every game.</span><span id="total"></span><div id="bar"><i></i></div></header>
+<main><div id="list"></div><div id="side"><div id="card"></div>
+<div id="msg" hidden></div>
+<div class="exp"><b>When you have recorded a batch:</b><select id="which"></select><button id="exp">⬇ Export voice pack</button>
+<span class="hint">Then in the app: Parents’ corner → Voices & words → Add voice pack. Recordings stay saved in this browser, so you can come back any time and continue.</span></div></div></main>
+<script>
+/* Ìjàpá's Yoruba — course content. Words: [yo, en, picture]. Phrases: [yo, en].
+   Talk lines: [speakerKey, yo, en, picture?]  or  ['you', [[yo, en, correct(1/0), hint?], ...]]
+   Letters: [letter, word, en, picture]. {name}/{age} are filled from the child's profile. */
+window.YO = {
+  version: 1,
+  ui: [
+    ['Tẹ́tí sílẹ̀!', 'Listen!'],
+    ['Wò ó!', 'Look!'],
+    ['Yan èyí tó tọ́.', 'Choose the right one.'],
+    ['O ṣe dáadáa!', 'You did well!'],
+    ['Ó dáa púpọ̀!', 'Very good!'],
+    ['Gbìyànjú lẹ́ẹ̀kan sí i.', 'Try again.'],
+    ['Sọ ọ́ sókè!', 'Say it out loud!'],
+    ['Káàbọ̀!', 'Welcome!']
+  ],
+  ages: { 4: 'mẹ́rin', 5: 'márùn-ún', 6: 'mẹ́fà', 7: 'méje', 8: 'mẹ́jọ', 9: 'mẹ́sàn-án', 10: 'mẹ́wàá' },
+  people: {
+    M: ['Màámi', '👩🏾'], B: ['Bàbá', '👨🏾'], G: ['Ìyá Àgbà', '👵🏾'],
+    T: ['Tèmi', '👧🏾'], I: ['Ìyá Ọlọ́jà', '👩🏿'], J: ['Ìjàpá', '🐢']
+  },
+  units: [
+    {
+      id: 'u1', wk: 1, yo: 'Ẹ káàbọ̀', en: 'Greetings', pic: '👋🏾', col: '#FFB020',
+      words: [
+        ['Ẹ káàárọ̀', 'Good morning (to an elder)', '🌅'],
+        ['Káàárọ̀', 'Good morning (to a friend)', '☀️'],
+        ['Ẹ káàsán', 'Good afternoon (to an elder)', '🌤️'],
+        ['Ẹ kú ìrọ̀lẹ́', 'Good evening (to an elder)', '🌇'],
+        ['Ó dàárọ̀', 'Good night', '🌙'],
+        ['Ẹ ṣé', 'Thank you (to an elder)', '🙏🏾'],
+        ['Bẹ́ẹ̀ni', 'Yes', '👍🏾'],
+        ['Rárá', 'No', '👎🏾'],
+        ['Ó dàbọ̀', 'Goodbye', '👋🏾']
+      ],
+      phrases: [
+        ['Ẹ káàárọ̀ Màámi.', 'Good morning, Mummy.'],
+        ['Ẹ káàárọ̀ Bàbá.', 'Good morning, Daddy.'],
+        ['Ẹ ṣé Màámi.', 'Thank you, Mummy.'],
+        ['Bẹ́ẹ̀ni mà.', 'Yes, ma.'],
+        ['Ó dàbọ̀ Bàbá.', 'Goodbye, Daddy.']
+      ],
+      talk: {
+        place: 'Good morning at home', bg: '🏠', lines: [
+          ['M', 'Káàárọ̀ ọmọ mi.', 'Good morning, my child.'],
+          ['you', [['Ẹ káàárọ̀ Màámi.', 'Good morning, Mummy.', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'It is morning! Say good morning.'], ['Ó dàbọ̀.', 'Goodbye.', 0, 'Mummy said hello, not goodbye.']]],
+          ['M', 'Ṣé o sùn dáadáa?', 'Did you sleep well?'],
+          ['you', [['Bẹ́ẹ̀ni mà.', 'Yes, ma.', 1], ['Ẹ kú ìrọ̀lẹ́.', 'Good evening.', 0, 'Mummy asked if you slept well.']]],
+          ['M', 'Ó dáa. Wá jẹun.', 'Good. Come and eat.'],
+          ['you', [['Ẹ ṣé Màámi.', 'Thank you, Mummy.', 1], ['Rárá.', 'No.', 0, 'Breakfast is ready! Say thank you.']]]
+        ]
+      },
+      letters: [['A', 'ajá', 'dog', '🐕'], ['B', 'bàtà', 'shoes', '👟'], ['D', 'dígí', 'mirror', '🪞']],
+      mission: 'Tomorrow morning, greet Mummy and Daddy with “Ẹ káàárọ̀” before anything else.',
+      culture: 'Yoruba children greet elders first. Boys bow or lie down (dọ̀bálẹ̀), girls kneel (kúnlẹ̀). “Ẹ” at the start shows respect.'
+    },
+    {
+      id: 'u2', wk: 2, yo: 'Ìdílé mi', en: 'My family', pic: '👨‍👩‍👧‍👦', col: '#FF6B57',
+      words: [
+        ['Bàbá', 'Father, Daddy', '👨🏾'],
+        ['Ìyá', 'Mother', '👩🏾'],
+        ['Màámi', 'My mummy', '🤱🏾'],
+        ['Ìyá àgbà', 'Grandmother', '👵🏾'],
+        ['Bàbá àgbà', 'Grandfather', '👴🏾'],
+        ['Ẹ̀gbọ́n', 'Older brother or sister', '🧑🏾'],
+        ['Àbúrò', 'Younger brother or sister', '👶🏾'],
+        ['Ọmọ', 'Child', '🧒🏾'],
+        ['Ìdílé', 'Family', '👨‍👩‍👧‍👦'],
+        ['Ọ̀rẹ́', 'Friend', '🤝🏾']
+      ],
+      phrases: [
+        ['Èyí ni bàbá mi.', 'This is my daddy.'],
+        ['Èyí ni ìyá mi.', 'This is my mother.'],
+        ['Ta ni èyí?', 'Who is this?'],
+        ['Àbúrò mi ni.', 'That is my younger sibling.'],
+        ['Mo nífẹ̀ẹ́ yín.', 'I love you (to an elder).']
+      ],
+      talk: {
+        place: 'Video call with Grandma', bg: '📱', lines: [
+          ['G', 'Káàsán o, ọmọ mi!', 'Good afternoon, my child!'],
+          ['you', [['Ẹ káàsán Ìyá Àgbà.', 'Good afternoon, Grandma.', 1], ['Káàsán.', 'Good afternoon (to a friend).', 0, 'Grandma is an elder. Start with “Ẹ”!']]],
+          ['G', 'Ta ni èyí?', 'Who is this?', '👶🏾'],
+          ['you', [['Àbúrò mi ni.', 'That is my younger sibling.', 1], ['Bàbá àgbà ni.', 'That is Grandpa.', 0, 'Look: it is a little baby!']]],
+          ['G', 'Mo nífẹ̀ẹ́ rẹ o!', 'I love you!'],
+          ['you', [['Èmi náà nífẹ̀ẹ́ yín.', 'I love you too.', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'Grandma said “I love you”. Say it back!']]]
+        ]
+      },
+      letters: [['E', 'ewúrẹ́', 'goat', '🐐'], ['Ẹ', 'ẹyin', 'egg', '🥚'], ['F', 'fìlà', 'cap', '🧢']],
+      mission: 'Call a grandparent or aunty and say “Mo nífẹ̀ẹ́ yín” (I love you).',
+      culture: 'Yoruba has no separate words for brother and sister. Ẹ̀gbọ́n is anyone older than you and àbúrò is anyone younger. Age matters!'
+    },
+    {
+      id: 'u3', wk: 3, yo: 'Èmi', en: 'All about me', pic: '🙋🏾', col: '#2BA36B',
+      words: [
+        ['Báwo ni?', 'Hi! How are you?', '🙂'],
+        ['Dáadáa ni', 'I am fine', '😊'],
+        ['Orúkọ', 'Name', '🏷️'],
+        ['Ọmọkùnrin', 'Boy', '👦🏾'],
+        ['Ọmọbìnrin', 'Girl', '👧🏾'],
+        ['Ọmọ ọdún márùn-ún', 'Five years old', '#5'],
+        ['Ọmọ ọdún mẹ́fà', 'Six years old', '#6'],
+        ['Ọmọ ọdún méje', 'Seven years old', '#7']
+      ],
+      phrases: [
+        ['Kí ni orúkọ rẹ?', 'What is your name?'],
+        ['Orúkọ mi ni Ayọ̀.', 'My name is Ayọ̀.'],
+        ['Ọmọ ọdún mélòó ni ọ́?', 'How old are you?'],
+        ['Ọmọ ọdún mẹ́fà ni mí.', 'I am six years old.'],
+        ['Mo wà dáadáa.', 'I am well.'],
+        ['Jẹ́ ká ṣeré!', 'Let’s play!']
+      ],
+      talk: {
+        place: 'A new friend at the park', bg: '🌳', lines: [
+          ['T', 'Báwo ni?', 'Hi! How are you?'],
+          ['you', [['Dáadáa ni.', 'I am fine.', 1], ['Ó dàbọ̀.', 'Goodbye.', 0, 'You just met! Say you are fine.']]],
+          ['T', 'Kí ni orúkọ rẹ?', 'What is your name?'],
+          ['you', [['Orúkọ mi ni {name}.', 'My name is {name}.', 1], ['Ọmọ ọdún méje ni mí.', 'I am seven years old.', 0, 'Tèmi asked your name.']]],
+          ['T', 'Orúkọ mi ni Tèmi. Ọmọ ọdún mélòó ni ọ́?', 'My name is Tèmi. How old are you?'],
+          ['you', [['Ọmọ ọdún {age} ni mí.', 'I am {agen} years old.', 1], ['Orúkọ mi ni Tèmi.', 'My name is Tèmi.', 0, 'Tèmi asked how old you are.']]],
+          ['T', 'Jẹ́ ká ṣeré!', 'Let’s play!'],
+          ['you', [['Ó dáa!', 'Okay!', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'It is playtime, not bedtime!']]]
+        ]
+      },
+      letters: [['G', 'gúgúrú', 'popcorn', '🍿'], ['Gb', 'gbá bọ́ọ̀lù', 'kick a ball', '⚽'], ['H', 'ahọ́n', 'tongue', '👅']],
+      mission: 'Introduce yourself to someone at home: “Orúkọ mi ni …, ọmọ ọdún … ni mí.”',
+      culture: 'Every Yoruba name has a meaning. Ayọ̀ means joy. Ask Mummy or Daddy what your Yoruba name means!'
+    },
+    {
+      id: 'u4', wk: 4, yo: 'Ònkà', en: 'Counting 1 to 10', pic: '🔢', col: '#3D6BFF', special: 'count',
+      words: [
+        ['Ení', 'One', '#1'], ['Èjì', 'Two', '#2'], ['Ẹ̀ta', 'Three', '#3'], ['Ẹ̀rin', 'Four', '#4'], ['Àrún', 'Five', '#5'],
+        ['Ẹ̀fà', 'Six', '#6'], ['Èje', 'Seven', '#7'], ['Ẹ̀jọ', 'Eight', '#8'], ['Ẹ̀sán', 'Nine', '#9'], ['Ẹ̀wá', 'Ten', '#10']
+      ],
+      phrases: [
+        ['Mélòó ni?', 'How many?'],
+        ['Mo fẹ́ ọ̀gẹ̀dẹ̀.', 'I want bananas.'],
+        ['Ọ̀gẹ̀dẹ̀ méjì.', 'Two bananas.'],
+        ['Ẹyin mẹ́ta.', 'Three eggs.'],
+        ['Ẹ ṣé mà!', 'Thank you, ma!']
+      ],
+      talk: {
+        place: 'At the market', bg: '🧺', lines: [
+          ['I', 'Káàbọ̀! Kí lo fẹ́?', 'Welcome! What would you like?'],
+          ['you', [['Mo fẹ́ ọ̀gẹ̀dẹ̀.', 'I want bananas.', 1], ['Orúkọ mi ni {name}.', 'My name is {name}.', 0, 'She asked what you want to buy.']]],
+          ['I', 'Mélòó?', 'How many?', '🍌🍌'],
+          ['you', [['Méjì.', 'Two.', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'Tell her a number!']]],
+          ['I', 'Ó dáa. Ọ̀gẹ̀dẹ̀ méjì nìyí.', 'Okay. Here are two bananas.'],
+          ['you', [['Ẹ ṣé mà!', 'Thank you, ma!', 1], ['Rárá.', 'No.', 0, 'She gave you the bananas. Say thank you!']]]
+        ]
+      },
+      letters: [['I', 'ilé', 'house', '🏠'], ['J', 'jẹun', 'eat', '🍽️'], ['K', 'kẹ̀kẹ́', 'bicycle', '🚲']],
+      mission: 'Count 10 stairs or 10 toys out loud with a parent: ení, èjì, ẹ̀ta…',
+      culture: 'Counting out loud uses ení, èjì, ẹ̀ta. Counting things uses méjì, mẹ́ta (two bananas: ọ̀gẹ̀dẹ̀ méjì). Later you will learn that 16 is said as “twenty minus four”!'
+    },
+    {
+      id: 'u5', wk: 5, yo: 'Ara mi', en: 'My body', pic: '🙆🏾', col: '#B455E0', special: 'simon',
+      words: [
+        ['Orí', 'Head', '🙆🏾'],
+        ['Ojú', 'Eyes, face', '👀'],
+        ['Imú', 'Nose', '👃🏾'],
+        ['Etí', 'Ear', '👂🏾'],
+        ['Ẹnu', 'Mouth', '👄'],
+        ['Ehín', 'Teeth', '🦷'],
+        ['Irun', 'Hair', '💇🏾'],
+        ['Ọwọ́', 'Hand', '✋🏾'],
+        ['Ẹsẹ̀', 'Leg, foot', '🦶🏾']
+      ],
+      phrases: [
+        ['Fọwọ́ kan orí rẹ.', 'Touch your head.'],
+        ['Fọwọ́ kan imú rẹ.', 'Touch your nose.'],
+        ['Pa ojú rẹ dé.', 'Close your eyes.'],
+        ['Ṣí ojú rẹ.', 'Open your eyes.'],
+        ['Gbé ọwọ́ rẹ sókè.', 'Put your hands up.'],
+        ['Fò sókè!', 'Jump!']
+      ],
+      talk: {
+        place: 'Playing with Daddy', bg: '🛋️', lines: [
+          ['B', 'Níbo ni imú rẹ wà?', 'Where is your nose?'],
+          ['you', [['Imú mi nìyí!', 'Here is my nose!', 1], ['Etí mi nìyí!', 'Here is my ear!', 0, 'Daddy asked for your nose: imú.']]],
+          ['B', 'Níbo ni etí rẹ wà?', 'Where is your ear?'],
+          ['you', [['Etí mi nìyí!', 'Here is my ear!', 1], ['Ẹsẹ̀ mi nìyí!', 'Here is my foot!', 0, 'Etí is your ear.']]],
+          ['B', 'Ó dáa púpọ̀! O gbọ́n gan-an!', 'Very good! You are so clever!'],
+          ['you', [['Ẹ ṣé Bàbá!', 'Thank you, Daddy!', 1], ['Rárá.', 'No.', 0, 'Daddy praised you. Say thank you!']]]
+        ]
+      },
+      letters: [['L', 'labalábá', 'butterfly', '🦋'], ['M', 'màlúù', 'cow', '🐄'], ['N', 'náírà', 'naira', '💵']],
+      mission: 'Play “Ìjàpá sọ pé” (Simon says) for 5 minutes. A parent gives the commands in Yoruba.',
+      culture: 'Ojú means eye and also face. Yoruba uses ojú in lots of sayings, like ojú ọjọ́ (the weather, “the face of the day”).'
+    },
+    {
+      id: 'u6', wk: 6, yo: 'Oúnjẹ', en: 'Food', pic: '🍲', col: '#E8833A',
+      words: [
+        ['Oúnjẹ', 'Food', '🍲'],
+        ['Omi', 'Water', '💧'],
+        ['Ìrẹsì', 'Rice', '🍚'],
+        ['Ẹ̀wà', 'Beans', '🫘'],
+        ['Búrẹ́dì', 'Bread', '🍞'],
+        ['Ẹja', 'Fish', '🐟'],
+        ['Ẹran', 'Meat', '🍖'],
+        ['Ọ̀gẹ̀dẹ̀', 'Banana, plantain', '🍌'],
+        ['Ọsàn', 'Orange', '🍊'],
+        ['Àgbàdo', 'Corn', '🌽']
+      ],
+      phrases: [
+        ['Ebi ń pa mí.', 'I am hungry.'],
+        ['Òùngbẹ ń gbẹ mí.', 'I am thirsty.'],
+        ['Mo fẹ́ omi.', 'I want water.'],
+        ['Ó dùn!', 'It is tasty!'],
+        ['Mo ti yó.', 'I am full.'],
+        ['Ṣé o ti jẹun?', 'Have you eaten?']
+      ],
+      talk: {
+        place: 'Dinner time', bg: '🍽️', lines: [
+          ['M', 'Ṣé ebi ń pa ọ́?', 'Are you hungry?'],
+          ['you', [['Bẹ́ẹ̀ni mà, ebi ń pa mí.', 'Yes ma, I am hungry.', 1], ['Ẹ káàsán.', 'Good afternoon.', 0, 'Mummy asked if you are hungry.']]],
+          ['M', 'Kí lo fẹ́ jẹ?', 'What would you like to eat?'],
+          ['you', [['Mo fẹ́ ìrẹsì àti ẹja.', 'I want rice and fish.', 1], ['Orí mi nìyí.', 'Here is my head.', 0, 'Choose some food!']]],
+          ['M', 'Ṣé ó dùn?', 'Is it tasty?'],
+          ['you', [['Bẹ́ẹ̀ni, ó dùn gan-an!', 'Yes, it is very tasty!', 1], ['Ọmọ ọdún méje ni mí.', 'I am seven years old.', 0, 'Mummy asked about the food.']]],
+          ['M', 'Jẹun dáadáa, ọmọ mi.', 'Eat well, my child.'],
+          ['you', [['Ẹ ṣé Màámi.', 'Thank you, Mummy.', 1], ['Ó dàbọ̀.', 'Goodbye.', 0, 'Say thank you for the food.']]]
+        ]
+      },
+      letters: [['O', 'ológbò', 'cat', '🐈'], ['Ọ', 'ọ̀bọ', 'monkey', '🐒'], ['P', 'pupa', 'red', '🔴']],
+      mission: 'At dinner, ask for water in Yoruba: “Mo fẹ́ omi.” Say “Ó dùn!” if you like the food.',
+      culture: 'After a meal, Yoruba children thank whoever cooked: “Ẹ ṣé Màámi.” Saying thank you to elders is a big part of good manners (ìwà ọmọlúàbí).'
+    },
+    {
+      id: 'u7', wk: 7, yo: 'Àwọ̀', en: 'Colours & things', pic: '🎨', col: '#E0457B',
+      words: [
+        ['Pupa', 'Red', '🔴'],
+        ['Funfun', 'White', '⚪'],
+        ['Dúdú', 'Black', '⚫'],
+        ['Ofeefee', 'Yellow', '🟡'],
+        ['Aláwọ̀ ewé', 'Green', '🟢'],
+        ['Búlúù', 'Blue', '🔵'],
+        ['Bọ́ọ̀lù', 'Ball', '⚽'],
+        ['Aṣọ', 'Clothes', '👕'],
+        ['Ìwé', 'Book', '📖'],
+        ['Ọkọ̀', 'Car', '🚗']
+      ],
+      phrases: [
+        ['Kí ni èyí?', 'What is this?'],
+        ['Bọ́ọ̀lù ni.', 'It is a ball.'],
+        ['Kí ni àwọ̀ rẹ̀?', 'What colour is it?'],
+        ['Pupa ni.', 'It is red.'],
+        ['Bọ́ọ̀lù pupa', 'A red ball'],
+        ['Aṣọ funfun', 'White clothes']
+      ],
+      talk: {
+        place: 'Toy box with Tèmi', bg: '🧸', lines: [
+          ['T', 'Kí ni èyí?', 'What is this?', '⚽'],
+          ['you', [['Bọ́ọ̀lù ni.', 'It is a ball.', 1], ['Ìwé ni.', 'It is a book.', 0, 'It is round and you kick it!']]],
+          ['T', 'Kí ni àwọ̀ rẹ̀?', 'What colour is it?', '🔴'],
+          ['you', [['Pupa ni.', 'It is red.', 1], ['Funfun ni.', 'It is white.', 0, 'The ball is red: pupa.']]],
+          ['T', 'Jẹ́ ká gbá bọ́ọ̀lù!', 'Let’s play ball!'],
+          ['you', [['Ó dáa, jẹ́ ká lọ!', 'Okay, let’s go!', 1], ['Mo ti yó.', 'I am full.', 0, 'Tèmi wants to play!']]]
+        ]
+      },
+      letters: [['R', 'ràkúnmí', 'camel', '🐪'], ['S', 'sálúbàtà', 'slippers', '🩴'], ['Ṣ', 'ṣíbí', 'spoon', '🥄']],
+      mission: 'Find 3 red things at home. Point and say “Pupa ni!” for each one.',
+      culture: 'Ọkọ̀ (car), ọkọ (husband) and ọkọ́ (hoe) are spelled with the same letters. Only the tones change the meaning. That is why we listen so carefully!'
+    },
+    {
+      id: 'u8', wk: 8, yo: 'Ẹranko', en: 'Animals', pic: '🦁', col: '#1FA3A3',
+      words: [
+        ['Ajá', 'Dog', '🐕'],
+        ['Ológbò', 'Cat', '🐈'],
+        ['Ewúrẹ́', 'Goat', '🐐'],
+        ['Adìẹ', 'Chicken', '🐔'],
+        ['Ẹyẹ', 'Bird', '🐦'],
+        ['Erin', 'Elephant', '🐘'],
+        ['Kìnnìún', 'Lion', '🦁'],
+        ['Ọ̀bọ', 'Monkey', '🐒'],
+        ['Àgùntàn', 'Sheep', '🐑'],
+        ['Ìjàpá', 'Tortoise', '🐢']
+      ],
+      phrases: [
+        ['Mo rí ajá kan.', 'I see a dog.'],
+        ['Erin tóbi gan-an.', 'The elephant is very big.'],
+        ['Ìjàpá ń lọ díẹ̀díẹ̀.', 'The tortoise walks slowly.'],
+        ['Ẹranko wo lo fẹ́ràn?', 'Which animal do you like?'],
+        ['Mo fẹ́ràn ológbò.', 'I like cats.']
+      ],
+      talk: {
+        place: 'At the zoo with Daddy', bg: '🦓', lines: [
+          ['B', 'Wò ó! Kí ni ìyẹn?', 'Look! What is that?', '🐘'],
+          ['you', [['Erin ni!', 'It is an elephant!', 1], ['Ajá ni!', 'It is a dog!', 0, 'It has a very long nose…']]],
+          ['B', 'Ṣé erin tóbi?', 'Is the elephant big?'],
+          ['you', [['Bẹ́ẹ̀ni, ó tóbi gan-an!', 'Yes, it is very big!', 1], ['Rárá, ó kéré.', 'No, it is small.', 0, 'Elephants are huge!']]],
+          ['B', 'Ẹranko wo lo fẹ́ràn jù?', 'Which animal do you like best?'],
+          ['you', [['Mo fẹ́ràn ìjàpá!', 'I like the tortoise!', 1], ['Mo fẹ́ omi.', 'I want water.', 0, 'Name an animal you like.']]],
+          ['B', 'Èmi náà! Ìjàpá gbọ́n.', 'Me too! The tortoise is clever.'],
+          ['you', [['Ẹ ṣé Bàbá!', 'Thank you, Daddy!', 1], ['Ó dàárọ̀.', 'Good night.', 0, 'Say thank you to Daddy.']]]
+        ]
+      },
+      letters: [['T', 'tòlótòló', 'turkey', '🦃'], ['U', 'ìlù', 'drum', '🥁'], ['W', 'wàrà', 'milk', '🥛'], ['Y', 'yànmùyánmú', 'mosquito', '🦟']],
+      mission: 'Animal charades: a parent says an animal in Yoruba and you act it out. Then swap!',
+      culture: 'Ìjàpá the tortoise is the star of many Yoruba folktales (àlọ́). He is clever and a little bit naughty. Ask a grandparent for an Ìjàpá story!'
+    }
+  ],
+  year: [
+    { yo: 'Ìgbà Kìíní: Ilé wa', en: 'Season 1 · Me and my home', weeks: 'Weeks 1–12', goal: 'Greets elders properly, introduces self and family, knows about 120 words, answers 10 everyday questions.',
+      units: ['Ẹ káàbọ̀ · Greetings', 'Ìdílé mi · Family', 'Èmi · All about me', 'Ònkà · Counting', 'Ara mi · My body', 'Oúnjẹ · Food', 'Àwọ̀ · Colours & things', 'Ẹranko · Animals', 'Inú mi · Feelings', 'Ohun tí mo ń ṣe · Action words', 'Ilé wa · Rooms at home', 'Ìtàn àkọ́kọ́ · First story + family show'] },
+    { yo: 'Ìgbà Kejì: Ọjọ́ mi', en: 'Season 2 · My day', weeks: 'Weeks 13–24', goal: 'Talks through a whole day, asks where / when / what, uses “I am going”, “I went”, “I will”.',
+      units: ['Àkókò · Time of day', 'Ọjọ́ ọ̀sẹ̀ · Days of the week', 'Ilé ìwé · School', 'Aṣọ · Clothes', 'Ojú ọjọ́ · Weather', 'Níbo? · Where things are', 'Mo ń lọ · Going places', 'Ọjà · Market & money', 'Mo fẹ́ràn · Likes & dislikes', 'Àná àti ọ̀la · Yesterday & tomorrow', 'Ìbéèrè · Asking questions', 'Ọjọ́ kan · A day in Yoruba'] },
+    { yo: 'Ìgbà Kẹta: Ìtàn', en: 'Season 3 · Stories', weeks: 'Weeks 25–36', goal: 'Describes and compares, retells a short folktale, holds a 3–4 minute chat.',
+      units: ['Bí ó ṣe rí · Describing', 'Tóbi, kéré · Comparing', 'Ìjàpá àti Erin · Folktale', 'Orin · Songs & rhymes', 'Ohun tó ṣẹlẹ̀ · What happened', 'Àlọ́ · Riddles', 'Òwe · Proverbs for kids', 'Ìpè · Phone call with Grandma', 'Ayẹyẹ · Celebrations', 'Iṣẹ́ · Jobs', 'Ìrìn àjò · Travel', 'Ìtàn mi · My own story'] },
+    { yo: 'Ìgbà Kẹrin: Ọ̀rọ̀ sísọ', en: 'Season 4 · Real conversation', weeks: 'Weeks 37–48', goal: 'Gives opinions and reasons, 10-minute conversation with grandparents, Yoruba is normal at home.',
+      units: ['Èrò mi · My opinion', 'Nítorí pé · Because…', 'Ìbọ̀wọ̀ · Respect', 'Ìrànlọ́wọ́ · Helping', 'Eré · Sports & games', 'Ilẹ̀ Yorùbá · Yorubaland', 'Oúnjẹ ìbílẹ̀ · Cooking together', 'Ìròyìn · Sharing news', 'Ìjíròrò · Friendly debate', 'Lẹ́tà · Writing a letter', 'Eré oníṣe · Drama', 'Àyájọ́ · Graduation show'] }
+  ],
+  shop: [
+    { id: 'fila', yo: 'Fìlà', en: 'Cap', e: '🧢', cost: 15, slot: 'head' },
+    { id: 'balloon', yo: 'Bálúùnù', en: 'Balloon', e: '🎈', cost: 15, slot: 'hand' },
+    { id: 'gele', yo: 'Gèlè', en: 'Head-tie', e: '🎀', cost: 20, slot: 'head' },
+    { id: 'ileke', yo: 'Ìlẹ̀kẹ̀', en: 'Beads', e: '📿', cost: 25, slot: 'neck' },
+    { id: 'ilu', yo: 'Ìlù', en: 'Drum', e: '🥁', cost: 30, slot: 'hand' },
+    { id: 'gilasi', yo: 'Gíláàsì', en: 'Glasses', e: '🕶️', cost: 35, slot: 'face' },
+    { id: 'agboorun', yo: 'Agbòórùn', en: 'Umbrella', e: '☂️', cost: 40, slot: 'hand' },
+    { id: 'ade', yo: 'Adé', en: 'Crown', e: '👑', cost: 60, slot: 'head' }
+  ]
+};
+
+/* Shared helpers for the app and the Recording Studio */
+window.YK = (function () {
+  const MARK = /[̀-ͯ]/;
+  function key(s) {
+    return String(s).normalize('NFC').toLowerCase()
+      .replace(/[.,!?“”"’‘…:;]/g, '').replace(/\s+/g, ' ').trim();
+  }
+  // Tone of each syllable: H (mí), M (rè), L (dò)
+  function tones(s) {
+    const d = String(s).normalize('NFD'); const out = [];
+    for (let i = 0; i < d.length; i++) {
+      const lc = d[i].toLowerCase();
+      const vowel = 'aeiou'.includes(lc), nasal = lc === 'n' || lc === 'm';
+      if (!vowel && !nasal) continue;
+      let j = i + 1, t = vowel ? 'M' : null;
+      while (j < d.length && MARK.test(d[j])) {
+        if (d[j] === '́') t = 'H';
+        if (d[j] === '̀') t = 'L';
+        j++;
+      }
+      if (t) { out.push(t); i = j - 1; }
+    }
+    return out;
+  }
+  function hash(s) { let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+  function hasSlot(s) { return /\{(name|age|agen)\}/.test(s); }
+  // Every distinct thing a parent can record, grouped for the studio and the parent corner
+  function allItems(YO) {
+    const groups = []; const seen = new Set();
+    function add(list, yo, en, kind, pic) {
+      if (hasSlot(yo)) return; const k = key(yo); if (!k || seen.has(k)) return;
+      seen.add(k); list.push({ key: k, yo, en, kind, pic: pic || '' });
+    }
+    YO.units.forEach(u => {
+      const items = [];
+      u.words.forEach(w => add(items, w[0], w[1], 'Word', w[2]));
+      u.phrases.forEach(p => add(items, p[0], p[1], 'Sentence'));
+      u.talk.lines.forEach(l => {
+        if (l[0] === 'you') l[1].forEach(o => add(items, o[0], o[1], 'Talk · child'));
+        else add(items, l[1], l[2], 'Talk · ' + YO.people[l[0]][0]);
+      });
+      u.letters.forEach(l => add(items, l[1], l[2], 'Letter ' + l[0], l[3]));
+      groups.push({ id: u.id, title: 'Week ' + u.wk + ' · ' + u.yo + ' (' + u.en + ')', items });
+    });
+    const ui = []; YO.ui.forEach(p => add(ui, p[0], p[1], 'Praise & instructions'));
+    groups.push({ id: 'ui', title: 'Ìjàpá’s praise & instructions', items: ui });
+    return groups;
+  }
+  return { key, tones, hash, hasSlot, allItems };
+})();
+
+(function () {
+'use strict';
+const YO = window.YO, YK = window.YK;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const groups = YK.allItems(YO);
+const flat = groups.flatMap(g => g.items.map(it => Object.assign({ g: g.id }, it)));
+const clips = {}; // key -> {blob, mime}
+let cur = 0, rec = null, stream = null, chunks = [], recKey = null;
+
+/* IndexedDB so recordings survive closing the file */
+let idb = null;
+function openDB() { return new Promise(res => { try { const r = indexedDB.open('ijapa-studio', 1); r.onupgradeneeded = () => r.result.createObjectStore('clips'); r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch (e) { res(null); } }); }
+function dbPut(k, v) { if (!idb) return; try { idb.transaction('clips', 'readwrite').objectStore('clips').put(v, k); } catch (e) {} }
+function dbDel(k) { if (!idb) return; try { idb.transaction('clips', 'readwrite').objectStore('clips').delete(k); } catch (e) {} }
+function dbAll() { return new Promise(res => { if (!idb) return res({}); const out = {}; try { const st = idb.transaction('clips').objectStore('clips'); const c = st.openCursor(); c.onsuccess = () => { const x = c.result; if (x) { out[x.key] = x.value; x.continue(); } else res(out); }; c.onerror = () => res(out); } catch (e) { res(out); } }); }
+
+function toneDots(yo) { return '<span class="tones">' + YK.tones(yo).map(t => '<i class="' + t + '"></i>').join('') + '</span>'; }
+function drawList() {
+  $('#list').innerHTML = groups.map(g => '<section><h2>' + esc(g.title) + ' <span class="cnt">' + g.items.filter(i => clips[i.key]).length + '/' + g.items.length + '</span></h2>' +
+    g.items.map(it => { const i = flat.findIndex(f => f.key === it.key); return '<button class="row' + (i === cur ? ' cur' : '') + (clips[it.key] ? ' has' : '') + '" data-i="' + i + '"><span class="yo">' + esc(it.yo) + '</span><span class="en">' + esc(it.en) + '</span><span class="st">' + (clips[it.key] ? '✓' : '') + '</span></button>'; }).join('') + '</section>').join('');
+  $$('[data-i]').forEach(b => b.onclick = () => { stopRec(false); cur = +b.dataset.i; drawCur(); drawList(); });
+  const n = Object.keys(clips).length; $('#total').textContent = n + ' of ' + flat.length + ' recorded';
+  $('#bar i').style.width = (n / flat.length * 100) + '%';
+  const c = $('.row.cur'); if (c) c.scrollIntoView({ block: 'nearest' });
+}
+function drawCur() {
+  const it = flat[cur];
+  $('#card').innerHTML = '<div class="kind">' + esc(it.kind) + (it.pic ? ' · ' + (it.pic[0] === '#' ? it.pic.slice(1) : it.pic) : '') + '</div><div class="big yo">' + esc(it.yo) + '</div>' + toneDots(it.yo) + '<div class="en">' + esc(it.en) + '</div>' +
+    '<div class="ctl"><button id="rec" class="rec">' + (rec ? '■ Stop' : '● Record') + '</button><button id="play"' + (clips[it.key] ? '' : ' disabled') + '>▶ Play</button><button id="next">Next ➜</button><button id="del" class="ghost"' + (clips[it.key] ? '' : ' disabled') + '>Delete</button></div>' +
+    '<div class="hint">Keyboard: <b>Space</b> record / stop · <b>P</b> play · <b>→</b> next · <b>←</b> back. Say it slowly and clearly, the way you want the children to copy it.</div>';
+  $('#rec').onclick = () => (rec ? stopRec(true) : startRec());
+  $('#play').onclick = play; $('#next').onclick = () => move(1);
+  $('#del').onclick = () => { delete clips[it.key]; dbDel(it.key); drawCur(); drawList(); };
+}
+async function startRec() {
+  try {
+    if (!stream) stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  } catch (e) { alertBox('The microphone is blocked. Allow microphone access for this page in your browser (the icon in the address bar), then try again. Use Chrome or Edge on the laptop.'); return; }
+  const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+  const type = types.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || '';
+  chunks = []; recKey = flat[cur].key;
+  rec = new MediaRecorder(stream, type ? { mimeType: type, audioBitsPerSecond: 40000 } : undefined);
+  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  rec.onstop = () => {
+    const mime = (rec.mimeType || type || 'audio/webm').split(';')[0];
+    if (rec._keep && chunks.length) { const blob = new Blob(chunks, { type: mime }); clips[recKey] = { blob, mime }; dbPut(recKey, { blob, mime }); }
+    rec = null; drawCur(); drawList(); if (clipKeep) { clipKeep = false; play(); }
+  };
+  rec.start(); setTimeout(() => { if (rec && rec.state === 'recording' && recKey === flat[cur].key) stopRec(true); }, 9000);
+  drawCur(); $('#card').classList.add('live');
+}
+let clipKeep = false;
+function stopRec(keep) { if (!rec) return; rec._keep = keep; clipKeep = keep; $('#card').classList.remove('live'); try { rec.stop(); } catch (e) { rec = null; } }
+let audio;
+function play() { const c = clips[flat[cur].key]; if (!c) return; if (audio) audio.pause(); audio = new Audio(URL.createObjectURL(c.blob)); audio.play(); }
+function move(d) { stopRec(false); cur = Math.max(0, Math.min(flat.length - 1, cur + d)); drawCur(); drawList(); }
+function alertBox(msg) { $('#msg').textContent = msg; $('#msg').hidden = false; }
+function b64(blob) { return new Promise(r => { const f = new FileReader(); f.onload = () => r(String(f.result).split(',')[1]); f.readAsDataURL(blob); }); }
+async function exportPack(onlyGroup) {
+  const out = {}; const keys = Object.keys(clips).filter(k => !onlyGroup || flat.find(f => f.key === k && f.g === onlyGroup));
+  if (!keys.length) { alertBox('Nothing recorded yet.'); return; }
+  for (const k of keys) out[k] = { mime: clips[k].mime, b64: await b64(clips[k].blob) };
+  const blob = new Blob([JSON.stringify({ app: 'ijapa-yoruba', v: 1, made: new Date().toISOString(), clips: out })], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'ijapa-voices-' + new Date().toISOString().slice(0, 10) + '.json'; document.body.appendChild(a); a.click(); a.remove();
+  alertBox('Saved ' + keys.length + ' voices to your Downloads folder. Now open the app → Parents’ corner → Voices & words → Add voice pack, and pick that file.');
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.code === 'Space') { e.preventDefault(); rec ? stopRec(true) : startRec(); }
+  else if (e.key === 'p' || e.key === 'P') play();
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); move(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+});
+(async function boot() {
+  idb = await openDB(); const saved = await dbAll(); Object.assign(clips, saved);
+  const firstTodo = flat.findIndex(f => !clips[f.key]); cur = firstTodo < 0 ? 0 : firstTodo;
+  $('#exp').onclick = () => exportPack($('#which').value || null);
+  $('#which').innerHTML = '<option value="">Everything recorded</option>' + groups.map(g => '<option value="' + g.id + '">' + esc(g.title) + '</option>').join('');
+  if (!idb) alertBox('This browser will not keep recordings after you close the page. Export your voice pack before closing.');
+  drawCur(); drawList();
+})();
+})();
+
+</script>
+</body></html>

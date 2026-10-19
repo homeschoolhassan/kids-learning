@@ -1,0 +1,310 @@
+<style id="home-btn-style">
+#home-btn{position:fixed;top:12px;left:12px;z-index:99999;
+  background:#0b3d5e;color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);font-family:'Fredoka One',sans-serif;
+  transition:background .2s;}
+#home-btn:hover{background:#1d6ef5;}
+</style>
+<a id="home-btn" href="../index.html">🏠 Home</a>
+<title>Little Laws, Big Lessons</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: a picture book — cover, grown-ups note, contents, then one illustrated spread per wisdom, grouped into four coloured parts */
+:root{
+  --paper:#EEF5FB; --card:#FFFFFF; --wash:#DCEEFA; --ink:#1D2550; --muted:#5A6388; --line:#D3E0EC;
+  --sun:#FFC43D; --coral:#FF6A57; --sea:#159E9E; --leaf:#53B35A; --sky:#7CC3F0; --grey:#9AA3C4;
+  --display:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11173A; --card:#1A2250; --wash:#223062; --ink:#EEF2FF; --muted:#A9B2D8; --line:#2E3A70;
+  --sun:#FFCD55; --coral:#FF7D6B; --sea:#2BB8B5; --leaf:#6CCB72; --sky:#8ACDF5; --grey:#7D87B3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11173A; --card:#1A2250; --wash:#223062; --ink:#EEF2FF; --muted:#A9B2D8; --line:#2E3A70;
+  --sun:#FFCD55; --coral:#FF7D6B; --sea:#2BB8B5; --leaf:#6CCB72; --sky:#8ACDF5; --grey:#7D87B3; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:980px;margin:0 auto;padding-block:28px 64px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+p{margin:0}
+/* cover */
+.cover{background:var(--card);border:3px solid var(--ink);border-radius:28px;overflow:hidden;display:grid;grid-template-columns:1.1fr 1fr;box-shadow:8px 8px 0 var(--ink)}
+.cover-text{padding:36px 32px;display:flex;flex-direction:column;gap:16px;justify-content:center;min-width:0}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;color:var(--sea)}
+.cover h1{font-size:clamp(2.4rem,6vw,3.8rem);font-weight:700}
+.cover h1 span{color:var(--coral)}
+.cover .sub{font-size:1.15rem;color:var(--muted);max-width:30ch}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{font-family:var(--display);font-weight:600;font-size:.9rem;padding:4px 12px;border-radius:999px;border:2px solid var(--ink)}
+.cover-art{background:var(--wash);border-left:3px solid var(--ink);min-width:0}
+.cover-art svg{display:block;width:100%;height:100%}
+/* grown-ups */
+.note{background:var(--card);border:2px dashed var(--grey);border-radius:20px;padding:24px 26px;display:grid;gap:10px}
+.note h2{font-size:1.3rem}
+.note ol{margin:0;padding-left:1.3em;display:grid;gap:4px}
+.note .small{color:var(--muted);font-size:.95rem}
+/* contents */
+.contents h2{font-size:2rem;margin-bottom:16px}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.part-box{background:var(--card);border-radius:20px;padding:18px 20px;border-top:8px solid var(--pc)}
+.part-box h3{font-size:1.15rem;margin-bottom:8px}
+.part-box h3 small{display:block;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:2px}
+.part-box ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.part-box a{color:var(--ink);text-decoration:none;display:flex;gap:10px;align-items:baseline;border-radius:8px;padding:2px 4px}
+.part-box a:hover,.part-box a:focus-visible{background:var(--wash);outline:none}
+.part-box a b{font-family:var(--display);color:var(--pc);min-width:1.6em;font-variant-numeric:tabular-nums}
+/* part divider */
+.divider{background:var(--pc);color:#1D2550;border-radius:24px;padding:22px 26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.divider .pn{font-family:var(--display);font-weight:700;font-size:3rem;line-height:1;background:#fff;border-radius:18px;width:72px;height:72px;display:grid;place-items:center;flex:none}
+.divider h2{font-size:clamp(1.6rem,4vw,2.2rem)}
+.divider p{font-size:1rem;opacity:.85;max-width:52ch}
+.divider > div{min-width:0;flex:1}
+/* chapter */
+.ch{background:var(--card);border:3px solid var(--ink);border-radius:26px;overflow:hidden;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);scroll-margin-top:16px}
+.ch-art{background:var(--wash);border-right:3px solid var(--ink);display:flex;flex-direction:column}
+.ch-art svg{display:block;width:100%;height:auto;flex:1}
+.ch-num{font-family:var(--display);font-weight:700;padding:14px 18px;display:flex;gap:10px;align-items:center;border-top:3px solid var(--ink);background:var(--card)}
+.ch-num span{background:var(--pc);color:#1D2550;border-radius:12px;min-width:44px;height:44px;display:grid;place-items:center;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.ch-num em{font-style:normal;color:var(--muted);font-size:.9rem;font-weight:600}
+.ch-body{padding:26px 26px 24px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.ch-body h3{font-size:clamp(1.6rem,3.6vw,2.1rem);font-weight:700}
+.ch-body .tag{font-family:var(--display);font-weight:600;color:var(--pc2);font-size:1.15rem;margin-top:-6px}
+.story{max-width:62ch}
+.boxes{display:grid;gap:10px}
+.box{border-radius:16px;padding:12px 16px;display:grid;gap:2px}
+.box b{font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.78rem}
+.box.idea{background:color-mix(in srgb,var(--sun) 28%,var(--card))}
+.box.try{background:color-mix(in srgb,var(--leaf) 20%,var(--card))}
+.box.talk{background:color-mix(in srgb,var(--sky) 24%,var(--card))}
+.grown{font-size:.88rem;color:var(--muted);font-style:italic}
+.end{text-align:center;display:grid;gap:8px;justify-items:center}
+.end h2{font-size:2rem}
+.end p{color:var(--muted);max-width:50ch}
+/* svg art */
+.art .bg{fill:var(--wash)} .art .s{fill:var(--sun)} .art .c{fill:var(--coral)} .art .t{fill:var(--sea)}
+.art .l{fill:var(--leaf)} .art .k{fill:var(--sky)} .art .i{fill:var(--ink)} .art .m{fill:var(--grey)}
+.art .w{fill:var(--card)}
+.art .s,.art .c,.art .t,.art .l,.art .k,.art .m,.art .w{stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round}
+.art .bg,.art .nos{stroke:none}
+.art .o{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.art .d{fill:none;stroke:var(--coral);stroke-width:3;stroke-dasharray:6 7;stroke-linecap:round}
+.art text{font-family:var(--display);font-weight:600;fill:var(--ink);font-size:15px}
+.art .q{font-size:30px;fill:var(--coral)}
+a:focus-visible{outline:3px solid var(--sea);outline-offset:2px}
+@media (max-width:720px){
+  .cover,.ch{grid-template-columns:1fr}
+  .cover-art{border-left:0;border-top:3px solid var(--ink);order:-1}
+  .ch-art{border-right:0;border-bottom:3px solid var(--ink)}
+  .parts{grid-template-columns:1fr}
+  .ch-body{padding:20px 18px}
+  .cover-text{padding:26px 20px}
+}
+</style>
+
+<div class="wrap">
+
+<header class="cover">
+  <div class="cover-text">
+    <div class="eyebrow">A read-together book</div>
+    <h1>Little Laws, <span>Big Lessons</span></h1>
+    <p class="sub">19 smart ideas about how people think, feel and grow, told as short stories for curious kids.</p>
+    <div class="badges">
+      <span class="badge" style="background:color-mix(in srgb,var(--sea) 25%,var(--card))">19 wisdoms</span>
+      <span class="badge" style="background:color-mix(in srgb,var(--sun) 35%,var(--card))">19 activities</span>
+      <span class="badge" style="background:color-mix(in srgb,var(--coral) 25%,var(--card))">19 talk questions</span>
+    </div>
+  </div>
+  <div class="cover-art">
+    <svg class="art" viewBox="0 0 320 260" role="img" aria-label="An open book with a lightbulb, stars and a paper plane rising out of it">
+      <rect class="bg" width="320" height="260"/>
+      <circle class="s" cx="160" cy="92" r="34"/>
+      <path class="o" d="M150 126h20M152 136h16"/>
+      <path class="o" d="M160 40V24M118 58l-11-11M202 58l11-11M108 92H92M212 92h16"/>
+      <path class="w" d="M60 200 Q110 180 160 200 V150 Q110 132 60 150Z"/>
+      <path class="w" d="M260 200 Q210 180 160 200 V150 Q210 132 260 150Z"/>
+      <path class="o" d="M80 160q30-8 60 0M80 172q30-8 60 0M180 160q30-8 60 0M180 172q30-8 60 0"/>
+      <path class="c" d="M232 110l36-22-12 36-8-10z"/>
+      <path class="d" d="M228 112q-20 14-40 4"/>
+      <path class="t" transform="translate(66 74)" d="M0-12L3.5-4 12-4 5 1.5 7.5 10 0 5-7.5 10-5 1.5-12-4-3.5-4Z"/>
+      <path class="l" transform="translate(262 46) scale(.8)" d="M0-12L3.5-4 12-4 5 1.5 7.5 10 0 5-7.5 10-5 1.5-12-4-3.5-4Z"/>
+      <rect class="l nos" x="0" y="214" width="320" height="46"/>
+    </svg>
+  </div>
+</header>
+
+<section class="note" aria-labelledby="gu">
+  <h2 id="gu">For grown-ups: how to use this book</h2>
+  <ol>
+    <li>Read one wisdom together. One a night or a few a week works well.</li>
+    <li>Ask the <b>Talk About It</b> question and listen more than you speak.</li>
+    <li>Do the <b>Try It</b> activity during the week, then check in on how it went.</li>
+  </ol>
+  <p class="small">Written for reading aloud with children about 5 to 10. Older readers can read it alone. Each idea comes from real psychology, simplified for kids.</p>
+</section>
+
+<section class="contents" aria-labelledby="ct">
+  <h2 id="ct">What's inside</h2>
+  <div class="parts" id="parts"></div>
+</section>
+
+<div id="book" style="display:flex;flex-direction:column;gap:28px"></div>
+
+<section class="end">
+  <h2>The End (for now!)</h2>
+  <p>Which little law was your favourite? Pick one to practise as a family this month.</p>
+</section>
+
+</div>
+
+<script>
+const STAR='M0-12L3.5-4 12-4 5 1.5 7.5 10 0 5-7.5 10-5 1.5-12-4-3.5-4Z';
+const PARTS=[
+ {n:1,name:'Understanding Ourselves',blurb:'Why we sometimes feel lazy, copy others, or keep going when we should stop.',c:'var(--sea)',c2:'var(--sea)'},
+ {n:2,name:'Handling Big Feelings',blurb:'Mistakes, worry, anger, confidence and joy: how to steer your feelings.',c:'var(--coral)',c2:'var(--coral)'},
+ {n:3,name:'Getting Along with Others',blurb:'Kindness, first impressions, and remembering that everyone is different.',c:'var(--sun)',c2:'var(--muted)'},
+ {n:4,name:'Growing Up Smart',blurb:'Setting goals, making choices, and learning to wait for something better.',c:'var(--leaf)',c2:'var(--leaf)'}
+];
+const sky='<rect class="bg" width="320" height="200"/>';
+const grass='<rect class="l nos" x="0" y="168" width="320" height="32"/>';
+const W=[
+{p:1,name:'The Horsefly Effect',tag:'How a tiny buzz gets us moving',
+ story:'A farm horse was plodding through the field: step… stop… step. Then a little horsefly landed on its back and gave it a nip. Zoom! The horse picked up its feet and finished the field in no time. Young Abraham Lincoln saw this happen on his family farm. Years later, when he was President, one man on his team kept criticizing him. Lincoln kept him anyway. He said the man was like that horsefly: a bit annoying, but he kept Lincoln sharp.',
+ idea:'A little push, like a deadline or a friend saying "you can do better", can wake us up when we feel lazy.',
+ tryit:'Pick one job you keep putting off. Set a 10-minute timer and see how much you finish before it rings.',
+ talk:'Who is a "good horsefly" in your life, someone who pushes you to do your best?',
+ svg:`${sky}${grass}<ellipse class="c" cx="150" cy="116" rx="70" ry="30"/><path class="c" d="M200 104 L236 62 L262 72 L230 114 Z"/><circle class="i nos" cx="249" cy="74" r="3.5"/><path class="o" d="M106 142v26M128 142v26M174 142v26M196 142v26M82 104q-26 6-30 32"/><path class="o" d="M30 96h26M18 116h32M30 136h24"/><ellipse class="w" cx="132" cy="72" rx="7" ry="4.5"/><ellipse class="w" cx="146" cy="72" rx="7" ry="4.5"/><circle class="i nos" cx="139" cy="80" r="5.5"/><text x="150" y="50">bzzz!</text>`},
+{p:1,name:'The Situation Effect',tag:'The people around us change how we act',
+ story:'Sami is a kind boy. But one day at recess, a group of kids started laughing at a new girl’s shoes. Everyone was doing it, and Sami laughed too. That night he felt awful. Scientists have found that the place we are in and the people around us can change how we act, even when we are good inside. That is why the friends we choose matter so much.',
+ idea:'Everyone has a kind side and an unkind side. Choose friends who bring out your kind side, and be brave enough to stay kind when a group is not.',
+ tryit:'Practise one "brave sentence" out loud: "That’s not nice. Let’s stop."',
+ talk:'Have you ever acted differently because of who you were with?',
+ grown:'Also called the Lucifer Effect, from psychologist Philip Zimbardo’s research.',
+ svg:`${sky}<circle class="w" cx="70" cy="62" r="34"/><path class="c" d="M70 80 L54 64 A9 9 0 0 1 70 52 A9 9 0 0 1 86 64 Z"/><circle class="w" cx="250" cy="62" r="34"/><path class="k" d="M230 72h40a11 11 0 0 0-4-21 15 15 0 0 0-28 2 10 10 0 0 0-8 19z"/><path class="s" d="M252 72l-9 14h8l-4 12 13-18h-8l4-8z"/><circle class="s" cx="160" cy="84" r="26"/><circle class="i nos" cx="151" cy="80" r="3"/><circle class="i nos" cx="169" cy="80" r="3"/><path class="o" d="M152 94q8 5 16 0"/><rect class="t" x="138" y="110" width="44" height="58" rx="14"/><circle class="l" cx="44" cy="160" r="15"/><circle class="l" cx="82" cy="166" r="15"/><circle class="c" cx="238" cy="166" r="15"/><circle class="c" cx="276" cy="160" r="15"/>`},
+{p:1,name:'The Herd Effect',tag:'Why we want to follow the crowd',
+ story:'In a field of sheep, when one sheep walks, the others follow. If the first sheep walks into a muddy puddle, the whole line splashes in after it! People do this too. If all your classmates suddenly want the same toy, you might want it too, even if you never liked it before.',
+ idea:'Before you copy what everyone is doing, stop and ask: "Do I really want this, or is it just because everyone else does?"',
+ tryit:'Next time "everyone" wants something, say three reasons YOU want it. If you can’t think of any, you might be following the herd.',
+ talk:'When was following the crowd a good idea? When was it a bad one?',
+ svg:`${sky}${grass}<ellipse class="k" cx="292" cy="176" rx="30" ry="9"/>${[110,175,240].map(x=>`<path class="o" d="M${x-12} 140v22M${x+10} 140v22"/><ellipse class="w" cx="${x}" cy="126" rx="28" ry="19"/><ellipse class="i nos" cx="${x+26}" cy="116" rx="10" ry="8"/>`).join('')}<path class="o" d="M38 140v22M60 140v22"/><ellipse class="w" cx="50" cy="126" rx="28" ry="19"/><ellipse class="i nos" cx="24" cy="116" rx="10" ry="8"/><text class="q" x="18" y="88">?</text>`},
+{p:1,name:'The Sunk Cost Trap',tag:'The more you put in, the harder it is to stop',
+ story:'Ayo spent two whole hours building a tall block tower. It started to lean. His sister said, "Let’s fix the bottom first!" But Ayo said, "No way, I already worked so hard," and kept adding blocks. Crash! Sometimes we keep going with something that isn’t working only because we already put lots of time or money into it. What’s spent is already gone.',
+ idea:'Ask "Is this still a good idea from now on?" instead of "How much have I already put in?"',
+ tryit:'Think of a game or project that isn’t going well. Would you start it today, knowing what you know? If not, it’s okay to stop or start over.',
+ talk:'Why is it so hard to give up on something we’ve worked hard on?',
+ svg:`${sky}<rect class="m nos" x="0" y="172" width="320" height="28"/><g transform="rotate(9 150 172)">${['s','c','t','l','k','s','c'].map((c,i)=>`<rect class="${c}" x="128" y="${150-i*22}" width="44" height="22" rx="3"/>`).join('')}</g><rect class="c" x="232" y="120" width="34" height="34" rx="4"/><text x="214" y="104">one more?</text><path class="o" d="M196 62l12-8M204 74l14-2"/>`},
+{p:2,name:'Murphy’s Law',tag:'If something can go wrong, plan for it',
+ story:'In 1949, an engineer named Edward Murphy was testing equipment for pilots. Someone had connected the sensors the wrong way, and the test failed. Murphy noticed that if there is a way to make a mistake, sooner or later someone will make it, so the smart thing is to plan ahead. Zara made a big birthday card for her friend. She remembered Murphy’s Law and put it in a folder. When her juice spilled at lunch, the card stayed dry!',
+ idea:'Mistakes and accidents happen to everyone. Nobody is perfect. Planning ahead and staying calm helps more than worrying.',
+ tryit:'Tonight, ask: "What could go wrong tomorrow?" Then do one thing to prepare, like packing your bag.',
+ talk:'What little thing went wrong this week? What could you plan for next time?',
+ svg:`${sky}<rect class="m nos" x="0" y="172" width="320" height="28"/><g transform="rotate(28 160 80)"><rect class="s" x="126" y="48" width="68" height="62" rx="16"/><rect class="w" x="138" y="60" width="30" height="16" rx="5"/></g><path class="o" d="M110 30v24M130 22v24M190 22v24M210 30v24"/><ellipse class="s" cx="160" cy="176" rx="40" ry="7"/><text x="210" y="160">Oops!</text>`},
+{p:2,name:'The Wallenda Mindset',tag:'Too much worry makes you wobble',
+ story:'Karl Wallenda was a famous tightrope walker who crossed ropes high in the air. People noticed that when he focused on his walk, he was steady. When he worried only about falling, he got shaky. Lena felt the same before her piano recital. When she thought "Don’t mess up!", her fingers trembled. When she thought "One note at a time," she felt steady again.',
+ idea:'A little nervousness is normal. Put your attention on the next step, not on what might go wrong.',
+ tryit:'Before a test or a big moment, take three slow breaths and whisper: "One step at a time."',
+ talk:'What helps you feel calm when you’re nervous?',
+ svg:`${sky}<rect class="i nos" x="18" y="64" width="10" height="136"/><rect class="i nos" x="292" y="64" width="10" height="136"/><path class="o" d="M28 74Q160 92 292 74"/><circle class="s" cx="150" cy="38" r="13"/><path class="o" d="M150 51v24M150 75l-9 10M150 75l9 10M150 58l-16 6M150 58l16 6M88 64h124"/><path class="d" d="M168 36h78"/><path class="c" transform="translate(262 36)" d="${STAR}"/><text x="60" y="140">eyes on the next step</text>`},
+{p:2,name:'The Wild Horse Effect',tag:'Don’t let anger hurt you',
+ story:'An old story says that tiny bats sometimes nip wild horses on the leg. The bite is very small. But some horses get so angry that they kick and gallop until they are completely worn out. The anger hurts them far more than the little bite. Tomi’s brother broke one of his crayons. Tomi yelled and stomped for so long that he missed the whole cartoon he had been waiting for.',
+ idea:'Feeling angry is normal. Staying angry for a long time hurts you more than the thing that made you angry.',
+ tryit:'When you feel angry, count to ten, then say what you feel: "I’m upset because…"',
+ talk:'What helps you calm down when you’re angry?',
+ svg:`${sky}${grass}<ellipse class="t" cx="150" cy="116" rx="70" ry="30"/><path class="t" d="M200 104 L236 62 L262 72 L230 114 Z"/><path class="o" d="M243 70l10 6"/><path class="o" d="M106 142v26M128 142v26M174 142v26M196 142v26M82 104q-26 6-30 32"/><circle class="w" cx="270" cy="44" r="10"/><circle class="w" cx="286" cy="32" r="13"/><circle class="w" cx="300" cy="16" r="9"/><path class="i nos" d="M96 164l-8-6 4 8-6 2 10 2-2 6 6-6 6 2-4-6z"/><text x="40" y="60">grrr!</text>`},
+{p:2,name:'The Confidence Rule',tag:'Believe you can, and it gets easier',
+ story:'Noah wanted to walk across the balance beam at the playground. The first time, he thought "I’ll fall," and he hopped off after two steps. His mom said, "You’ve been practising. I think you can do it." Noah stood tall, looked ahead, and walked all the way across! Confidence means believing you can do something, even before you are perfect at it.',
+ idea:'Believing in yourself helps you try, and trying is how you get better.',
+ tryit:'Swap "I can’t" for "I can’t YET." Say it out loud about one thing that feels hard.',
+ talk:'What can you do now that you couldn’t do last year?',
+ svg:`${sky}${grass}<rect class="c" x="40" y="132" width="240" height="14" rx="4"/><path class="o" d="M70 146v24M250 146v24"/><circle class="s" cx="160" cy="58" r="14"/><path class="o" d="M160 72v32M160 104l-10 26M160 104l10 26M160 80l-20-20M160 80l20-20"/><path class="s" transform="translate(110 40)" d="${STAR}"/><path class="t" transform="translate(212 34) scale(.8)" d="${STAR}"/><path class="l" transform="translate(240 80) scale(.7)" d="${STAR}"/><text x="40" y="100">I can!</text>`},
+{p:2,name:'The Wheat Field Rule',tag:'Choose what is good, don’t wait for perfect',
+ story:'An old story tells of a teacher who took his students to a wheat field. "Walk through once," he said, "and pick the biggest ear of wheat you can find. But you can’t go back." The students kept thinking, "Maybe there’s a bigger one ahead!" They reached the end of the field with empty hands. The best choice is one that is good and right for you, not a perfect one you keep waiting for.',
+ idea:'When something is good and fits you, it’s okay to choose it. Waiting for "perfect" can leave you with nothing.',
+ tryit:'At the library, give yourself three minutes to pick a book, then enjoy your pick.',
+ talk:'Why is it sometimes hard to make a choice?',
+ svg:`${sky}${grass}${[30,70,110,150,190,230,270].map((x,i)=>`<path class="o" d="M${x} 190V${112+(i%3)*8}"/><ellipse class="s" cx="${x}" cy="${98+(i%3)*8}" rx="${7+(i%2)*2}" ry="17"/>`).join('')}<circle cx="190" cy="98" r="28" class="d"/><text x="200" y="52">this one is good!</text>`},
+{p:2,name:'The Daydream Joy Rule',tag:'A little imagination, a lot more joy',
+ story:'It was a rainy Saturday and Amira was bored. Then her grandpa said, "Let’s pretend the couch is a ship!" Soon the pillows were waves, the rug was an island, and the afternoon flew by. Nothing in the room had changed. Only the way they looked at it changed. Imagination can turn an ordinary day into an adventure.',
+ idea:'Happiness doesn’t always come from new things. It can come from how we use our imagination.',
+ tryit:'Find three animals hiding in the clouds, or make up a story about something in your room.',
+ talk:'What’s your favourite thing to pretend?',
+ svg:`${sky}${grass}<ellipse class="w" cx="104" cy="58" rx="40" ry="20"/><ellipse class="w" cx="86" cy="30" rx="7" ry="18"/><ellipse class="w" cx="104" cy="28" rx="7" ry="18"/><circle class="i nos" cx="90" cy="54" r="3"/><ellipse class="w" cx="230" cy="70" rx="46" ry="18"/><ellipse class="w" cx="252" cy="54" rx="22" ry="16"/><circle class="s" cx="290" cy="26" r="14"/><circle class="s" cx="110" cy="152" r="13"/><rect class="c" x="124" y="144" width="70" height="18" rx="9"/><path class="o" d="M194 150l26-4M194 158l26 4M150 144l-6-16"/>`},
+{p:3,name:'Kindness Comes Back',tag:'The Reciprocity Principle',
+ story:'Ben forgot his lunch, so Zara shared half of her sandwich with him. The next week, Zara couldn’t find her pencil case. Guess who lent her his favourite pencils? Ben! When someone is kind to us, we want to be kind back. It’s like shouting "Hello!" into a valley and hearing "Hello!" echo back.',
+ idea:'Kindness starts a circle of kindness. And true kindness doesn’t wait for something in return.',
+ tryit:'Do one kind thing today without being asked: hold a door, share a snack, help tidy up.',
+ talk:'When did someone’s kindness make your day better?',
+ svg:`${sky}${grass}<circle class="s" cx="80" cy="74" r="22"/><rect class="t" x="58" y="96" width="44" height="72" rx="14"/><circle class="c" cx="240" cy="74" r="22"/><rect class="l" x="218" y="96" width="44" height="72" rx="14"/><path class="o" d="M102 116h34M218 116h-34"/><rect class="s" x="138" y="102" width="44" height="28" rx="6"/><path class="c" transform="translate(130 50)" d="M0 12 L-12 0 A7 7 0 0 1 0-9 A7 7 0 0 1 12 0 Z"/><path class="c" transform="translate(160 36) scale(.8)" d="M0 12 L-12 0 A7 7 0 0 1 0-9 A7 7 0 0 1 12 0 Z"/><path class="c" transform="translate(190 50)" d="M0 12 L-12 0 A7 7 0 0 1 0-9 A7 7 0 0 1 12 0 Z"/>`},
+{p:3,name:'The First Impression Effect',tag:'Also called the Primacy Effect',
+ story:'On the first day of school, a new boy named Leo smiled, waved and said, "Hi, I’m Leo! Want to play?" Everyone liked him right away. Another new boy kept his head down and didn’t talk, so some kids thought he wasn’t friendly. Really, he was just shy. The first things we notice about someone stay in our minds for a long time.',
+ idea:'Make a warm first impression with a smile and a hello. And give others a second chance, because first impressions can be wrong.',
+ tryit:'Practise your hello: look at the person, smile, say your name, and ask one question.',
+ talk:'Did you ever change your mind about someone after you got to know them?',
+ svg:`${sky}${grass}<rect class="w" x="40" y="40" width="96" height="128" rx="6"/><circle class="i nos" cx="122" cy="108" r="4"/><circle class="s" cx="196" cy="88" r="24"/><circle class="i nos" cx="188" cy="84" r="3"/><circle class="i nos" cx="204" cy="84" r="3"/><path class="o" d="M186 96q10 8 20 0"/><rect class="c" x="174" y="112" width="44" height="56" rx="14"/><path class="o" d="M218 120l26-30"/><circle class="w" cx="248" cy="84" r="8"/><path class="w" d="M224 22h84v34h-56l-12 12v-12h-16z"/><text x="234" y="45">Hi, I’m Leo!</text>`},
+{p:3,name:'The Projection Effect',tag:'Not everyone thinks like me',
+ story:'Lena loves spicy peppers. At lunch she put some on her friend Kai’s plate to be nice. But Kai’s mouth was on fire! Lena thought, "I love them, so everyone must love them." That’s the Projection Effect: thinking other people feel what we feel. The fix is easy. Ask first!',
+ idea:'People are different, and that’s okay. Before you decide what someone likes or feels, ask them.',
+ tryit:'Ask a family member three questions about what they like. Did any answer surprise you?',
+ talk:'What’s something you love that someone in your family doesn’t?',
+ svg:`${sky}<rect class="m nos" x="0" y="160" width="320" height="40"/><ellipse class="w" cx="90" cy="150" rx="54" ry="14"/><path class="c" d="M70 146q4-22 14-24q-4 14 2 24z"/><path class="c" d="M92 146q4-22 14-24q-4 14 2 24z"/><circle class="s" cx="230" cy="88" r="28"/><circle class="i nos" cx="220" cy="82" r="3"/><circle class="i nos" cx="240" cy="82" r="3"/><ellipse class="i nos" cx="230" cy="100" rx="7" ry="5"/><path class="o" d="M262 64l14-8M264 80h16M262 96l14 8"/><path class="c" d="M226 106q4 10 8 0"/><text x="40" y="70">I love these!</text><text x="200" y="150">Too hot!</text>`},
+{p:3,name:'The Believe-in-You Effect',tag:'Also called the Pygmalion Effect',
+ story:'Long ago, scientists told a teacher that some students in her class were about to "bloom." She believed it, so she encouraged them more, smiled at them more and gave them more chances. By the end of the year, those students really did improve! The surprise? They had been picked at random. When someone believes in us, we often rise to meet it.',
+ idea:'When people believe in us, we try harder. When we believe in others, they grow too.',
+ tryit:'Tell a friend or sibling one specific thing they’re good at, like "You’re great at drawing animals."',
+ talk:'Who believes in you? How does that make you feel?',
+ svg:`${sky}<path class="c" d="M120 140h80l-10 44h-60z"/><path class="o" d="M160 140V80"/><ellipse class="l" cx="142" cy="96" rx="18" ry="9" transform="rotate(-25 142 96)"/><ellipse class="l" cx="178" cy="84" rx="18" ry="9" transform="rotate(25 178 84)"/><circle class="s" cx="160" cy="68" r="12"/><path class="t" d="M226 72h40l-6 34h-28z"/><path class="o" d="M226 80l-22-10M266 82q18 0 14 18"/><path class="d" d="M200 70q-12 6-20 4"/><path class="s" transform="translate(196 42) scale(.7)" d="${STAR}"/><text x="30" y="40">You can do it!</text>`},
+{p:4,name:'The Flea Effect',tag:'Don’t put a lid on yourself',
+ story:'Fleas can jump very high for their tiny size. In a famous story, a scientist put a flea in a jar with a lid. The flea jumped and bumped its head again and again, so it started jumping lower. When the lid came off, the flea still only jumped as high as the lid used to be. It had learned to stop trying. People can do this too. After a few bumps, we start to think, "This is as far as I can go."',
+ idea:'Bumps and mistakes don’t set your limit. Keep trying a little higher.',
+ tryit:'Pick something you gave up on. Try it once more today, one step further than last time.',
+ talk:'Is there something you think you "can’t" do? What if the lid is already off?',
+ svg:`${sky}<rect class="m nos" x="0" y="172" width="320" height="28"/><path class="k" style="fill-opacity:.35" d="M90 80h100v92H90z"/><path class="o" d="M90 80v92h100V80"/><rect class="w" x="196" y="40" width="70" height="14" rx="6" transform="rotate(14 230 47)"/><circle class="c" cx="120" cy="160" r="7"/><path class="d" d="M126 154q20-56 40 0"/><path class="o" d="M150 70V24M140 34l10-10 10 10"/><text x="20" y="40">You can go higher!</text>`},
+{p:4,name:'Buridan’s Donkey',tag:'Overthinking can leave you stuck',
+ story:'An old story tells of a hungry donkey standing exactly between two piles of hay. The left pile smelled fresher. The right pile was bigger. The donkey looked left… then right… then left again… and could not choose, so it ate nothing at all! Some choices just need you to pick one and go.',
+ idea:'When two choices are both good, any choice is better than no choice.',
+ tryit:'Stuck between two things? Flip a coin. Notice how you feel when it lands. That feeling tells you what you really wanted!',
+ talk:'What’s a choice that was hard for you to make?',
+ svg:`${sky}${grass}<path class="s" d="M14 168q30-70 70 0z"/><path class="s" d="M232 168q40-84 80 0z"/><ellipse class="m" cx="160" cy="124" rx="44" ry="22"/><path class="o" d="M134 142v26M186 142v26"/><path class="m" d="M190 116l18-36 18 6-12 34z"/><path class="m" d="M206 82l-4-18 10 14M218 84l4-18 2 18"/><circle class="i nos" cx="214" cy="96" r="3"/><text class="q" x="150" y="70">?</text><text class="q" x="120" y="86">?</text><path class="o" d="M110 52l-20 8M226 48l20 8"/>`},
+{p:4,name:'The Diderot Effect',tag:'Why more never feels like enough',
+ story:'About 250 years ago, a French writer named Denis Diderot got a beautiful new red robe. He loved it! But then his old chair looked shabby next to it, so he bought a new chair. Then his desk looked old, so he bought a new desk… Soon he had spent lots of money and felt less happy than before. One new thing made him want more and more.',
+ idea:'Getting one new thing can make us want more things. Being thankful for what we have helps us feel we have enough.',
+ tryit:'Before asking for something new, name three things you already have and love.',
+ talk:'Have you ever gotten something new and then wanted something else right away?',
+ grown:'A great first money lesson about needs, wants and contentment.',
+ svg:`${sky}<rect class="m nos" x="0" y="172" width="320" height="28"/><path class="c" d="M70 40h56l18 128H52z"/><path class="o" d="M98 40v128M78 40l20 30 20-30"/><path class="m" d="M200 92h60v40h-60zM200 132h60v10h-60zM204 142v28M256 142v28"/><path class="m" d="M200 60h60v32h-60z"/><path class="o" d="M214 70l10 14M240 66l-6 18"/><path class="s" transform="translate(150 50) scale(.8)" d="${STAR}"/><text x="186" y="40">I want new too…</text>`},
+{p:4,name:'The Locke Goal Rule',tag:'Small goals lead to big success',
+ story:'Imagine a basketball hoop as tall as a building. You’d never score, so you’d give up. Now imagine a hoop as low as your knees. Too easy, and boring! The best hoop is just a little higher than you can easily reach. A scientist named Edwin Locke found that goals work the same way: the best goals are a little hard but still possible. Ayo wanted to read a big chapter book, so he set a goal of five pages a night. He finished it in a month!',
+ idea:'Break big dreams into small, clear steps you can actually reach.',
+ tryit:'Write down one big goal. Then write the first tiny step you can do this week.',
+ talk:'What’s a big thing you’d love to do one day? What’s step one?',
+ svg:`${sky}<rect class="m nos" x="0" y="172" width="320" height="28"/><rect class="w" x="226" y="30" width="70" height="50" rx="4"/><path class="o" d="M261 80v92M244 70h34"/><path class="o" d="M248 70l4 18h18l4-18"/>${[0,1,2].map(i=>`<rect class="${['t','s','c'][i]}" x="${40+i*44}" y="${148-i*24}" width="44" height="${24+i*24}"/><text x="${56+i*44}" y="${142-i*24}">${i+1}</text>`).join('')}<circle class="c" cx="200" cy="58" r="13"/><path class="d" d="M140 70q40-50 60-14"/>`},
+{p:4,name:'The Marshmallow Test',tag:'Waiting now can mean more later',
+ story:'Scientists once gave children a marshmallow and said, "You can eat this now. Or, if you wait until I come back, you can have two." Some children ate it right away. Others sang songs, covered their eyes or played with their fingers to help them wait, and they got two! Learning to wait for something better is a superpower, and you can practise it.',
+ idea:'Sometimes waiting gets you something better. Saving money works the same way: wait, and it grows.',
+ tryit:'Get a jar for coins. Choose something you want, and save toward it instead of spending right away.',
+ talk:'What helps you wait when you really want something now?',
+ grown:'Pair this with a real savings jar to make the idea stick.',
+ svg:`${sky}<rect class="m nos" x="0" y="172" width="320" height="28"/><ellipse class="w" cx="70" cy="150" rx="46" ry="12"/><rect class="w" x="56" y="122" width="28" height="24" rx="8"/><circle class="s" cx="160" cy="80" r="34"/><path class="o" d="M160 80V58M160 80l16 8"/><ellipse class="w" cx="252" cy="150" rx="54" ry="12"/><rect class="w" x="222" y="122" width="28" height="24" rx="8"/><rect class="w" x="254" y="122" width="28" height="24" rx="8"/><path class="o" d="M110 140h22M196 140h18M206 132l8 8-8 8"/><text x="58" y="104">now</text><text x="234" y="104">later</text>`}
+];
+const parts=document.getElementById('parts'),book=document.getElementById('book');
+let n=0;
+PARTS.forEach(P=>{
+  const items=W.map((w,i)=>({...w,num:i+1})).filter(w=>w.p===P.n);
+  parts.insertAdjacentHTML('beforeend',`<div class="part-box" style="--pc:${P.c}"><h3><small>Part ${P.n}</small>${P.name}</h3><ul>${items.map(w=>`<li><a href="#w${w.num}"><b>${w.num}</b><span>${w.name}</span></a></li>`).join('')}</ul></div>`);
+  book.insertAdjacentHTML('beforeend',`<section class="divider" style="--pc:${P.c}"><div class="pn">${P.n}</div><div><h2>${P.name}</h2><p>${P.blurb}</p></div></section>`);
+  items.forEach(w=>{
+    book.insertAdjacentHTML('beforeend',`<article class="ch" id="w${w.num}" style="--pc:${P.c};--pc2:${P.c2}">
+      <div class="ch-art"><svg class="art" viewBox="0 0 320 200" role="img" aria-label="Illustration for ${w.name}">${w.svg}</svg>
+        <div class="ch-num"><span>${w.num}</span><em>Part ${P.n} · ${P.name}</em></div></div>
+      <div class="ch-body"><h3>${w.name}</h3><p class="tag">${w.tag}</p><p class="story">${w.story}</p>
+        <div class="boxes"><div class="box idea"><b>The big idea</b><p>${w.idea}</p></div>
+        <div class="box try"><b>Try it</b><p>${w.tryit}</p></div>
+        <div class="box talk"><b>Talk about it</b><p>${w.talk}</p></div></div>
+        ${w.grown?`<p class="grown">For grown-ups: ${w.grown}</p>`:''}</div></article>`);
+  });
+});
+</script>
