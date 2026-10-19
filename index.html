@@ -5,6 +5,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap">
 
 <style>
+/* =====================================================================
+   DESIGN TOKENS
+   ===================================================================== */
 :root {
   --bg: #f2f6fb;
   --surface: #ffffff;
@@ -15,25 +18,11 @@
   --hero-bg: #0b3d5e;
   --hero-fg: #ffffff;
   --hero-sub: #a8cce0;
-
-  --c-lang: #1d6ef5;
-  --c-math: #0a8f6c;
-  --c-sci:  #c2410c;
-  --c-ss:   #7c3aed;
-  --c-arts: #db2777;
-  --c-health: #0891b2;
-  --c-french: #9333ea;
-  --c-quran: #1a8a4a;
-  --c-yoruba: #d97706;
-  --c-skills: #0ea5e9;
-  --c-add:  #94a3b8;
-
   --pill-radius: 5px;
   --card-radius: 10px;
   --f-display: 'Fredoka', 'Nunito', sans-serif;
   --f-body: 'Nunito', sans-serif;
 }
-
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0c1724; --surface: #162032; --fg: #e2ecf5;
@@ -50,22 +39,16 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
+body { font-family: var(--f-body); background: var(--bg); color: var(--fg); line-height: 1.5; }
 
-body {
-  font-family: var(--f-body);
-  background: var(--bg);
-  color: var(--fg);
-  line-height: 1.5;
-}
-
+/* =====================================================================
+   HERO
+   ===================================================================== */
 .hero {
   background: var(--hero-bg);
-  padding: 40px 24px 44px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+  padding: 36px 24px 40px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
 }
 .hero-eyebrow {
   font-size: 11px; font-weight: 700; letter-spacing: .12em;
@@ -73,39 +56,64 @@ body {
 }
 .hero h1 {
   font-family: var(--f-display);
-  font-size: clamp(32px, 6vw, 54px);
+  font-size: clamp(28px, 5vw, 48px);
   font-weight: 700; color: var(--hero-fg);
   line-height: 1.1; letter-spacing: -.01em;
 }
 .hero h1 span { color: #5dcfff; }
 .hero-meta { font-size: 14px; color: var(--hero-sub); margin-top: 10px; }
-.hero-stats { display: flex; gap: 20px; flex-wrap: wrap; }
-.stat { text-align: right; }
-.stat-num { font-family: var(--f-display); font-size: 28px; font-weight: 700; color: var(--hero-fg); line-height: 1; }
-.stat-label { font-size: 11px; color: var(--hero-sub); letter-spacing: .04em; text-transform: uppercase; }
 
-.section {
-  padding: 44px 24px;
-  max-width: 1080px;
-  margin: 0 auto;
+/* =====================================================================
+   BREADCRUMB
+   ===================================================================== */
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 14px 24px; border-bottom: 1px solid var(--border);
+  font-size: 13px; background: var(--surface);
+  max-width: 100%;
 }
-.section + .section { padding-top: 8px; }
-.section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-.section-title { font-family: var(--f-display); font-size: 22px; font-weight: 700; }
-.section-sub { font-size: 13px; color: var(--fg2); }
+.breadcrumb a, .breadcrumb button.bc-btn {
+  color: var(--fg2); text-decoration: none; background: none;
+  border: none; font: inherit; cursor: pointer; padding: 0;
+  transition: color .15s;
+}
+.breadcrumb a:hover, .breadcrumb button.bc-btn:hover { color: var(--fg); }
+.breadcrumb .bc-sep { color: var(--fg3); user-select: none; }
+.breadcrumb .bc-current { color: var(--fg); font-weight: 600; }
 
-.grade-group { margin-bottom: 28px; }
-.grade-label {
+/* =====================================================================
+   MAIN CONTENT AREA
+   ===================================================================== */
+.view { padding: 36px 24px; max-width: 1080px; margin: 0 auto; }
+.view-title {
+  font-family: var(--f-display); font-size: 26px; font-weight: 700;
+  margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+}
+.view-desc { font-size: 14px; color: var(--fg2); margin-bottom: 32px; }
+
+/* section divider inside a view */
+.group-header {
   font-size: 11px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--fg3); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
+  text-transform: uppercase; color: var(--fg3); margin-bottom: 12px;
+  margin-top: 28px; display: flex; align-items: center; gap: 8px;
 }
-.grade-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.group-header:first-of-type { margin-top: 0; }
+.group-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+/* =====================================================================
+   CARD GRID
+   ===================================================================== */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px;
+}
+
+/* Category cards on home screen — wider + coloured left bar */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
 }
 
 .card {
@@ -117,52 +125,73 @@ body {
   position: relative; overflow: hidden;
   transition: box-shadow .15s, transform .15s;
   text-decoration: none; color: inherit;
+  cursor: pointer;
 }
 .card::before {
   content: ''; position: absolute; inset: 0 auto 0 0;
   width: 4px; background: var(--card-color, #ccc);
   border-radius: var(--card-radius) 0 0 var(--card-radius);
 }
-.card[href]:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); transform: translateY(-2px); }
+.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); transform: translateY(-2px); }
 .card.soon { opacity: .6; cursor: default; border-style: dashed; }
 .card.soon::before { opacity: .4; }
-.card.add {
-  border-style: dashed; border-color: var(--fg3);
-  justify-content: center; align-items: center; text-align: center;
-  min-height: 100px; cursor: pointer; gap: 6px;
-}
-.card.add::before { display: none; }
-.card.add:hover { border-color: var(--fg2); background: var(--bg); }
+.card.soon:hover { box-shadow: none; transform: none; }
 
-.card-icon { font-size: 26px; line-height: 1; }
+/* Category card extras */
+.card-cat {
+  padding: 20px 22px;
+}
+.card-cat-icon { font-size: 32px; line-height: 1; margin-bottom: 4px; }
+.card-cat-name { font-family: var(--f-display); font-size: 19px; font-weight: 700; }
+.card-cat-desc { font-size: 12px; color: var(--fg2); flex: 1; }
+.card-cat-badge {
+  font-size: 11px; font-weight: 700; padding: 2px 8px;
+  border-radius: var(--pill-radius); margin-top: 4px;
+  display: inline-block; width: fit-content;
+}
+.badge-active { background: #dcfce7; color: #15803d; }
+.badge-soon { background: var(--bg); color: var(--fg3); border: 1px solid var(--border); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .badge-active { background: #052e16; color: #4ade80; }
+}
+:root[data-theme="dark"] .badge-active { background: #052e16; color: #4ade80; }
+
+/* Subject card parts */
+.card-icon { font-size: 24px; line-height: 1; }
 .card-subject { font-family: var(--f-display); font-size: 16px; font-weight: 600; line-height: 1.2; }
 .card-desc { font-size: 12px; color: var(--fg2); line-height: 1.5; flex: 1; }
 .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
 
+/* Grade / unit card parts */
+.card-unit-label { font-family: var(--f-display); font-size: 16px; font-weight: 600; }
+.card-unit-sub { font-size: 12px; color: var(--fg2); flex: 1; }
+.card-unit-arrow { color: var(--fg3); font-size: 16px; margin-left: auto; }
+
+/* Pills */
 .pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: var(--pill-radius); }
 .pill-ready { background: #dcfce7; color: #15803d; }
-.pill-soon { background: var(--bg); color: var(--fg3); border: 1px solid var(--border); }
-.pill-new { background: #fef9c3; color: #854d0e; }
-
+.pill-soon  { background: var(--bg); color: var(--fg3); border: 1px solid var(--border); }
+.pill-wip   { background: #fef9c3; color: #854d0e; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .pill-ready { background: #052e16; color: #4ade80; }
-  :root:not([data-theme="light"]) .pill-new { background: #1c1507; color: #fbbf24; }
+  :root:not([data-theme="light"]) .pill-wip   { background: #1c1507; color: #fbbf24; }
 }
 :root[data-theme="dark"] .pill-ready { background: #052e16; color: #4ade80; }
-:root[data-theme="dark"] .pill-new { background: #1c1507; color: #fbbf24; }
+:root[data-theme="dark"] .pill-wip   { background: #1c1507; color: #fbbf24; }
 
-.add-icon { font-size: 28px; color: var(--fg3); line-height: 1; }
-.add-label { font-size: 13px; font-weight: 600; color: var(--fg2); }
-.add-hint { font-size: 11px; color: var(--fg3); }
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 60px 24px; color: var(--fg3);
+}
+.empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+.empty-state small { font-size: 13px; color: var(--fg3); margin-top: 6px; display: block; }
 
-.divider { height: 1px; background: var(--border); margin: 0 24px; }
-
+/* Footer */
 footer {
-  padding: 28px 24px;
-  border-top: 1px solid var(--border);
+  padding: 24px; border-top: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px;
-  max-width: 1080px; margin: 0 auto;
+  flex-wrap: wrap; gap: 12px; max-width: 1080px; margin: 0 auto;
 }
 footer p { font-size: 12px; color: var(--fg3); }
 .theme-toggle {
@@ -173,216 +202,462 @@ footer p { font-size: 12px; color: var(--fg3); }
 .theme-toggle:hover { background: var(--bg); }
 
 @media (max-width: 500px) {
-  .hero { padding: 28px 16px 32px; }
-  .stat { text-align: left; }
+  .hero { padding: 24px 16px 28px; }
+  .cat-grid { grid-template-columns: 1fr 1fr; }
   .card-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
 
-<!-- Hero -->
+<!-- ===================================================== HEADER -->
 <header class="hero">
   <div class="hero-text">
     <div class="hero-eyebrow">Hassan Family · Home Learning</div>
     <h1>Kids <span>Learning</span><br>Portal</h1>
-    <p class="hero-meta">Ontario Curriculum · Languages · Faith · Culture</p>
-  </div>
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">7</div>
-      <div class="stat-label">Grade 1 Guides</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">1,222+</div>
-      <div class="stat-label">Practice Questions</div>
-    </div>
+    <p class="hero-meta">Ontario Curriculum · Islam · Yoruba · Finance · More</p>
   </div>
 </header>
 
-<!-- Ontario Curriculum -->
-<div class="section">
-  <div class="section-head">
-    <h2 class="section-title">Ontario Curriculum</h2>
-    <span class="section-sub">Official grade-by-grade guides · All strands included</span>
-  </div>
+<!-- ===================================================== BREADCRUMB -->
+<nav class="breadcrumb" id="breadcrumb" aria-label="breadcrumb"></nav>
 
-  <!-- Grade 1 -->
-  <div class="grade-group">
-    <div class="grade-label">Grade 1</div>
-    <div class="card-grid">
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/language-grade1-guide.html" style="--card-color:var(--c-lang)">
-        <div class="card-icon">🔤</div>
-        <div class="card-subject">Language</div>
-        <div class="card-desc">Listening, Speaking, Reading, Writing — all strands A–F</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/mathematics-grade1-guide.html" style="--card-color:var(--c-math)">
-        <div class="card-icon">🔢</div>
-        <div class="card-subject">Mathematics</div>
-        <div class="card-desc">Number, Algebra, Data, Spatial, Financial — all strands A–F</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/Grade%201%20Science.html" style="--card-color:var(--c-sci)">
-        <div class="card-icon">🔬</div>
-        <div class="card-subject">Science</div>
-        <div class="card-desc">Life Systems, Matter &amp; Energy, Earth &amp; Space Systems</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/social-studies-grade1-guide.html" style="--card-color:var(--c-ss)">
-        <div class="card-icon">🌍</div>
-        <div class="card-subject">Social Studies</div>
-        <div class="card-desc">People, Places &amp; Communities</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/arts-grade1-guide.html" style="--card-color:var(--c-arts)">
-        <div class="card-icon">🎨</div>
-        <div class="card-subject">The Arts</div>
-        <div class="card-desc">Visual Arts, Music, Drama, Dance</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/health-physical-education-grade1-guide.html" style="--card-color:var(--c-health)">
-        <div class="card-icon">🏃</div>
-        <div class="card-subject">Health &amp; PE</div>
-        <div class="card-desc">Active Living, Movement, Healthy Living</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-      <a class="card" href="Ontario-curriculum/Elementary/Grade1/french-grade1-guide.html" style="--card-color:var(--c-french)">
-        <div class="card-icon">🇫🇷</div>
-        <div class="card-subject">French</div>
-        <div class="card-desc">Listening, Speaking, Reading, Writing en Français</div>
-        <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
-      </a>
-    </div>
-  </div>
+<!-- ===================================================== MAIN VIEW -->
+<main id="main-view"></main>
 
-  <!-- Grade 2 -->
-  <div class="grade-group">
-    <div class="grade-label">Grade 2</div>
-    <div class="card-grid">
-      <div class="card soon" style="--card-color:var(--c-lang)">
-        <div class="card-icon">🔤</div>
-        <div class="card-subject">Language</div>
-        <div class="card-desc">Listening, Speaking, Reading, Writing — all strands A–F</div>
-        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-      </div>
-      <div class="card soon" style="--card-color:var(--c-math)">
-        <div class="card-icon">🔢</div>
-        <div class="card-subject">Mathematics</div>
-        <div class="card-desc">Strands A–F · SEL, Number, Algebra, Data, Spatial, Financial</div>
-        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-      </div>
-      <div class="card soon" style="--card-color:var(--c-sci)">
-        <div class="card-icon">🔬</div>
-        <div class="card-subject">Science</div>
-        <div class="card-desc">Life, Matter &amp; Energy, Earth &amp; Space Systems</div>
-        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-      </div>
-      <div class="card soon" style="--card-color:var(--c-ss)">
-        <div class="card-icon">🌍</div>
-        <div class="card-subject">Social Studies</div>
-        <div class="card-desc">Changing Family &amp; Community Traditions</div>
-        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-      </div>
-      <div class="card add" onclick="showAddHint('g2')">
-        <div class="add-icon">＋</div>
-        <div class="add-label">Add a subject</div>
-        <div class="add-hint" id="g2-hint">Ask Claude to build it</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Grade 3+ -->
-  <div class="grade-group">
-    <div class="grade-label">Grade 3 &amp; Beyond</div>
-    <div class="card-grid">
-      <div class="card soon" style="--card-color:var(--c-lang)">
-        <div class="card-icon">🔤</div>
-        <div class="card-subject">Language · G3</div>
-        <div class="card-desc">All strands — build when ready</div>
-        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-      </div>
-      <div class="card soon" style="--card-color:var(--c-math)">
-        <div class="card-icon">🔢</div>
-        <div class="card-subject">Mathematics · G3</div>
-        <div class="card-desc">All strands — build when ready</div>
-        <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-      </div>
-      <div class="card add" onclick="showAddHint('ontario')">
-        <div class="add-icon">＋</div>
-        <div class="add-label">Add a subject</div>
-        <div class="add-hint" id="ontario-hint">Ask Claude to build it</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- Random Teachings -->
-<div class="section">
-  <div class="section-head">
-    <h2 class="section-title">Random Teachings</h2>
-    <span class="section-sub">Language, faith, culture &amp; life skills — beyond the curriculum</span>
-  </div>
-
-  <div class="card-grid">
-    <div class="card soon" style="--card-color:var(--c-quran)">
-      <div class="card-icon">📖</div>
-      <div class="card-subject">Quran &amp; Arabic</div>
-      <div class="card-desc">Arabic letters → words → Tajwid rules</div>
-      <div class="card-footer"><span class="pill pill-new">🔨 In progress</span></div>
-    </div>
-    <div class="card soon" style="--card-color:var(--c-yoruba)">
-      <div class="card-icon">🦊</div>
-      <div class="card-subject">Yoruba Language</div>
-      <div class="card-desc">Conversation, stories &amp; culture</div>
-      <div class="card-footer"><span class="pill pill-new">🔨 In progress</span></div>
-    </div>
-    <div class="card soon" style="--card-color:var(--c-french)">
-      <div class="card-icon">🇫🇷</div>
-      <div class="card-subject">French (Extra)</div>
-      <div class="card-desc">Vocabulary, phrases &amp; listening beyond school</div>
-      <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-    </div>
-    <div class="card soon" style="--card-color:var(--c-skills)">
-      <div class="card-icon">💡</div>
-      <div class="card-subject">Life Wisdom</div>
-      <div class="card-desc">Character, growth mindset, resilience &amp; values</div>
-      <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-    </div>
-    <div class="card soon" style="--card-color:#b45309">
-      <div class="card-icon">💰</div>
-      <div class="card-subject">Money for Kids</div>
-      <div class="card-desc">Saving, giving, earning · financial literacy</div>
-      <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
-    </div>
-    <div class="card add" onclick="showAddHint('random')">
-      <div class="add-icon">＋</div>
-      <div class="add-label">Add a topic</div>
-      <div class="add-hint" id="random-hint">Ask Claude to build it</div>
-    </div>
-  </div>
-</div>
-
-<!-- Footer -->
+<!-- ===================================================== FOOTER -->
 <footer>
   <p>Hassan Family · Kids Learning Portal · Built with Claude · Hosted on Cloudflare</p>
   <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
 </footer>
 
+
 <script>
+/* =================================================================
+   ✏️  CONTENT DATA
+   How to add things:
+   ─────────────────────────────────────────────────────────────────
+   ADD A NEW TOP-LEVEL CATEGORY:
+     Push a new object into SITE array.
+
+   ADD A NEW SECTION INSIDE A CATEGORY (e.g. "High School"):
+     Push into that category's  groups  array.
+
+   ADD A NEW GRADE / UNIT (e.g. "Grade 4"):
+     Push into that section's  units  array.
+
+   ADD A NEW SUBJECT (e.g. a new HTML file you built):
+     Push into that unit's  items  array.
+     Set  status: 'ready'  and  file: 'your-file.html'  when it's live.
+     Leave  file  out and set  status: 'soon'  while still building.
+
+   COLORS  — use any CSS color value for  color  on a category.
+   EMOJI   — any single emoji works for  icon.
+   ================================================================= */
+
+const SITE = [
+
+  /* ──────────── ONTARIO CURRICULUM ──────────────────────────── */
+  {
+    id: 'ontario',
+    name: 'Ontario Curriculum',
+    icon: '🏫',
+    color: '#1d6ef5',
+    desc: 'Ministry of Education curriculum guides — all subjects, all grades',
+    groups: [
+      {
+        name: 'Elementary (JK – Grade 8)',
+        units: [
+          { name: 'JK', desc: 'Junior Kindergarten', items: [] },
+          { name: 'SK', desc: 'Senior Kindergarten', items: [] },
+          {
+            name: 'Grade 1',
+            desc: '7 subjects ready',
+            path: 'Ontario-curriculum/Elementary/Grade1',
+            items: [
+              { name: 'Language',      icon: '🔤', color: '#1d6ef5', desc: 'Listening, Speaking, Reading, Writing — strands A–F', file: 'language-grade1-guide.html',              status: 'ready' },
+              { name: 'Mathematics',   icon: '🔢', color: '#0a8f6c', desc: 'Number, Algebra, Data, Spatial, Financial — strands A–F', file: 'mathematics.html',                   status: 'ready' },
+              { name: 'Science',       icon: '🔬', color: '#c2410c', desc: 'Life Systems, Matter & Energy, Earth & Space Systems',     file: 'Grade%201%20Science.html',            status: 'ready' },
+              { name: 'Social Studies',icon: '🌏', color: '#7c3aed', desc: 'People, Places & Communities',                             file: 'social-studies-grade1-guide.html',    status: 'ready' },
+              { name: 'The Arts',      icon: '🎨', color: '#db2777', desc: 'Visual Arts, Music, Drama, Dance',                         file: 'arts-grade1-guide.html',              status: 'ready' },
+              { name: 'Health & PE',   icon: '🏃', color: '#0891b2', desc: 'Active Living, Movement, Healthy Living',                  file: 'health-physical-education-grade1-guide.html', status: 'ready' },
+              { name: 'French',        icon: '🇫🇷', color: '#9333ea', desc: 'Listening, Speaking, Reading, Writing en Français',        file: 'french-grade1-guide.html',            status: 'ready' },
+            ]
+          },
+          { name: 'Grade 2', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade2', items: [] },
+          { name: 'Grade 3', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade3', items: [] },
+          { name: 'Grade 4', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade4', items: [] },
+          { name: 'Grade 5', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade5', items: [] },
+          { name: 'Grade 6', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade6', items: [] },
+          { name: 'Grade 7', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade7', items: [] },
+          { name: 'Grade 8', desc: 'Coming soon', path: 'Ontario-curriculum/Elementary/Grade8', items: [] },
+        ]
+      },
+      {
+        name: 'High School (Grade 9 – 12)',
+        units: [
+          { name: 'Grade 9',  desc: 'Coming soon', items: [] },
+          { name: 'Grade 10', desc: 'Coming soon', items: [] },
+          { name: 'Grade 11', desc: 'Coming soon', items: [] },
+          { name: 'Grade 12', desc: 'Coming soon', items: [] },
+        ]
+      },
+      {
+        name: 'University',
+        units: []
+      }
+    ]
+  },
+
+  /* ──────────── ISLAM ────────────────────────────────────────── */
+  {
+    id: 'islam',
+    name: 'Islam',
+    icon: '🌙',
+    color: '#059669',
+    desc: 'Quran, Islamic studies, Arabic & character building',
+    groups: [
+      {
+        name: 'Quran',
+        units: [
+          { name: 'Iqra — Beginner',      desc: 'Letters & basic reading', items: [] },
+          { name: 'Iqra — Intermediate',  desc: 'Words & short surahs',    items: [] },
+          { name: 'Tajwid',               desc: 'Proper recitation rules', items: [] },
+          { name: 'Memorization (Hifz)',  desc: 'Surah memorization',      items: [] },
+        ]
+      },
+      {
+        name: 'Islamic Studies',
+        units: [
+          { name: 'Pillars of Islam',  desc: 'The five pillars',          items: [] },
+          { name: 'Seerah',            desc: 'Life of the Prophet ﷺ',     items: [] },
+          { name: 'Adab & Akhlaq',     desc: 'Character & manners',       items: [] },
+          { name: 'Du\'a & Dhikr',     desc: 'Supplications & remembrance', items: [] },
+        ]
+      }
+    ]
+  },
+
+  /* ──────────── YORUBA ───────────────────────────────────────── */
+  {
+    id: 'yoruba',
+    name: 'Yoruba',
+    icon: '🌍',
+    color: '#d97706',
+    desc: 'Yoruba language, proverbs, stories & culture',
+    groups: [
+      {
+        name: 'Language Learning',
+        units: [
+          { name: 'Greetings & Basics',  desc: 'Hello, please, thank you', items: [] },
+          { name: 'Numbers & Counting',  desc: '1–100 in Yoruba',          items: [] },
+          { name: 'Colours & Objects',   desc: 'Everyday vocabulary',      items: [] },
+          { name: 'Family & People',     desc: 'Ìdílé — family words',     items: [] },
+          { name: 'Conversation',        desc: 'Short dialogues',          items: [] },
+        ]
+      },
+      {
+        name: 'Culture & Stories',
+        units: [
+          { name: 'Ìjàpá Stories',    desc: 'Tortoise folk tales',   items: [] },
+          { name: 'Proverbs (Òwe)',   desc: 'Yoruba wisdom sayings', items: [] },
+        ]
+      }
+    ]
+  },
+
+  /* ──────────── FINANCE ──────────────────────────────────────── */
+  {
+    id: 'finance',
+    name: 'Finance',
+    icon: '💰',
+    color: '#7c3aed',
+    desc: 'Money skills, saving, budgeting & financial literacy for kids',
+    groups: [
+      {
+        name: 'Kids Finance',
+        units: [
+          { name: 'Money Basics',       desc: 'Coins, bills & value',   items: [] },
+          { name: 'Saving & Goals',     desc: 'Piggy banks & planning', items: [] },
+          { name: 'Earning & Spending', desc: 'Work, choices & needs',  items: [] },
+          { name: 'Giving (Sadaqah)',   desc: 'Charity & generosity',   items: [] },
+        ]
+      }
+    ]
+  },
+
+  /* ──────────── SUPPLEMENTARY ────────────────────────────────── */
+  {
+    id: 'supplementary',
+    name: 'Supplementary',
+    icon: '⭐',
+    color: '#0891b2',
+    desc: 'Life skills, enrichment activities & extra learning beyond the curriculum',
+    groups: [
+      {
+        name: 'Life Skills & Character',
+        units: [
+          { name: 'Life Wisdom',        desc: 'Values & principles',      items: [] },
+          { name: 'Critical Thinking',  desc: 'Problem-solving skills',   items: [] },
+          { name: 'Study Skills',       desc: 'How to learn & focus',     items: [] },
+        ]
+      },
+      {
+        name: 'Creative',
+        units: [
+          { name: 'Art Projects',  desc: 'Hands-on art activities', items: [] },
+          { name: 'Science Fun',   desc: 'Experiments at home',     items: [] },
+        ]
+      }
+    ]
+  },
+
+  /* ──────────── LIBRARY ──────────────────────────────────────── */
+  {
+    id: 'library',
+    name: 'Library',
+    icon: '📚',
+    color: '#64748b',
+    desc: 'Books, stories, reading logs & reference materials',
+    groups: [
+      {
+        name: 'Reading',
+        units: [
+          { name: 'Story Books',    desc: 'Picture books & early readers', items: [] },
+          { name: 'Reading Log',    desc: 'Track books read',              items: [] },
+        ]
+      }
+    ]
+  },
+
+];
+
+/* =================================================================
+   NAVIGATION ENGINE  (no URL changes needed — simple stack-based)
+   ================================================================= */
+// navStack: array of breadcrumb levels
+// Each level: { label, action } where action() re-renders that level
+let navStack = [];
+
+function goHome() {
+  navStack = [];
+  renderHome();
+}
+
+function goCategory(cat) {
+  navStack = [
+    { label: 'Home', action: goHome },
+    { label: cat.name, action: () => goCategory(cat) },
+  ];
+  renderCategory(cat);
+}
+
+function goUnit(cat, group, unit) {
+  navStack = [
+    { label: 'Home', action: goHome },
+    { label: cat.name, action: () => goCategory(cat) },
+    { label: group.name, action: () => goCategory(cat) }, // back to category, scroll to group
+    { label: unit.name, action: () => goUnit(cat, group, unit) },
+  ];
+  renderUnit(cat, group, unit);
+}
+
+/* =================================================================
+   BREADCRUMB
+   ================================================================= */
+function updateBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  if (navStack.length === 0) { bc.innerHTML = '<span class="bc-current">Home</span>'; return; }
+
+  let html = '<button class="bc-btn" onclick="goHome()">Home</button>';
+  navStack.forEach((item, i) => {
+    html += '<span class="bc-sep">›</span>';
+    if (i === navStack.length - 1) {
+      html += `<span class="bc-current">${item.label}</span>`;
+    } else {
+      html += `<button class="bc-btn" onclick="navStack[${i}].action()">${item.label}</button>`;
+    }
+  });
+  bc.innerHTML = html;
+}
+
+/* =================================================================
+   RENDER: HOME — all categories
+   ================================================================= */
+function renderHome() {
+  updateBreadcrumb();
+  const main = document.getElementById('main-view');
+
+  const totalReady = SITE.reduce((sum, cat) =>
+    sum + cat.groups.reduce((s2, g) =>
+      s2 + g.units.reduce((s3, u) =>
+        s3 + (u.items || []).filter(it => it.status === 'ready').length, 0), 0), 0);
+
+  let html = `<div class="view">
+    <div class="view-title">📂 All Categories</div>
+    <div class="view-desc">${SITE.length} categories · ${totalReady} guides ready</div>
+    <div class="cat-grid">`;
+
+  SITE.forEach(cat => {
+    const readyCount = cat.groups.reduce((s, g) =>
+      s + g.units.reduce((s2, u) =>
+        s2 + (u.items || []).filter(it => it.status === 'ready').length, 0), 0);
+
+    const badgeClass = readyCount > 0 ? 'badge-active' : 'badge-soon';
+    const badgeText  = readyCount > 0 ? `${readyCount} ready` : 'Coming soon';
+
+    html += `
+      <div class="card card-cat" style="--card-color:${cat.color}" onclick="goCategory(SITE[${SITE.indexOf(cat)}])">
+        <div class="card-cat-icon">${cat.icon}</div>
+        <div class="card-cat-name">${cat.name}</div>
+        <div class="card-cat-desc">${cat.desc}</div>
+        <span class="card-cat-badge ${badgeClass}">${badgeText}</span>
+      </div>`;
+  });
+
+  html += `</div></div>`;
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =================================================================
+   RENDER: CATEGORY — list of groups + their unit cards
+   ================================================================= */
+function renderCategory(cat) {
+  updateBreadcrumb();
+  const main = document.getElementById('main-view');
+  let html = `<div class="view">
+    <div class="view-title">${cat.icon} ${cat.name}</div>
+    <div class="view-desc">${cat.desc}</div>`;
+
+  if (cat.groups.length === 0) {
+    html += emptyState('No content yet', 'Ask Claude to build the first guide for this category.');
+  } else {
+    cat.groups.forEach(group => {
+      html += `<div class="group-header">${group.name}</div>`;
+
+      if (group.units.length === 0) {
+        html += `<p style="font-size:13px;color:var(--fg3);margin-bottom:16px;">Coming soon</p>`;
+      } else {
+        html += `<div class="card-grid">`;
+        group.units.forEach(unit => {
+          const readyCount = (unit.items || []).filter(it => it.status === 'ready').length;
+          const totalItems = (unit.items || []).length;
+          const hasItems   = totalItems > 0;
+          const pillClass  = readyCount > 0 ? 'pill-ready' : 'pill-soon';
+          const pillText   = readyCount > 0 ? `${readyCount} / ${totalItems} ready` : 'Coming soon';
+          const clickable  = hasItems;
+
+          if (clickable) {
+            const catIdx   = SITE.indexOf(cat);
+            const groupIdx = cat.groups.indexOf(group);
+            const unitIdx  = group.units.indexOf(unit);
+            html += `
+              <div class="card" style="--card-color:${cat.color}"
+                   onclick="goUnit(SITE[${catIdx}], SITE[${catIdx}].groups[${groupIdx}], SITE[${catIdx}].groups[${groupIdx}].units[${unitIdx}])">
+                <div class="card-unit-label">${unit.name}</div>
+                <div class="card-unit-sub">${unit.desc || ''}</div>
+                <div class="card-footer">
+                  <span class="pill ${pillClass}">${pillText}</span>
+                  <span class="card-unit-arrow">›</span>
+                </div>
+              </div>`;
+          } else {
+            html += `
+              <div class="card soon" style="--card-color:${cat.color}">
+                <div class="card-unit-label">${unit.name}</div>
+                <div class="card-unit-sub">${unit.desc || ''}</div>
+                <div class="card-footer">
+                  <span class="pill ${pillClass}">${pillText}</span>
+                </div>
+              </div>`;
+          }
+        });
+        html += `</div>`;
+      }
+    });
+  }
+
+  html += `</div>`;
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =================================================================
+   RENDER: UNIT — subject / item cards
+   ================================================================= */
+function renderUnit(cat, group, unit) {
+  updateBreadcrumb();
+  const main = document.getElementById('main-view');
+  let html = `<div class="view">
+    <div class="view-title">${cat.icon} ${unit.name}</div>
+    <div class="view-desc">${cat.name} · ${group.name}</div>`;
+
+  const items = unit.items || [];
+  if (items.length === 0) {
+    html += emptyState('No guides yet', 'Ask Claude to build the first guide for this section.');
+  } else {
+    html += `<div class="card-grid">`;
+    items.forEach(item => {
+      const filePath = unit.path ? `${unit.path}/${item.file}` : item.file;
+      if (item.status === 'ready' && item.file) {
+        html += `
+          <a class="card" href="${filePath}" style="--card-color:${item.color || cat.color}">
+            <div class="card-icon">${item.icon || '📄'}</div>
+            <div class="card-subject">${item.name}</div>
+            <div class="card-desc">${item.desc || ''}</div>
+            <div class="card-footer"><span class="pill pill-ready">✓ Ready</span></div>
+          </a>`;
+      } else if (item.status === 'wip') {
+        html += `
+          <div class="card soon" style="--card-color:${item.color || cat.color}">
+            <div class="card-icon">${item.icon || '📄'}</div>
+            <div class="card-subject">${item.name}</div>
+            <div class="card-desc">${item.desc || ''}</div>
+            <div class="card-footer"><span class="pill pill-wip">🔨 In progress</span></div>
+          </div>`;
+      } else {
+        html += `
+          <div class="card soon" style="--card-color:${item.color || cat.color}">
+            <div class="card-icon">${item.icon || '📄'}</div>
+            <div class="card-subject">${item.name}</div>
+            <div class="card-desc">${item.desc || ''}</div>
+            <div class="card-footer"><span class="pill pill-soon">Coming soon</span></div>
+          </div>`;
+      }
+    });
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =================================================================
+   HELPER: empty state block
+   ================================================================= */
+function emptyState(title, hint) {
+  return `<div class="empty-state">
+    <div class="es-icon">🚧</div>
+    <p><strong>${title}</strong></p>
+    <small>${hint}</small>
+  </div>`;
+}
+
+/* =================================================================
+   THEME TOGGLE
+   ================================================================= */
 function toggleTheme() {
   const r = document.documentElement;
   r.setAttribute('data-theme', r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   try { localStorage.setItem('portal-theme', r.getAttribute('data-theme')); } catch(e){}
 }
-function showAddHint(section) {
-  const el = document.getElementById(section + '-hint');
-  if (!el) return;
-  el.textContent = 'Say: "Build a [topic] learning guide"';
-  setTimeout(() => { el.textContent = 'Ask Claude to build it'; }, 3000);
-}
 try {
   const t = localStorage.getItem('portal-theme');
   if (t) document.documentElement.setAttribute('data-theme', t);
 } catch(e){}
+
+/* =================================================================
+   BOOT
+   ================================================================= */
+goHome();
 </script>
