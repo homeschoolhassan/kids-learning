@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Compare Bars</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centered workbook column; a numbered path of stations from the basics up to word problems. Blue = matching part, orange = the difference. */
+:root{
+  --bg:#EEF3F8; --surface:#FFFFFF; --ink:#1B2332; --muted:#566176; --line:#D5DDE8;
+  --cube:#2F78D0; --cube-hi:#5C9BE6; --extra:#EE8420; --extra-hi:#F7A657;
+  --mark:#FFE58A; --mark-ink:#1B2332;
+  --good:#22895A; --good-bg:#E2F5EB; --bad:#C23B3B; --bad-bg:#FBE7E7;
+  --chip:#E4EBF4; --on-cube:#FFFFFF;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Lexend",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121822; --surface:#1B2330; --ink:#E7ECF4; --muted:#9BA7BA; --line:#2C3747;
+  --cube:#4C8FE0; --cube-hi:#78ACEC; --extra:#F0952F; --extra-hi:#F8B46A;
+  --mark:#6B5A12; --mark-ink:#FFF4C8;
+  --good:#4FC48B; --good-bg:#16352A; --bad:#F07A7A; --bad-bg:#3A1E22; --chip:#253041; --on-cube:#FFFFFF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121822; --surface:#1B2330; --ink:#E7ECF4; --muted:#9BA7BA; --line:#2C3747;
+  --cube:#4C8FE0; --cube-hi:#78ACEC; --extra:#F0952F; --extra-hi:#F8B46A;
+  --mark:#6B5A12; --mark-ink:#FFF4C8;
+  --good:#4FC48B; --good-bg:#16352A; --bad:#F07A7A; --bad-bg:#3A1E22; --chip:#253041; --on-cube:#FFFFFF; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:18px;min-width:0}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:2.2rem;font-weight:800}
+h2{font-size:1.6rem;font-weight:700}
+h3{font-size:1.25rem;font-weight:700}
+h4{font-size:1.05rem;font-weight:700}
+p{margin:0}
+ul,ol{margin:0}
+.lede{color:var(--muted);max-width:62ch}
+.muted{color:var(--muted)}
+button,select{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--extra);outline-offset:2px}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--ink);padding:0}
+.logo{display:flex;gap:3px}
+.logo i{width:14px;height:22px;border-radius:3px;background:var(--cube)}
+.logo i:last-child{background:var(--extra)}
+.stars{font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--extra)}
+
+.strip{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin}
+.strip button{flex:0 0 auto;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:5px 12px 5px 6px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:.88rem;white-space:nowrap}
+.strip button b{font-family:var(--display);display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--chip);font-size:1rem}
+.strip button[aria-current="true"]{border-color:var(--cube)}
+.strip button[aria-current="true"] b{background:var(--cube);color:var(--on-cube)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:480px){.panel{padding:16px}}
+.lesson{border:2px solid var(--cube);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;background:var(--surface)}
+.lesson .say{font-size:1.1rem}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* bar model */
+.model{display:flex;flex-direction:column;gap:8px;padding:14px 0 4px;min-width:0}
+.row{display:grid;grid-template-columns:var(--lab,7.5rem) minmax(0,1fr) 3.2rem;align-items:center;gap:10px}
+@media (max-width:480px){.row{--lab:5rem;gap:6px}}
+.who{font-weight:600;font-size:.95rem;line-height:1.2;overflow-wrap:anywhere}
+.track{display:grid;gap:3px;min-width:0}
+.cube{display:block;height:30px;border-radius:4px;background:linear-gradient(180deg,var(--cube-hi),var(--cube) 55%);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.cube.extra{background:linear-gradient(180deg,var(--extra-hi),var(--extra) 55%)}
+.cube.mystery{background:transparent;box-shadow:none;border:2px dashed var(--muted)}
+.cube.extra.mystery{border-color:var(--extra)}
+.total{font-family:var(--display);font-weight:800;font-size:1.4rem;font-variant-numeric:tabular-nums}
+.q{display:inline-grid;place-items:center;min-width:2.2rem;height:2.2rem;border-radius:50%;border:2px dashed var(--extra);color:var(--extra);font-size:1.3rem;font-family:var(--display);font-weight:800;background:var(--surface)}
+.hl .q{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.brace{position:relative;height:30px;border:3px solid var(--extra);border-bottom:0;border-radius:8px 8px 0 0;margin-top:22px}
+.brace span{position:absolute;left:50%;top:-24px;transform:translateX(-50%);font-family:var(--display);font-weight:800;color:var(--extra);font-size:1.1rem;white-space:nowrap;line-height:1.2}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:3px;background:var(--cube)}
+.legend i.o{background:var(--extra)}
+.pop{animation:pop .35s ease-out both}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+
+/* story */
+.story{font-size:1.15rem;line-height:1.7}
+.story b.num{font-family:var(--display);font-size:1.3em;font-weight:800;color:var(--cube)}
+mark{background:var(--mark);color:var(--mark-ink);padding:1px 4px;border-radius:5px}
+.question{font-weight:600}
+.badge{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:2px solid var(--extra);color:var(--extra);border-radius:999px;padding:1px 8px;vertical-align:middle}
+.speak{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:600;align-self:flex-start}
+
+/* steps */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{border-left:4px solid var(--line);padding:4px 0 4px 14px;display:flex;flex-direction:column;gap:10px}
+.step.now{border-color:var(--cube)}
+.step.done{border-color:var(--good)}
+.donetxt{color:var(--good);font-weight:600}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.choice{border:2px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 18px;border-radius:12px;font-weight:600;font-size:1rem}
+.choice:hover:not(:disabled){border-color:var(--cube)}
+.choice:disabled{cursor:default}
+.choice.wrong{border-color:var(--bad);background:var(--bad-bg);text-decoration:line-through;opacity:.7}
+.choice.right{border-color:var(--good);background:var(--good-bg)}
+.choice.big{font-family:var(--display);font-size:1.3rem;padding:8px 22px;min-width:3.6rem}
+.fb{padding:10px 14px;border-radius:12px;font-size:.98rem}
+.fb.ok{background:var(--good-bg);border:1px solid var(--good)}
+.fb.no{background:var(--bad-bg);border:1px solid var(--bad)}
+.eq{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--display);font-weight:800;font-size:2.2rem;font-variant-numeric:tabular-nums}
+.eq input{width:4.6rem;font:inherit;text-align:center;border:3px dashed var(--extra);border-radius:12px;background:var(--surface);color:var(--ink);padding:0 4px;height:3.2rem}
+.btn{border:0;background:var(--cube);color:var(--on-cube);padding:12px 22px;border-radius:12px;font-family:var(--display);font-weight:700;font-size:1.15rem}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.sm{padding:6px 14px;font-size:1rem}
+.win{background:var(--good-bg);border:2px solid var(--good);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.win .eq{font-size:1.8rem}
+.win p{font-size:1.1rem;font-weight:600}
+
+/* games */
+.prompt{font-family:var(--display);font-size:1.5rem;font-weight:700;line-height:1.25}
+.baskets{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.basket{border:2px solid var(--line);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.objs{display:flex;flex-wrap:wrap;gap:4px 6px;font-size:1.7rem;line-height:1.15}
+.pairs{display:grid;gap:4px;width:100%;max-width:30rem}
+.pcol{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:4px 0;border-radius:10px;font-size:clamp(1.1rem,5vw,1.6rem);line-height:1.2;min-width:0}
+.pcol span{height:2.1rem;display:grid;place-items:center}
+.pcol.m{background:var(--chip)}
+.pcol .left{outline:3px dashed var(--extra);outline-offset:-3px;border-radius:10px}
+.mcubes{display:flex;flex-wrap:wrap;gap:4px}
+.mcubes i{width:24px;height:24px;border-radius:4px;background:linear-gradient(180deg,var(--cube-hi),var(--cube) 55%)}
+.mcubes i.add{background:linear-gradient(180deg,var(--extra-hi),var(--extra) 55%)}
+.mcubes i.ghost{background:transparent;border:2px dashed var(--extra)}
+.mcubes i.gone{opacity:.25}
+.row3{display:grid;grid-template-columns:6rem minmax(0,1fr) 2rem;gap:8px;align-items:center}
+.row3 b{font-family:var(--display);font-size:1.3rem}
+.nlwrap{overflow-x:auto}
+.nl{width:100%;min-width:300px;height:auto;display:block}
+.nl text{fill:var(--ink);font-family:var(--body);font-size:15px;text-anchor:middle}
+.nl .axis{stroke:var(--muted);stroke-width:2}
+.nl .tick{stroke:var(--muted);stroke-width:2}
+.nl .hop{stroke:var(--extra);fill:none;stroke-width:3}
+.nl .hopn{fill:var(--extra);font-weight:600;font-size:13px}
+.nl .pt{fill:var(--cube)}
+.nl .pt2{fill:var(--extra)}
+.nl .ptl{fill:var(--on-cube);font-weight:600;font-size:13px}
+.sentence{font-family:var(--display);font-weight:700;font-size:1.6rem;line-height:1.3}
+.blank{display:inline-block;min-width:3.5rem;border-bottom:4px solid var(--extra);text-align:center;color:var(--extra)}
+
+/* path + words */
+.path{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.station{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:12px 14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start}
+.station:hover{border-color:var(--cube)}
+.station b.n{grid-row:span 2;font-family:var(--display);font-size:1.4rem;width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;background:var(--chip)}
+.station span.t{font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.2}
+.station small{color:var(--muted);font-size:.85rem;line-height:1.35}
+.station .st{color:var(--extra);font-weight:700}
+.wgroup{display:flex;flex-direction:column;gap:8px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.wcard{border-radius:12px;padding:10px 12px;background:var(--chip);display:flex;flex-direction:column;gap:2px;border-left:5px solid var(--cube)}
+.wcard.less{border-left-color:var(--muted)}
+.wcard.diff{border-left-color:var(--extra)}
+.wcard.same{border-left-color:var(--good)}
+.wcard b{font-family:var(--display);font-size:1.15rem}
+.wcard span{font-size:.88rem;color:var(--muted)}
+ol.detect,ul.plain{padding-left:1.4rem;display:flex;flex-direction:column;gap:8px}
+ol.detect li::marker{font-family:var(--display);font-weight:800;color:var(--cube)}
+.warn{border:2px solid var(--extra);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.foot{font-size:.85rem;color:var(--muted)}
+
+/* bars learn */
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:480px){.sliders{grid-template-columns:1fr}}
+.sliders label{display:flex;flex-direction:column;gap:4px;font-weight:600}
+.sliders input{width:100%;accent-color:var(--cube)}
+.rules{display:grid;gap:8px}
+.rule{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--chip)}
+.rule .r-eq{font-family:var(--display);font-weight:800;font-size:1.35rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.c-b{color:var(--cube)} .c-o{color:var(--extra)}
+
+/* problems + ways + practice */
+.picker{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+@media (max-width:480px){.picker{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pick{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;min-width:0}
+.pick b{font-family:var(--display);font-size:1.3rem;line-height:1.1}
+.pick small{font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.pick[aria-current="true"]{border-color:var(--cube);background:var(--chip)}
+.pick.solved b{color:var(--good)}
+.pick.solved b::after{content:" ✓";font-size:.8em}
+.filters{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+.filters label{display:flex;flex-direction:column;gap:3px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.filters select{border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:6px 8px;font-size:.95rem}
+.filters .chk{flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:.95rem;padding-bottom:8px}
+.ways{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.way{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.way .story{font-size:1.02rem;line-height:1.6}
+.way-act{display:flex;gap:8px;flex-wrap:wrap}
+.ans{font-weight:600;color:var(--good)}
+.ghead{display:flex;flex-direction:column;gap:2px;padding-top:8px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+</head>
+<body>
+<a id="home-btn" href="https://kids-learning-ecw.pages.dev/">🏠 Home</a>
+<style id="home-btn-style">
+#home-btn{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));z-index:99999;
+  background:#0b3d5e;color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);font-family:'Fredoka One','Baloo 2',sans-serif;
+  transition:background .2s;}
+#home-btn:hover{background:#1d6ef5;}
+body{padding-top:64px!important}
+</style>
+<div class="wrap">
+  <header>
+    <button class="brand" data-go="start" aria-label="Go to the start page"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span><h1>Compare Bars</h1></button>
+    <span class="stars" id="starTotal">★ 0</span>
+  </header>
+  <nav class="strip" id="strip" aria-label="Stations"></nav>
+
+  <!-- START -->
+  <section id="view-start" class="wrap">
+    <div class="panel">
+      <h2>Comparing, one small step at a time</h2>
+      <p class="lede">Start at station 1 and go in order. Each station teaches one idea with pictures, then lets her practice with new questions every time. Mistakes are fine: every wrong answer comes with a hint.</p>
+      <div><button class="btn" data-go="more-fewer">Start at station 1</button></div>
+    </div>
+    <div class="ghead"><span class="eyebrow">Part A</span><h3>The basics</h3></div>
+    <div class="path" id="pathA"></div>
+    <div class="ghead"><span class="eyebrow">Part B</span><h3>Word problems</h3></div>
+    <div class="path" id="pathB"></div>
+    <div class="panel">
+      <h3>For grown-ups: how to sit with her</h3>
+      <ol class="detect">
+        <li><b>Look before counting.</b> Ask "What do you notice? Which side looks like more?" before any numbers.</li>
+        <li><b>Match in pairs.</b> One from each side, side by side. The leftovers are "how many more".</li>
+        <li><b>Say it both ways.</b> "7 is 3 more than 4" and "4 is 3 fewer than 7" are the same fact.</li>
+        <li><b>Ask "who has more?" first</b> in every word problem. Most mistakes come from adding or subtracting before deciding this.</li>
+        <li><b>Use real things.</b> Socks, spoons, toy cars. Ask "How could we make them the same?"</li>
+      </ol>
+      <p class="foot">Stars are saved on this device only.</p>
+      <div><button class="btn ghost sm" id="resetStars">Reset stars</button> <span id="resetMsg" class="muted"></span></div>
+    </div>
+  </section>
+
+  <div id="levels"></div>
+
+  <!-- BAR MODEL -->
+  <section id="view-bars" class="wrap" hidden>
+    <div class="lesson">
+      <span class="eyebrow">Station 9</span>
+      <h2>Bar models: every compare story has 3 numbers</h2>
+      <p class="say">The <b class="c-b">bigger amount</b>, the <b class="c-b">smaller amount</b>, and the <b class="c-o">difference</b> (the extra bit the bigger one has). It's the same as matching in pairs, but with blocks in a row. The blue parts match. The orange part is the leftovers.</p>
+    </div>
+    <div class="panel">
+      <h3>Move the sliders and watch</h3>
+      <div class="sliders">
+        <label for="demoA">Mia's apples: <span id="demoAv">12</span><input type="range" id="demoA" min="1" max="20" value="12"></label>
+        <label for="demoB">Leo's apples: <span id="demoBv">7</span><input type="range" id="demoB" min="1" max="20" value="7"></label>
+      </div>
+      <div id="demoBars"></div>
+      <div class="rules" id="demoRules"></div>
+    </div>
+    <div class="panel">
+      <h3>The detective steps for every word problem</h3>
+      <ol class="detect">
+        <li><b>Who has more?</b> Find the bigger one (more, older, taller, longer, costs more). It gets the top bar.</li>
+        <li><b>Draw the bars.</b> Put a <span class="q" style="min-width:1.6rem;height:1.6rem;font-size:1rem">?</span> on the part you don't know.</li>
+        <li><b>Is the ? the whole bigger bar?</b> Then <b>add</b>: smaller + difference.</li>
+        <li><b>Is the ? anywhere else?</b> Then <b>subtract</b>: take away from the bigger bar.</li>
+      </ol>
+    </div>
+    <div class="warn">
+      <h3>Watch out for tricky words</h3>
+      <p>"Fewer" or "less" does <b>not</b> always mean subtract. "More" does <b>not</b> always mean add.</p>
+      <p class="story">Javier saw <b class="num">16</b> monkeys today. That is <mark>3 fewer than last Saturday</mark>.</p>
+      <p>Today is the one with fewer. So last Saturday had <b>more</b>, and it's the bigger bar. To find a bigger bar, we <b>add</b>: 16 + 3 = 19.</p>
+      <div><button class="btn" data-go="problems">Next: her 8 problems</button></div>
+    </div>
+  </section>
+
+  <!-- PROBLEMS -->
+  <section id="view-problems" class="wrap" hidden>
+    <div class="lesson"><span class="eyebrow">Station 10</span><h2>Her 8 homework problems</h2><p class="say">Same four steps every time: who has more, find the ?, add or subtract, solve.</p></div>
+    <div class="picker" id="picker"></div>
+    <div class="panel" id="solverMain"></div>
+  </section>
+
+  <!-- WAYS -->
+  <section id="view-ways" class="wrap" hidden>
+    <div class="lesson">
+      <span class="eyebrow">Station 11</span>
+      <h2>One story, many ways to ask</h2>
+      <p class="say">Below are the same three numbers asked in lots of different ways. The numbers never change. Only the words and the missing part change. Tap "Show answer" or "Solve it" on any one.</p>
+    </div>
+    <div class="panel">
+      <div class="filters">
+        <label for="wCtx">Story type<select id="wCtx"></select></label>
+        <label for="wMax">Numbers up to<select id="wMax"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option></select></label>
+        <button class="btn sm" id="wNew">New numbers</button>
+      </div>
+      <div id="wFact"></div>
+      <div id="wList"></div>
+    </div>
+  </section>
+
+  <!-- PRACTICE -->
+  <section id="view-practice" class="wrap" hidden>
+    <div class="lesson"><span class="eyebrow">Station 12</span><h2>Practice with new stories</h2><p class="say">Every story is new. Pick what to practice, or leave it on "Mixed".</p></div>
+    <div class="panel">
+      <div class="filters">
+        <label for="fMiss">What's missing<select id="fMiss"><option value="mix">Mixed</option><option value="big">The bigger amount</option><option value="small">The smaller amount</option><option value="diff">The difference</option></select></label>
+        <label for="fCtx">Story type<select id="fCtx"></select></label>
+        <label for="fMax">Numbers up to<select id="fMax"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option></select></label>
+        <label class="chk" for="fTricky"><input type="checkbox" id="fTricky"> Tricky ones only</label>
+      </div>
+    </div>
+    <div class="panel" id="solverPractice"></div>
+  </section>
+</div>
+
+<script>
+/* ================= helpers ================= */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=s=>esc(s).replace(/(\$?\b\d+\b)/g,'<b class="num">$1</b>').replace(/\[\[(.+?)\]\]/g,"<mark>$1</mark>");
+const plain=s=>String(s).replace(/\[\[|\]\]/g,"");
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pickOne=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const canSpeak="speechSynthesis" in window;
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain(t).replace(/\$(\d+)/g,"$1 dollars"));u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+const speakBtn=t=>canSpeak?`<button class="speak" data-say="${esc(plain(t))}">Read it to me</button>`:"";
+document.addEventListener("click",e=>{const b=e.target.closest("[data-say]");if(b)speak(b.dataset.say)});
+function numberChoices(ans){const s=new Set([ans]);const c=[ans+1,ans-1,ans+2,ans-2,ans+3];for(const x of shuffle(c)){if(x>=0&&s.size<4)s.add(x)}return shuffle([...s])}
+
+/* stars */
+let stars={};try{stars=JSON.parse(localStorage.getItem("cb-stars")||"{}")||{}}catch(e){}
+function addStar(k){stars[k]=(stars[k]||0)+1;try{localStorage.setItem("cb-stars",JSON.stringify(stars))}catch(e){}drawStars()}
+function drawStars(){let t=0;for(const k in stars)t+=stars[k];starTotal.textContent=`★ ${t}`;drawPath()}
+
+/* ================= bar model ================= */
+function barsHTML(c){
+  const B=c.big.val,S=c.small.val,D=B-S;const hide=k=>c.unknown===k&&!c.reveal;
+  let n=0;const pop=()=>c.animate?` pop" style="animation-delay:${Math.min(n++*35,900)}ms`:"";
+  const qd='<span class="q" style="min-width:1.8rem;height:1.8rem;font-size:1rem">?</span>';
+  let bigC="",smC="",cols;
+  if(B<=20){
+    cols=`grid-template-columns:repeat(${Math.max(B,1)},minmax(0,1fr))`;
+    for(let i=0;i<S;i++)bigC+=`<i class="cube${pop()}"></i>`;
+    for(let i=0;i<D;i++)bigC+=`<i class="cube extra${hide("diff")?" mystery":""}${pop()}"></i>`;
+    for(let i=0;i<S;i++)smC+=`<i class="cube${hide("small")?" mystery":""}${pop()}"></i>`;
+  }else{
+    cols=D>0?`grid-template-columns:${S}fr ${D}fr`:"grid-template-columns:1fr";
+    bigC=`<i class="cube${pop()}"></i>`+(D>0?`<i class="cube extra${hide("diff")?" mystery":""}${pop()}"></i>`:"");
+    smC=`<i class="cube${hide("small")?" mystery":""}${pop()}"></i>`;
+  }
+  const bc=B<=20?`${S+1}/${B+1}`:"2/3";
+  const tot=(k,v)=>hide(k)?'<span class="q">?</span>':v;
+  const dl=hide("diff")?qd:(c.diffLabel||`${D} more`);
+  return `<div class="model${c.highlight?" hl":""}">
+   ${D>0?`<div class="row"><span></span><div class="track" style="${cols};align-items:end"><div class="brace" style="grid-column:${bc}"><span>${dl}</span></div></div><span></span></div>`:""}
+   <div class="row"><span class="who">${esc(cap(c.big.name))}</span><div class="track" style="${cols}">${bigC}</div><span class="total">${tot("big",B)}</span></div>
+   <div class="row"><span class="who">${esc(cap(c.small.name))}</span><div class="track" style="${cols}">${smC}</div><span class="total">${tot("small",S)}</span></div>
+  </div>
+  <div class="legend"><span><i></i>matching part</span><span><i class="o"></i>the difference (extra)</span>${c.unit?`<span>${B<=20?"Each block = 1 "+esc(c.unit):"Bars are drawn to size"}</span>`:""}</div>`;
+}
+
+/* ================= objects for basics ================= */
+const OBJS=[["🍎","apples"],["🍐","pears"],["⭐","stars"],["🐟","fish"],["🚗","cars"],["🐞","ladybugs"],["🌸","flowers"],["🍪","cookies"],["⚽","balls"],["🐤","chicks"],["🦋","butterflies"],["🍓","strawberries"],["🎈","balloons"],["🐢","turtles"]];
+function objKinds(n){return shuffle(OBJS).slice(0,n).map(([e,name])=>({e,name}))}
+const objs=(e,n)=>`<div class="objs" aria-label="${n}">${Array.from({length:n},()=>`<span>${e}</span>`).join("")}</div>`;
+function basketsHTML(groups){return `<div class="baskets">${groups.map(g=>`<div class="basket"><h4>${esc(cap(g.name))}</h4>${objs(g.e,g.n)}</div>`).join("")}</div>`}
+function pairsHTML(A,a,B,b,hl){
+  const m=Math.max(a,b),mn=Math.min(a,b);let cols="";
+  for(let i=0;i<m;i++){
+    const t=i<a?A.e:"",u=i<b?B.e:"";
+    const lt=hl&&i>=mn&&i<a?' class="left"':"",lb=hl&&i>=mn&&i<b?' class="left"':"";
+    cols+=`<div class="pcol${i<mn?" m":""}"><span${lt}>${t}</span><span${lb}>${u}</span></div>`;
+  }
+  return `<div class="pairs" style="grid-template-columns:repeat(${m},minmax(0,2.6rem))">${cols}</div>
+   <div class="legend"><span>Top row: ${esc(A.name)} (${a})</span><span>Bottom row: ${esc(B.name)} (${b})</span>${hl&&a!==b?`<span>Dashed = no partner (${Math.abs(a-b)})</span>`:""}</div>`;
+}
+function cubesHTML(n,extra,mode){let h="";for(let i=0;i<n;i++)h+=`<i class="${mode==="minus"&&i>=n-extra?"gone":""}"></i>`;if(mode==="plus")for(let i=0;i<extra;i++)h+=`<i class="add pop"></i>`;if(mode==="ghost")for(let i=0;i<extra;i++)h+=`<i class="ghost"></i>`;return `<div class="mcubes">${h}</div>`}
+function numberLine(a,b,opts={}){
+  let lo=Math.max(0,Math.min(a,b)-2),hi=Math.max(lo+10,Math.max(a,b)+2);if(hi>20){hi=20;lo=Math.max(0,Math.min(lo,hi-10))}
+  if(opts.t!=null){lo=Math.min(lo,opts.t-1);hi=Math.max(hi,opts.t+1);lo=Math.max(0,lo);hi=Math.min(20,hi)}
+  const W=600,pad=26,st=(W-2*pad)/(hi-lo),x=n=>pad+(n-lo)*st,y=86;
+  let s=`<svg class="nl" viewBox="0 0 ${W} 130" role="img" aria-label="Number line from ${lo} to ${hi}"><line class="axis" x1="${pad-10}" y1="${y}" x2="${W-pad+10}" y2="${y}"/>`;
+  for(let n=lo;n<=hi;n++)s+=`<line class="tick" x1="${x(n)}" y1="${y-7}" x2="${x(n)}" y2="${y+7}"/><text x="${x(n)}" y="${y+28}">${n}</text>`;
+  if(opts.hops){const[f,t]=[Math.min(a,b),Math.max(a,b)];for(let n=f,k=1;n<t;n++,k++){const x1=x(n),x2=x(n+1),h=Math.min(46,st*.75);s+=`<path class="hop" d="M${x1} ${y-10} Q${(x1+x2)/2} ${y-10-h*1.4} ${x2} ${y-10}"/><text class="hopn" x="${(x1+x2)/2}" y="${y-14-h*.75}">${k}</text>`}}
+  if(opts.t!=null)s+=`<circle class="pt2" cx="${x(opts.t)}" cy="${y}" r="13"/><text class="ptl" x="${x(opts.t)}" y="${y+5}">${opts.t}</text>`;
+  for(const n of [a,b])s+=`<circle class="pt" cx="${x(n)}" cy="${y}" r="13"/><text class="ptl" x="${x(n)}" y="${y+5}">${n}</text>`;
+  return `<div class="nlwrap">${s}</svg></div>`;
+}
+
+/* ================= basic games ================= */
+const NAMES=["Mia","Leo","Ava","Sam","Zara","Omar","Lily","Noah","Nina","Kai","Ruby","Theo","Maya","Eli","Grace","Jamal","Sofia","Ben"];
+function twoNames(){const a=pickOne(NAMES);let b;do{b=pickOne(NAMES)}while(b===a);return[a,b]}
+
+function genMoreFewer(){
+  const[A,B]=objKinds(2);let a=rnd(1,10),b;const same=Math.random()<.18;if(same)b=a;else do{b=rnd(1,10)}while(b===a);
+  A.n=a;B.n=b;
+  const ask=pickOne(["more","fewer","more","fewer","bigger","smaller"]);
+  const prompt={more:"Which basket has more?",fewer:"Which basket has fewer?",bigger:"Which basket has the bigger number of things?",smaller:"Which basket has the smaller number of things?"}[ask];
+  const wantBig=ask==="more"||ask==="bigger";
+  const correct=same?2:((a>b)===wantBig?0:1);
+  const big=a>b?A:B,sm=a>b?B:A;
+  return{prompt,
+    visual:basketsHTML([A,B]),
+    after:pairsHTML(A,a,B,b,true),
+    choices:[`The ${A.name}`,`The ${B.name}`,"They are the same"],correct,
+    hint:"Look at the picture now: we lined them up in pairs. The row with leftovers (dashed) has more. If nothing is left over, they are the same.",
+    explain:same?`Both baskets have ${a}. Every one has a partner. Nothing is left over, so they are <b>the same</b> (equal).`
+      :`${cap(big.name)}: ${big.n}. ${cap(sm.name)}: ${sm.n}. The ${big.name} have ${big.n-sm.n} left over with no partner, so <b>the ${big.name} have ${big.n-sm.n} more</b> and <b>the ${sm.name} have ${big.n-sm.n} fewer</b>. The difference is ${big.n-sm.n}.`};
+}
+function genPairs(){
+  const[A,B]=objKinds(2);let a=rnd(1,10),b;do{b=rnd(1,10)}while(b===a);
+  const big=a>b?A:B,sm=a>b?B:A,d=Math.abs(a-b);
+  const prompt=pickOne([`How many more ${big.name} than ${sm.name}?`,`How many fewer ${sm.name} than ${big.name}?`,`How many more ${sm.name} do we need to make them the same?`,`How many ${big.name} should we take away to make them the same?`,`What is the difference between the number of ${A.name} and ${B.name}?`,`How many ${big.name} have no partner?`]);
+  return{prompt,visual:pairsHTML(A,a,B,b,false),after:pairsHTML(A,a,B,b,true),
+    choices:numberChoices(d),answerIsValue:true,correctVal:d,
+    hint:"Count only the ones with no partner (the dashed ones). Those are the leftovers.",
+    explain:`There are ${Math.min(a,b)} pairs. ${d} ${big.name} have no partner. So the answer is <b>${d}</b>. Say it both ways: <b>${cap(big.name)} have ${d} more. ${cap(sm.name)} have ${d} fewer.</b> Number sentence: ${Math.max(a,b)} − ${Math.min(a,b)} = ${d}.`};
+}
+function genOneMore(){
+  const list=[
+    [1,n=>`What is 1 more than ${n}?`],[-1,n=>`What is 1 less than ${n}?`],[1,n=>`What number comes just after ${n}?`],[-1,n=>`What number comes just before ${n}?`],
+    [2,n=>`What is 2 more than ${n}?`],[-2,n=>`What is 2 fewer than ${n}?`],[1,n=>`What is one greater than ${n}?`],[-1,n=>`What is one smaller than ${n}?`],
+    [1,n=>`${pickOne(NAMES)} has ${n} shells. She finds 1 more. How many shells now?`],[-1,n=>`There are ${n} birds. 1 flies away. How many birds now?`],
+    [3,n=>`What is 3 more than ${n}?`],[-3,n=>`What is 3 less than ${n}?`],[10,n=>`What is 10 more than ${n}?`]];
+  let k,f,n;do{[k,f]=pickOne(list);n=rnd(1,19)}while(n+k<0||n+k>20||(k===10&&n>10));
+  const ans=n+k,prompt=f(n);
+  return{prompt,visual:cubesHTML(n,Math.abs(k),k>0?"ghost":""),after:cubesHTML(n,Math.abs(k),k>0?"plus":"minus"),
+    choices:numberChoices(ans),answerIsValue:true,correctVal:ans,
+    hint:k>0?`Start at ${n} and count up ${k}: say the next ${k===1?"number":k+" numbers"}.`:`Start at ${n} and count back ${-k}.`,
+    explain:k>0?`${n} and ${k} more makes <b>${ans}</b>. ${n} + ${k} = ${ans}. More means we go <b>up</b> when counting.`:`${n} with ${-k} taken away leaves <b>${ans}</b>. ${n} − ${-k} = ${ans}. Less means we go <b>down</b> when counting.`};
+}
+function genMostLeast(){
+  const G=objKinds(3);const mode=pickOne(["most","least","fewest","most","least","same","greatest","smallest"]);
+  let ns;if(mode==="same"){const x=rnd(2,9);let y;do{y=rnd(1,10)}while(y===x);ns=shuffle([x,x,y])}else{ns=shuffle([1,2,3,4,5,6,7,8,9,10]).slice(0,3)}
+  G.forEach((g,i)=>g.n=ns[i]);
+  let prompt,choices,correct;
+  if(mode==="same"){prompt="Which two baskets have the same number?";const pairs=[[0,1],[0,2],[1,2]];choices=pairs.map(([i,j])=>`${cap(G[i].name)} and ${G[j].name}`);correct=pairs.findIndex(([i,j])=>G[i].n===G[j].n)}
+  else{const wantMax=["most","greatest"].includes(mode);prompt={most:"Which basket has the most?",least:"Which basket has the least?",fewest:"Which basket has the fewest?",greatest:"Which basket has the greatest number?",smallest:"Which basket has the smallest number?"}[mode];
+    choices=G.map(g=>`The ${g.name}`);const t=wantMax?Math.max(...ns):Math.min(...ns);correct=ns.indexOf(t)}
+  const sorted=G.slice().sort((p,q)=>q.n-p.n);
+  return{prompt,visual:basketsHTML(G),
+    after:`<div class="steps">${G.map(g=>`<div class="row3"><span>${esc(cap(g.name))}</span>${objs(g.e,g.n)}<b>${g.n}</b></div>`).join("")}</div>`,
+    choices,correct,hint:"Count each basket and write the number down. Most = the biggest number. Least or fewest = the smallest. Same = equal numbers.",
+    explain:mode==="same"?`Two baskets both have the same number. Same means <b>equal</b>.`:`In order from most to least: ${sorted.map(g=>`${g.name} ${g.n}`).join(", ")}. <b>Most</b> is ${sorted[0].name}. <b>Least</b> (fewest) is ${sorted[2].name}.`};
+}
+function genNumberLine(){
+  if(Math.random()<.25){
+    let t,p,q;do{t=rnd(5,15);p=rnd(1,5);q=rnd(1,5)}while(p===q);const x=t-p,y=t+q;const pair=shuffle([x,y]);
+    const closer=p<q?x:y;
+    return{prompt:`Which is closer to ${t}: ${pair[0]} or ${pair[1]}?`,visual:numberLine(x,y,{t}),after:numberLine(x,y,{t}),
+      choices:pair.map(String),correct:pair.indexOf(closer),hint:`Count the jumps from ${t} to each number. Fewer jumps = closer (nearer).`,
+      explain:`${x} is ${p} jump${p>1?"s":""} from ${t}. ${y} is ${q} jump${q>1?"s":""} from ${t}. So <b>${closer}</b> is closer. The other one is farther.`};
+  }
+  let a,b;do{a=rnd(0,18);b=rnd(a+1,20)}while(b-a>10);const d=b-a;
+  const prompt=pickOne([`How far apart are ${a} and ${b}?`,`How many jumps from ${a} to ${b}?`,`What is the difference between ${b} and ${a}?`,`How many more is ${b} than ${a}?`,`Start at ${b}. How many jumps back to ${a}?`,`How many fewer is ${a} than ${b}?`]);
+  return{prompt,visual:numberLine(a,b),after:numberLine(a,b,{hops:true}),choices:numberChoices(d),answerIsValue:true,correctVal:d,
+    hint:`Put your finger on ${a}. Jump one number at a time until you land on ${b}. Count the jumps.`,
+    explain:`It takes <b>${d}</b> jumps from ${a} to ${b}. That is the difference: ${b} − ${a} = ${d}, and ${a} + ${d} = ${b}.`};
+}
+const VOCAB=[
+  {m:"older",l:"younger",unit:"years",big:(X,v)=>`${X} is ${v} years old.`,label:"age"},
+  {m:"taller",l:"shorter",unit:"cm",big:(X,v)=>`${X} is ${v} cm tall.`},
+  {m:"heavier",l:"lighter",unit:"kg",big:(X,v)=>`${X}'s bag weighs ${v} kg.`,poss:"bag"},
+  {m:"longer",l:"shorter",unit:"cm",big:(X,v)=>`${X}'s ribbon is ${v} cm long.`,poss:"ribbon"},
+  {m:"more",l:"fewer",unit:"stickers",big:(X,v)=>`${X} has ${v} stickers.`}];
+function genBothWays(){
+  const s=rnd(2,12),d=rnd(1,8),b=s+d;const t=rnd(1,6);
+  const vis=barsHTML({big:{name:String(b),val:b},small:{name:String(s),val:s},diffLabel:`${d} more`});
+  const both=`Say it both ways: <b>${b} is ${d} more than ${s}</b>, and <b>${s} is ${d} fewer than ${b}</b>.`;
+  if(t===1)return{prompt:"Choose the missing word.",sentence:`${b} is ${d} ___ than ${s}.`,visual:vis,choices:["more","fewer"],correct:0,hint:`${b} is the bigger number. The bigger number is MORE.`,explain:both};
+  if(t===2)return{prompt:"Choose the missing word.",sentence:`${s} is ${d} ___ than ${b}.`,visual:vis,choices:["more","fewer"],correct:1,hint:`${s} is the smaller number. The smaller number has FEWER.`,explain:both};
+  if(t===3)return{prompt:"Choose the missing number.",sentence:`${b} is ___ more than ${s}.`,visual:vis,choices:numberChoices(d),answerIsValue:true,correctVal:d,hint:"Look at the orange part of the bar. Count its blocks.",explain:both};
+  if(t===4)return{prompt:"Choose the missing number.",sentence:`${s} is ___ fewer than ${b}.`,visual:vis,choices:numberChoices(d),answerIsValue:true,correctVal:d,hint:"The difference is the same number both ways. Count the orange blocks.",explain:both};
+  if(t===5)return{prompt:"Choose the missing word.",sentence:`If ${b} is ${d} more than ${s}, then ${s} is ${d} ___ than ${b}.`,visual:vis,choices:["more","fewer"],correct:1,hint:"Flip it around. When we talk about the smaller one, we say FEWER.",explain:both};
+  const V=pickOne(VOCAB),[P,Q]=twoNames();const aboutBig=Math.random()<.5;
+  const visN=barsHTML({big:{name:P,val:b},small:{name:Q,val:s},diffLabel:`${d} ${V.unit}`});
+  const subj=aboutBig?P:Q,obj=aboutBig?Q:P;
+  const whose=V.poss?`${subj}'s ${V.poss}`:subj;const of=V.poss?`${obj}'s`:obj;
+  const verb=V.m==="more"?"has":"is";const tail=V.m==="more"?`${d} ___ stickers than ${obj}.`:`${d} ${V.unit} ___ than ${of}.`;
+  const say=(X,w)=>V.m==="more"?`${X} has ${d} <b>${w}</b> stickers`:`${V.poss?X+"'s "+V.poss:X} is ${d} ${V.unit} <b>${w}</b>`;
+  return{prompt:"Choose the missing word.",sentence:`${V.big(P,b)} ${V.big(Q,s)} ${whose} ${verb} ${tail}`,
+    visual:visN,choices:[V.m,V.l],correct:aboutBig?0:1,
+    hint:`Who has the bigger number? ${P} has ${b}, ${Q} has ${s}. The bigger one is "${V.m}". The smaller one is "${V.l}".`,
+    explain:`Say it both ways: ${say(P,V.m)}. ${say(Q,V.l)}.`};
+}
+const CWORDS=[
+  {m:"more",l:"fewer",s:(X,w,d,Y)=>`${X} has ${d} ${w} stickers than ${Y}.`,ask:"Who has more stickers?",that:(X,w,d,Y)=>`${X} has 9 stickers. That is ${d} ${w} than ${Y} has.`},
+  {m:"older",l:"younger",s:(X,w,d,Y)=>`${X} is ${d} years ${w} than ${Y}.`,ask:"Who is older?",that:(X,w,d,Y)=>`${X} is 8 years old. That is ${d} years ${w} than ${Y}.`},
+  {m:"taller",l:"shorter",s:(X,w,d,Y)=>`${X} is ${d} cm ${w} than ${Y}.`,ask:"Who is taller?"},
+  {m:"heavier",l:"lighter",s:(X,w,d,Y)=>`${X}'s bag is ${d} kg ${w} than ${Y}'s.`,ask:"Whose bag is heavier?"},
+  {m:"longer",l:"shorter",s:(X,w,d,Y)=>`${X}'s ribbon is ${d} cm ${w} than ${Y}'s.`,ask:"Whose ribbon is longer?"},
+  {m:"more",l:"less",s:(X,w,d,Y)=>`${X} has $${d} ${w} than ${Y}.`,ask:"Who has more money?",that:(X,w,d,Y)=>`${X} has $12. That is $${d} ${w} than ${Y} has.`},
+  {m:"more expensive",l:"cheaper",s:(X,w,d,Y)=>`${X}'s toy is $${d} ${w} than ${Y}'s toy.`,ask:"Whose toy costs more?"},
+  {m:"farther",l:"closer",s:(X,w,d,Y)=>`${X} lives ${d} km ${w} from school than ${Y}.`,ask:"Who lives farther from school?"},
+  {m:"longer",l:"less time",s:(X,w,d,Y)=>`${X} takes ${d} minutes ${w==="less time"?"less":w} than ${Y} to get ready.`,ask:"Who takes more time?"},
+  {m:"more",l:"fewer",s:(X,w,d,Y)=>`${X} scored ${d} ${w} points than ${Y}.`,ask:"Who scored more points?",that:(X,w,d,Y)=>`${X} scored 10 points. That is ${d} ${w} than ${Y} scored.`},
+  {m:"greater",l:"smaller",s:(X,w,d,Y)=>`${X}'s number is ${d} ${w} than ${Y}'s number.`,ask:"Whose number is bigger?"}];
+function genWords(){
+  const W=pickOne(CWORDS),[X,Y]=twoNames(),d=rnd(1,6);const useLess=Math.random()<.55;const w=useLess?W.l:W.m;
+  const useThat=W.that&&Math.random()<.35;const sentence=useThat?W.that(X,w,d,Y):W.s(X,w,d,Y);
+  const bigger=useLess?Y:X;
+  return{prompt:W.ask,sentence,visual:"",choices:shuffle([X,Y]),correctVal:bigger,answerIsValue:true,
+    hint:`Find the compare word: "${w}". It tells us about ${X}. Is "${w}" a MORE word or a LESS word?`,
+    explain:useLess?`"${w}" is a <b>less</b> word, and it's about ${X}. So ${X} is the smaller one, and <b>${Y}</b> is the bigger one.`:`"${w}" is a <b>more</b> word, and it's about ${X}. So <b>${X}</b> is the bigger one.`};
+}
+
+function genCheck(){
+  const[A,B]=objKinds(2);const s=rnd(2,9),d=rnd(1,6),b=s+d;const[X,Y]=twoNames();
+  const t=rnd(1,7);
+  const pic=pairsHTML({e:A.e,name:A.name},b,{e:B.e,name:B.name},s,true);
+  if(t===1)return{prompt:`${cap(A.name)} have ${d} more than ${B.name}. So ${B.name} have how many fewer than ${A.name}?`,visual:pic,choices:numberChoices(d),answerIsValue:true,correctVal:d,
+    hint:"More and fewer are the same leftovers, looked at from the other side.",explain:`The difference is ${d} both ways. ${cap(A.name)} have ${d} more, so ${B.name} have <b>${d} fewer</b>.`};
+  if(t===2){const c=shuffle([`${cap(A.name)} have ${d} more. ${cap(B.name)} have ${d} fewer.`,`${cap(A.name)} have ${d} more. ${cap(B.name)} have ${d} more.`,`${cap(A.name)} have ${d} fewer. ${cap(B.name)} have ${d} more.`,`${cap(A.name)} have ${d} more. ${cap(B.name)} have ${d+1} fewer.`]);
+    return{prompt:`There are ${b} ${A.name} and ${s} ${B.name}. Which sentence is true?`,visual:pic,choices:c,answerIsValue:true,correctVal:`${cap(A.name)} have ${d} more. ${cap(B.name)} have ${d} fewer.`,
+    hint:"Find the leftovers first. The bigger group has that many MORE. The smaller group has that many FEWER.",explain:`${b} − ${s} = ${d}. <b>${cap(A.name)} have ${d} more. ${cap(B.name)} have ${d} fewer.</b> One difference, two ways to say it.`}}
+  if(t===3)return{prompt:`"How many more ${A.name} than ${B.name}?" and "How many fewer ${B.name} than ${A.name}?" have the same answer. Why?`,visual:pic,
+    choices:["Both questions count the same leftovers (the difference)","Because more and fewer mean the same thing","It just happened by luck this time"],correct:0,
+    hint:"Look at the dashed leftovers. Do the two questions count different things, or the same things?",explain:`Both questions count the ${d} leftovers. More and fewer are opposite words, but the <b>difference</b> is the same number either way. It is never luck.`};
+  if(t===4){const w=pickOne([["fewer","has"],["less","has"]]);return{prompt:`${X} has ${d} ${w[0]} stickers than ${Y}. Who has more stickers?`,visual:"",choices:shuffle([X,Y]),answerIsValue:true,correctVal:Y,
+    hint:`The word "${w[0]}" is about ${X}. ${X} is the smaller one.`,explain:`${X} has ${d} fewer, so ${X} is smaller. <b>${Y} has ${d} more.</b>`}}
+  if(t===5){const c=shuffle([`${b} is ${d} more than ${s}`,`${b} is ${d} fewer than ${s}`,`${s} is ${d} more than ${b}`]);
+    return{prompt:`The difference between ${b} and ${s} is ${d}. Which is true?`,visual:"",choices:c,answerIsValue:true,correctVal:`${b} is ${d} more than ${s}`,
+    hint:`Which number is bigger, ${b} or ${s}? The bigger one is "more".`,explain:`${b} is bigger, so <b>${b} is ${d} more than ${s}</b>, and ${s} is ${d} fewer than ${b}.`}}
+  if(t===6)return{prompt:`${cap(A.name)}: ${b}. ${cap(B.name)}: ${s}. How many ${B.name} do we need to add to make them the same?`,visual:pic,choices:numberChoices(d),answerIsValue:true,correctVal:d,
+    hint:"Each leftover needs a partner. How many partners are missing?",explain:`${d} leftovers need ${d} partners. Adding ${d} ${B.name} makes them equal. That's the difference again: ${cap(B.name)} have ${d} fewer.`};
+  return{prompt:`Today Javier saw ${s} monkeys. That is ${d} fewer than last Saturday. Which day did he see more monkeys?`,visual:"",choices:["Today","Last Saturday"],correct:1,
+    hint:`"${d} fewer" is about today. So today is the smaller one.`,explain:`Today had ${d} fewer, so <b>last Saturday had ${d} more</b>: ${s} + ${d} = ${b} monkeys.`};
+}
+
+class Game{
+  constructor(el,key,gen){this.el=el;this.key=key;this.gen=gen;
+    el.addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(b)this.pick(+b.dataset.c);if(e.target.closest("[data-gnext]"))this.next()});}
+  next(){this.q=this.gen();this.done=false;this.wrong=new Set();this.fb=null;this.show=false;this.render()}
+  isRight(i){const q=this.q;return q.answerIsValue?String(q.choices[i])===String(q.correctVal):i===q.correct}
+  pick(i){if(this.done||this.wrong.has(i))return;
+    if(this.isRight(i)){this.done=true;this.show=true;this.rightIdx=i;this.fb={ok:true,t:this.q.explain};addStar(this.key)}
+    else{this.wrong.add(i);this.show=true;this.fb={ok:false,t:"Not quite. "+this.q.hint}}
+    this.render()}
+  render(){const q=this.q;
+    const btns=q.choices.map((c,i)=>{const cls=this.wrong.has(i)?" wrong":(this.done&&i===this.rightIdx?" right":"");const big=q.answerIsValue&&typeof c==="number"?" big":"";
+      return`<button class="choice${big}${cls}" data-c="${i}" ${this.wrong.has(i)||this.done?"disabled":""}>${esc(c)}</button>`}).join("");
+    const sayText=(q.sentence?q.sentence+" ":"")+q.prompt;
+    this.el.innerHTML=`${speakBtn(sayText)}
+      ${q.sentence?`<p class="sentence">${esc(q.sentence).replace("___",'<span class="blank">'+(this.done?esc(q.choices[this.rightIdx]):"?")+"</span>")}</p>`:""}
+      <p class="prompt">${esc(q.prompt)}</p>
+      ${q.visual?`<div>${this.show&&q.after?q.after:q.visual}</div>`:""}
+      <div class="choices">${btns}</div>
+      ${this.fb?`<p class="fb ${this.fb.ok?"ok":"no"}" role="status">${this.fb.t}</p>`:""}
+      ${this.done?`<div><button class="btn" data-gnext="1">Next question →</button></div>`:""}`;
+  }
+}
+
+/* ================= stations ================= */
+const BASICS=[
+ {id:"more-fewer",short:"More or fewer",desc:"Which group has more? Which has fewer? Or the same?",gen:genMoreFewer,
+  lesson:`<p class="say"><b>More</b> means a bigger number of things. <b>Fewer</b> means a smaller number of things. <b>Same</b> (or <b>equal</b>) means nobody has extra.</p>
+   <p class="say">Not sure? Line them up in pairs, one from each group. The group with leftovers has <b>more</b>.</p>
+   ${pairsHTML({e:"⭐",name:"stars"},5,{e:"🌸",name:"flowers"},3,true)}
+   <p class="say">5 stars, 3 flowers. 2 stars have no partner. <b>Stars have 2 more. Flowers have 2 fewer.</b></p><div class="warn" style="border-color:var(--extra)"><h4>The difference works both ways</h4><p class="say">The <b>difference</b> is the number of leftovers. It tells us <b>how much more</b> the bigger group has <b>and</b> <b>how much less</b> the smaller group has. Same number, said two ways.</p><p class="sentence" style="font-size:1.3rem">Difference = 2 → Stars have <span class="c-o">2 more</span>. Flowers have <span class="c-o">2 fewer</span>.</p></div>`},
+ {id:"pairs",short:"How many more?",desc:"Match in pairs and count the leftovers.",gen:genPairs,
+  lesson:`<p class="say">"How many more?" means: <b>how many are left over</b> after we match in pairs.</p>
+   ${pairsHTML({e:"🍎",name:"apples"},7,{e:"🍐",name:"pears"},4,true)}
+   <p class="say">7 apples, 4 pears. 4 pairs. <b>3 apples</b> have no partner. The difference is 3: <b>apples have 3 more, pears have 3 fewer.</b></p>
+   <p>All these questions have the same answer, 3:</p>
+   <ul class="plain"><li>How many <b>more</b> apples than pears?</li><li>How many <b>fewer</b> pears than apples?</li><li>What is the <b>difference</b>?</li><li>How many more pears do we <b>need to make them the same</b>?</li><li>How many apples should we <b>take away to make them the same</b>?</li></ul>`},
+ {id:"one-more",short:"One more, one less",desc:"Count up for more, count back for less.",gen:genOneMore,
+  lesson:`<p class="say"><b>1 more</b> = the next number when you count. <b>1 less</b> = the number just before.</p>
+   ${cubesHTML(6,1,"plus")}<p>6 and 1 more is <b>7</b>.</p>
+   ${cubesHTML(6,1,"minus")}<p>6 and 1 less is <b>5</b>.</p>
+   <p class="muted">"Just after" means 1 more. "Just before" means 1 less. "2 more" means count up 2.</p>`},
+ {id:"most-least",short:"Most, least, same",desc:"Compare three groups at once.",gen:genMostLeast,
+  lesson:`<p class="say">With three groups: <b>most</b> or <b>greatest</b> = the biggest number. <b>Least</b> or <b>fewest</b> = the smallest number. <b>Same</b> = equal.</p>
+   <div class="steps"><div class="row3"><span>Cars</span>${objs("🚗",6)}<b>6</b></div><div class="row3"><span>Balls</span>${objs("⚽",2)}<b>2</b></div><div class="row3"><span>Chicks</span>${objs("🐤",4)}<b>4</b></div></div>
+   <p>Cars have the <b>most</b>. Balls have the <b>least</b>.</p>`},
+ {id:"number-line",short:"Near or far",desc:"The difference is the number of jumps between numbers.",gen:genNumberLine,
+  lesson:`<p class="say">On a number line, the <b>difference</b> between two numbers is how many jumps it takes to get from one to the other.</p>
+   ${numberLine(4,9,{hops:true})}
+   <p>From 4 to 9 is <b>5 jumps</b>. So 9 is 5 more than 4, and 4 is 5 fewer than 9. Fewer jumps means <b>closer</b> (nearer). More jumps means <b>farther</b>.</p>`},
+ {id:"both-ways",short:"Say it both ways",desc:"7 is 3 more than 4, so 4 is 3 fewer than 7.",gen:genBothWays,
+  lesson:`<p class="say">Every compare fact can be said <b>two ways</b>. The difference stays the same number.</p>
+   ${barsHTML({big:{name:"Ben",val:7},small:{name:"Abby",val:3},diffLabel:"4 years"})}
+   <ul class="plain"><li>Ben is 4 years <b>older</b> than Abby. → Abby is 4 years <b>younger</b> than Ben.</li><li>7 is 4 <b>more</b> than 3. → 3 is 4 <b>fewer</b> than 7.</li></ul>`},
+ {id:"words",short:"Compare words",desc:"Which words mean more, and which mean less?",gen:genWords,
+  lesson:`<p class="say">Word problems use lots of different words. They all mean either <b>the bigger one</b> or <b>the smaller one</b>.</p>
+   <div class="wgroup"><h4>These mean MORE (the bigger one)</h4><div class="wgrid">
+    ${[["more","Mia has 3 more cards."],["greater","9 is greater than 5."],["bigger, larger","The big box holds more."],["older","Ben is older (more years)."],["taller","The tree is taller (more cm)."],["longer","The red ribbon is longer."],["heavier","The dog is heavier (more kg)."],["farther","The park is farther (more km)."],["more expensive / costs more","The kite costs more dollars."],["takes longer","Raj takes more minutes."]].map(([w,e])=>`<div class="wcard"><b>${w}</b><span>${e}</span></div>`).join("")}</div></div>
+   <div class="wgroup"><h4>These mean LESS (the smaller one)</h4><div class="wgrid">
+    ${[["fewer","Leo has 3 fewer cards."],["less","$4 is less than $9."],["smaller","5 is smaller than 9."],["younger","Abby is younger (fewer years)."],["shorter","The flower is shorter."],["lighter","The cat is lighter."],["closer / nearer","School is closer (fewer km)."],["cheaper / costs less","The ball is cheaper."],["less time / quicker","Carlos takes less time."]].map(([w,e])=>`<div class="wcard less"><b>${w}</b><span>${e}</span></div>`).join("")}</div></div>
+   <div class="wgroup"><h4>These ask for the DIFFERENCE (the leftovers)</h4><div class="wgrid">
+    ${[["how many more?","Count the extra part."],["how many fewer?","Same extra part."],["what is the difference?","The gap between them."],["how much older / taller / heavier?","The extra part."],["by how many?","The extra part."],["how many to make them the same?","The extra part."],["how far apart?","Jumps between them."]].map(([w,e])=>`<div class="wcard diff"><b>${w}</b><span>${e}</span></div>`).join("")}</div></div>
+   <div class="wgroup"><h4>These mean SAME</h4><div class="wgrid">
+    ${[["equal","4 = 4"],["the same as","As many as each other."],["as many as / a tie","Nobody has extra."]].map(([w,e])=>`<div class="wcard same"><b>${w}</b><span>${e}</span></div>`).join("")}</div></div>
+   <p class="say"><b>The big trick:</b> always check <b>who</b> the word is about. "Mia has 3 <b>fewer</b> than Leo" is about Mia. Mia is smaller, so Leo has <b>more</b>.</p>`},
+ {id:"check",short:"Check the idea",desc:"Show you really understand the difference, not just the answer.",gen:genCheck,
+  lesson:`<p class="say">This station checks the big idea. There are no new tricks here. Every question uses one fact:</p>
+   <p class="sentence" style="font-size:1.3rem">The <span class="c-o">difference</span> = how many <b>more</b> the bigger one has = how many <b>fewer</b> the smaller one has.</p>
+   <p class="muted">Grown-ups: after each answer, ask her to say <b>why</b> out loud. If she can explain it, she has the concept.</p>`}
+];
+const PART_B=[{id:"bars",short:"Bar models",desc:"Turn any compare story into two bars."},{id:"problems",short:"Her 8 problems",desc:"Her homework, solved step by step."},{id:"ways",short:"Many ways to ask",desc:"One story asked about 20 different ways."},{id:"practice",short:"Practice",desc:"New word problems every time, with filters."}];
+const ALL=[...BASICS,...PART_B];
+const levelsEl=document.getElementById("levels");
+const games={};
+BASICS.forEach((L,i)=>{
+  const sec=document.createElement("section");sec.id="view-"+L.id;sec.className="wrap";sec.hidden=true;
+  sec.innerHTML=`<div class="lesson"><span class="eyebrow">Station ${i+1}</span><h2>${L.short}</h2>${L.lesson}</div>
+   <div class="panel" id="game-${L.id}"></div>
+   <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost" data-go="${i===0?"start":BASICS[i-1].id}">← Back</button><button class="btn" data-go="${i<BASICS.length-1?BASICS[i+1].id:"bars"}">Next station →</button></div>`;
+  levelsEl.appendChild(sec);
+  games[L.id]=new Game(sec.querySelector(".panel"),L.id,L.gen);games[L.id].next();
+});
+function drawPath(){
+  const card=(L,i)=>`<button class="station" data-go="${L.id}"><b class="n">${i+1}</b><span class="t">${L.short}</span><small>${L.desc} ${stars[L.id]?`<span class="st">★ ${stars[L.id]}</span>`:""}</small></button>`;
+  pathA.innerHTML=BASICS.map(card).join("");pathB.innerHTML=PART_B.map((L,i)=>card(L,i+BASICS.length)).join("");
+}
+strip.innerHTML=ALL.map((L,i)=>`<button data-go="${L.id}"><b>${i+1}</b>${L.short}</button>`).join("");
+
+/* ================= Learn demo (bars) ================= */
+function drawDemo(){const a=+demoA.value,b=+demoB.value;demoAv.textContent=a;demoBv.textContent=b;
+  const mia={name:"Mia",val:a},leo={name:"Leo",val:b};const big=a>=b?mia:leo,small=a>=b?leo:mia,d=big.val-small.val;
+  demoBars.innerHTML=barsHTML({big,small,unit:"apple"});
+  demoRules.innerHTML=d===0?`<div class="rule"><span>Same amount! The difference is 0.</span><span class="r-eq">${a} = ${b}</span></div>`:`
+   <div class="rule"><span>Bigger bar = smaller + difference <b>(add)</b></span><span class="r-eq"><span class="c-b">${big.val}</span> = ${small.val} + <span class="c-o">${d}</span></span></div>
+   <div class="rule"><span>Smaller bar = bigger − difference <b>(subtract)</b></span><span class="r-eq"><span class="c-b">${small.val}</span> = ${big.val} − <span class="c-o">${d}</span></span></div>
+   <div class="rule"><span>Difference = bigger − smaller <b>(subtract)</b></span><span class="r-eq"><span class="c-o">${d}</span> = ${big.val} − ${small.val}</span></div>`}
+demoA.addEventListener("input",drawDemo);demoB.addEventListener("input",drawDemo);drawDemo();
+
+/* ================= Solver ================= */
+class Solver{
+  constructor(el,{onSolved,nextLabel,onNext}){this.el=el;this.onSolved=onSolved;this.onNext=onNext;this.nextLabel=nextLabel;this.inputId="ans-"+el.id;
+    el.addEventListener("click",e=>{const t=e.target.closest("[data-act]");if(t)this.act(t.dataset.act,t.dataset.v)});
+    el.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id===this.inputId)this.act("check")});
+    el.addEventListener("input",e=>{if(e.target.id===this.inputId)this.typed=e.target.value});}
+  load(p,label){this.p=p;this.label=label;this.step=0;this.fb=null;this.tries=0;this.typed="";this.animated=false;this.render()}
+  eq(){const{big,small,unknown}=this.p,d=big.val-small.val;
+    if(unknown==="big")return[small.val,"+",d,big.val];if(unknown==="small")return[big.val,"−",d,small.val];return[big.val,"−",small.val,d]}
+  act(a,v){const p=this.p,d=p.big.val-p.small.val,B=cap(p.big.name),S=cap(p.small.name);
+    if(a==="pick0"){if(v==="big"){this.step=1;this.fb={ok:true,t:p.why}}else this.fb={ok:false,t:"Not quite. "+p.why}}
+    else if(a==="pick1"){const where={big:`${B}'s bar (the top bar)`,small:`${S}'s bar (the bottom bar)`,diff:"the extra orange part"};
+      if(v===p.unknown){this.step=2;this.fb={ok:true,t:`Yes! The ? is on ${where[v]}. That's what the question asks for.`}}
+      else{const k=[];if(p.unknown!=="big")k.push(`${B} = ${p.big.val}`);if(p.unknown!=="small")k.push(`${S} = ${p.small.val}`);if(p.unknown!=="diff")k.push(`the extra part = ${d}`);
+        this.fb={ok:false,t:`Look for the ? in the picture. We already know ${k.join(" and ")}. The ? is the one the question asks about.`}}}
+    else if(a==="pick2"){const want=p.unknown==="big"?"add":"sub";
+      const ex=p.unknown==="big"?`The bigger bar is the matching part (${p.small.val}) and the extra part (${d}) put together. Putting together means ADD.`
+        :p.unknown==="small"?`The smaller bar is the bigger bar (${p.big.val}) with the extra part (${d}) taken away. Taking away means SUBTRACT.`
+        :`The extra part is what's left of the bigger bar (${p.big.val}) after you take away the matching part (${p.small.val}). Taking away means SUBTRACT.`;
+      if(v===want){this.step=3;this.fb={ok:true,t:ex}}else this.fb={ok:false,t:"Not this time. "+ex}}
+    else if(a==="check"){const e=this.eq(),n=parseInt(this.typed,10);
+      if(isNaN(n))this.fb={ok:false,t:"Type a number in the box first."};
+      else if(n===e[3]){this.step=4;this.fb=null;this.animated=true;this.onSolved&&this.onSolved()}
+      else{this.tries++;const h=e[1]==="+"?`Start at ${e[0]} and count up ${e[2]} more.`:`Start at ${e[0]} and count back ${e[2]}.`;
+        this.fb={ok:false,t:this.tries>1?`Not yet. ${h}${e[0]<=20?" Or count the blocks in the bar with the ?.":""}`:`Not yet, ${n} isn't it. Try again.`}}}
+    else if(a==="next"){this.onNext&&this.onNext();return}
+    this.render();if(this.step===3){const i=document.getElementById(this.inputId);if(i)i.focus()}}
+  render(){const p=this.p,s=this.step,e=this.eq(),B=cap(p.big.name),S=cap(p.small.name);
+    const fb=this.fb?`<p class="fb ${this.fb.ok?"ok":"no"}" role="status">${esc(this.fb.t)}</p>`:"";
+    const box=(i,tag,title,body,done)=>s<i?"":s>i?`<div class="step done"><span class="eyebrow">${tag}</span><span class="donetxt">✓ ${done}</span></div>`:`<div class="step now"><span class="eyebrow">${tag}</span><h3>${title}</h3>${body}${fb}</div>`;
+    const nm={big:B,small:S};
+    let h=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">${esc(this.label)}</span>${p.tricky?'<span class="badge">Tricky</span>':""}</div>
+      <p class="story">${fmt(p.story)}</p><p class="story question">${fmt(p.question)}</p>${speakBtn(p.story+" "+p.question)}`;
+    if(s>=1)h+=barsHTML({big:p.big,small:p.small,unknown:p.unknown,reveal:s===4,highlight:s===1,animate:s===4&&this.animated,unit:p.unit});
+    h+=`<div class="steps">`;
+    h+=box(0,"Step 1",esc(p.moreQ),`<p class="muted">Bigger number, older, taller, longer, or more time all count as "more".</p><div class="choices">${p.order.map(k=>`<button class="choice" data-act="pick0" data-v="${k}">${esc(nm[k])}</button>`).join("")}</div>`,`${esc(B)} is the bigger one, so it gets the top bar.`);
+    h+=box(1,"Step 2","Where is the mystery ? in the picture?",`<div class="choices"><button class="choice" data-act="pick1" data-v="big">${esc(B)}'s bar (top)</button><button class="choice" data-act="pick1" data-v="small">${esc(S)}'s bar (bottom)</button><button class="choice" data-act="pick1" data-v="diff">The extra part (orange)</button></div>`,{big:`The ? is ${esc(B)}'s bar.`,small:`The ? is ${esc(S)}'s bar.`,diff:"The ? is the extra part."}[p.unknown]);
+    h+=box(2,"Step 3","Add or subtract?",`<p class="muted">Missing the whole bigger bar? Add. Missing anything else? Subtract.</p><div class="choices"><button class="choice big" data-act="pick2" data-v="add">Add +</button><button class="choice big" data-act="pick2" data-v="sub">Subtract −</button></div>`,e[1]==="+"?"We add.":"We subtract.");
+    if(s===3)h+=`<div class="step now"><span class="eyebrow">Step 4</span><h3>Solve it</h3><div class="eq"><span>${e[0]}</span><span>${e[1]}</span><span>${e[2]}</span><span>=</span><input id="${this.inputId}" type="text" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Your answer" value="${esc(this.typed)}"></div><div><button class="btn" data-act="check">Check</button></div>${fb}</div>`;
+    h+=`</div>`;
+    if(s===4)h+=`<div class="win" role="status"><div class="eq"><span>${e[0]} ${e[1]} ${e[2]} = ${e[3]}</span></div><p>${esc(p.answer)}</p><div><button class="btn" data-act="next">${esc(this.nextLabel())}</button></div></div>`;
+    this.el.innerHTML=h}
+}
+
+/* ================= Her 8 problems ================= */
+const PROBLEMS=[
+ {short:"Monkeys",story:"Javier went to the zoo today and saw 16 monkeys. That is [[3 fewer than he saw last Saturday]].",question:"How many monkeys did Javier see last Saturday?",moreQ:"When did Javier see more monkeys?",big:{name:"Last Saturday",val:19},small:{name:"Today",val:16},unknown:"big",order:["small","big"],unit:"monkey",tricky:true,why:"Today's 16 is 3 FEWER than last Saturday. So today had fewer, and last Saturday had more. Tricky! The word \"fewer\" is about today.",answer:"Javier saw 19 monkeys last Saturday."},
+ {short:"Cards",story:"Katy and Matt are playing a card game. Katy has 6 cards. Matt has [[5 more cards than Katy]].",question:"How many cards does Matt have?",moreQ:"Who has more cards?",big:{name:"Matt",val:11},small:{name:"Katy",val:6},unknown:"big",order:["small","big"],unit:"card",why:"Matt has 5 MORE than Katy, so Matt has more.",answer:"Matt has 11 cards."},
+ {short:"Dragons",story:"Erin fought a dragon with 9 heads. Then she fought another dragon with [[2 fewer heads than the first dragon]].",question:"How many heads did the second dragon have?",moreQ:"Which dragon had more heads?",big:{name:"First dragon",val:9},small:{name:"Second dragon",val:7},unknown:"small",order:["big","small"],unit:"head",why:"The second dragon had 2 FEWER heads, so the first dragon had more.",answer:"The second dragon had 7 heads."},
+ {short:"Marbles",story:"Alex has 19 marbles. Emily has 5 marbles.",question:"[[How many more]] marbles does Alex have than Emily?",moreQ:"Who has more marbles?",big:{name:"Alex",val:19},small:{name:"Emily",val:5},unknown:"diff",order:["big","small"],unit:"marble",why:"19 is bigger than 5, so Alex has more.",answer:"Alex has 14 more marbles than Emily. So Emily has 14 fewer."},
+ {short:"Fish",story:"In a fish tank, there are 9 blue fish and 7 red fish.",question:"[[How many fewer]] red fish than blue fish are there?",moreQ:"Which color has more fish?",big:{name:"Blue fish",val:9},small:{name:"Red fish",val:7},unknown:"diff",order:["big","small"],unit:"fish",why:"9 is bigger than 7, so there are more blue fish.",answer:"There are 2 fewer red fish than blue fish."},
+ {short:"Books",story:"Yuri read 17 books. Hiro read 5 books.",question:"[[How many more]] books did Yuri read than Hiro?",moreQ:"Who read more books?",big:{name:"Yuri",val:17},small:{name:"Hiro",val:5},unknown:"diff",order:["big","small"],unit:"book",why:"17 is bigger than 5, so Yuri read more.",answer:"Yuri read 12 more books than Hiro."},
+ {short:"Reading",story:"Raj and Carlos are reading. Carlos reads a chapter in 4 minutes, which is [[3 minutes less time than it takes Raj]].",question:"How long does it take Raj to read a chapter?",moreQ:"Who takes more time?",big:{name:"Raj",val:7},small:{name:"Carlos",val:4},unknown:"big",order:["big","small"],unit:"minute",tricky:true,why:"Carlos takes 3 minutes LESS than Raj. So Raj takes more time. Tricky! The word \"less\" is about Carlos.",answer:"It takes Raj 7 minutes to read a chapter."},
+ {short:"Ages",story:"Abby is 3 years old. Her brother Ben is [[4 years older than she is]].",question:"How old is Ben?",moreQ:"Who is older (has more years)?",big:{name:"Ben",val:7},small:{name:"Abby",val:3},unknown:"big",order:["small","big"],unit:"year",why:"Ben is 4 years OLDER, so Ben has more years.",answer:"Ben is 7 years old."}];
+let solved=new Set();try{solved=new Set(JSON.parse(localStorage.getItem("compare-bars-solved")||"[]"))}catch(e){}
+let cur=0;
+function drawPicker(){picker.innerHTML=PROBLEMS.map((p,i)=>`<button class="pick${solved.has(i)?" solved":""}" data-i="${i}" aria-current="${i===cur}"><b>${i+1}</b><small>${esc(p.short)}</small></button>`).join("")}
+const main=new Solver(solverMain,{onSolved(){if(!solved.has(cur))addStar("problems");solved.add(cur);try{localStorage.setItem("compare-bars-solved",JSON.stringify([...solved]))}catch(e){}drawPicker()},
+  nextLabel(){return cur<PROBLEMS.length-1?"Next problem →":"Next: many ways to ask →"},onNext(){if(cur<PROBLEMS.length-1)openProblem(cur+1);else go("ways")}});
+function openProblem(i){cur=i;drawPicker();main.load(PROBLEMS[i],`Problem ${i+1} of ${PROBLEMS.length}`)}
+picker.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(b)openProblem(+b.dataset.i)});
+openProblem(0);
+
+/* ================= Story contexts ================= */
+const THINGS=[["stickers","sticker"],["shells","shell"],["pencils","pencil"],["cookies","cookie"],["toy cars","toy car"],["balloons","balloon"],["crayons","crayon"],["marbles","marble"],["stamps","stamp"],["cards","card"],["beads","bead"],["rocks","rock"]];
+const SETS=[["In a fish tank","blue fish","red fish"],["At the animal shelter","cats","dogs"],["In the parking lot","red cars","blue cars"],["In a jar","chocolate cookies","vanilla cookies"],["In the garden","roses","tulips"],["On the farm","chickens","ducks"],["In the class library","picture books","chapter books"]];
+const ITEMS=["the ball","the kite","the puzzle","the book","the yo-yo","the paint set","the robot","the backpack"];
+const CTX={
+ things:{label:"Things people have",make(){const[t,one]=pickOne(THINGS);const lw=()=>Math.random()<.8?"fewer":"less";return{unit:one,names:twoNames,
+  has:(X,n)=>`${X} has ${n} ${t}.`,more:(X,d,Y)=>`${X} has [[${d} more ${t} than ${Y}]].`,less:(X,d,Y)=>`${X} has [[${d} ${lw()} ${t} than ${Y}]].`,
+  thatMore:(d,Y)=>`That is [[${d} more than ${Y} has]].`,thatLess:(d,Y)=>`That is [[${d} fewer than ${Y} has]].`,
+  shortMore:(X,d)=>`${X} has [[${d} more]].`,shortLess:(X,d)=>`${X} has [[${d} fewer]].`,
+  askVal:X=>`How many ${t} does ${X} have?`,askMore:(X,Y)=>`[[How many more]] ${t} does ${X} have than ${Y}?`,askLess:(X,Y)=>`[[How many fewer]] ${t} does ${X} have than ${Y}?`,
+  askDiff:(X,Y)=>`What is [[the difference]] between the number of ${t} ${X} has and the number ${Y} has?`,askWho:()=>`Who has more ${t}, and [[how many more]]?`,
+  gainSame:(X,d,Y)=>`If ${X} got [[${d} more]], ${X} would have [[the same number as]] ${Y}.`,loseSame:(X,d,Y)=>`If ${X} gave away [[${d}]], ${X} would have [[the same number as]] ${Y}.`,
+  needMore:(X,d,Y)=>`${X} needs [[${d} more to have as many as]] ${Y}.`,askNeed:(X,Y)=>`How many more ${t} does ${X} [[need to have as many as]] ${Y}?`,askGive:(X,Y)=>`How many ${t} would ${X} have to [[give away to have the same as]] ${Y}?`,
+  moreQ:`Who has more ${t}?`,ansVal:(X,n)=>`${X} has ${n} ${t}.`,ansDiff:(P,Q,d)=>`${P} has ${d} more ${t} than ${Q}. So ${Q} has ${d} fewer.`}}},
+ sets:{label:"Two kinds of things",make(){const[where,x,y]=pickOne(SETS);let first=true;const intro=()=>{if(first){first=false;return where+", there"}return"There"};return{unit:"one",names:()=>shuffle([x,y]),reset(){first=true},
+  has:(X,n)=>`${intro()} are ${n} ${X}.`,more:(X,d,Y)=>`${intro()} are [[${d} more ${X} than ${Y}]].`,less:(X,d,Y)=>`${intro()} are [[${d} fewer ${X} than ${Y}]].`,
+  thatMore:(d,Y)=>`That is [[${d} more than the number of ${Y}]].`,thatLess:(d,Y)=>`That is [[${d} fewer than the number of ${Y}]].`,
+  shortMore:(X,d)=>`There are [[${d} more ${X}]].`,shortLess:(X,d)=>`There are [[${d} fewer ${X}]].`,
+  askVal:X=>`How many ${X} are there?`,askMore:(X,Y)=>`[[How many more]] ${X} than ${Y} are there?`,askLess:(X,Y)=>`[[How many fewer]] ${X} than ${Y} are there?`,
+  askDiff:(X,Y)=>`What is [[the difference]] between the number of ${X} and ${Y}?`,askWho:()=>`Are there more ${x} or more ${y}, and [[how many more]]?`,
+  gainSame:(X,d,Y)=>`If [[${d} more ${X}]] came, there would be [[the same number of]] ${X} and ${Y}.`,loseSame:(X,d,Y)=>`If [[${d} ${X}]] were taken out, there would be [[the same number of]] ${X} and ${Y}.`,
+  askNeed:(X,Y)=>`How many more ${X} are [[needed to have as many as]] the ${Y}?`,askGive:(X,Y)=>`How many ${X} would have to be [[taken out to have the same number as]] the ${Y}?`,
+  moreQ:"Which are there more of?",ansVal:(X,n)=>`There are ${n} ${X}.`,ansDiff:(P,Q,d)=>`There are ${d} more ${P} than ${Q}. So there are ${d} fewer ${Q}.`}}},
+ age:{label:"Ages (older, younger)",make(){return{unit:"year",names:twoNames,
+  has:(X,n)=>`${X} is ${n} years old.`,more:(X,d,Y)=>`${X} is [[${d} years older than ${Y}]].`,less:(X,d,Y)=>`${X} is [[${d} years younger than ${Y}]].`,
+  thatMore:(d,Y)=>`That is [[${d} years older than ${Y}]].`,thatLess:(d,Y)=>`That is [[${d} years younger than ${Y}]].`,
+  shortMore:(X,d)=>`${X} is [[${d} years older]].`,shortLess:(X,d)=>`${X} is [[${d} years younger]].`,
+  askVal:X=>`How old is ${X}?`,askMore:(X,Y)=>`[[How much older]] is ${X} than ${Y}?`,askLess:(X,Y)=>`[[How much younger]] is ${X} than ${Y}?`,
+  askDiff:()=>`What is [[the difference]] between their ages?`,askWho:()=>`Who is older, and [[by how many years]]?`,
+  moreQ:"Who is older?",ansVal:(X,n)=>`${X} is ${n} years old.`,ansDiff:(P,Q,d)=>`${P} is ${d} years older than ${Q}. So ${Q} is ${d} years younger.`}}},
+ tower:{label:"Block towers (taller, shorter)",make(){return{unit:"block",names:twoNames,
+  has:(X,n)=>`${X}'s tower is ${n} blocks tall.`,more:(X,d,Y)=>`${X}'s tower is [[${d} blocks taller than ${Y}'s]].`,less:(X,d,Y)=>`${X}'s tower is [[${d} blocks shorter than ${Y}'s]].`,
+  thatMore:(d,Y)=>`That is [[${d} blocks taller than ${Y}'s tower]].`,thatLess:(d,Y)=>`That is [[${d} blocks shorter than ${Y}'s tower]].`,
+  shortMore:(X,d)=>`${X}'s tower is [[${d} blocks taller]].`,shortLess:(X,d)=>`${X}'s tower is [[${d} blocks shorter]].`,
+  askVal:X=>`How tall is ${X}'s tower?`,askMore:(X,Y)=>`[[How much taller]] is ${X}'s tower than ${Y}'s?`,askLess:(X,Y)=>`[[How much shorter]] is ${X}'s tower than ${Y}'s?`,
+  askDiff:()=>`What is [[the difference]] in height between the two towers?`,askWho:()=>`Whose tower is taller, and [[by how many blocks]]?`,
+  gainSame:(X,d,Y)=>`If ${X} added [[${d} more blocks]], the two towers would be [[the same height]].`,loseSame:(X,d,Y)=>`If ${X} took [[${d} blocks]] off, the two towers would be [[the same height]].`,
+  needMore:(X,d,Y)=>`${X} needs to add [[${d} more blocks to match]] ${Y}'s tower.`,askNeed:(X,Y)=>`How many blocks does ${X} [[need to add to match]] ${Y}'s tower?`,askGive:(X,Y)=>`How many blocks would ${X} have to [[take off to make the towers the same]]?`,
+  moreQ:"Whose tower is taller?",ansVal:(X,n)=>`${X}'s tower is ${n} blocks tall.`,ansDiff:(P,Q,d)=>`${P}'s tower is ${d} blocks taller. So ${Q}'s tower is ${d} blocks shorter.`}}},
+ money:{label:"Money (more, less)",make(){return{unit:"dollar",names:twoNames,
+  has:(X,n)=>`${X} has $${n}.`,more:(X,d,Y)=>`${X} has [[$${d} more than ${Y}]].`,less:(X,d,Y)=>`${X} has [[$${d} less than ${Y}]].`,
+  thatMore:(d,Y)=>`That is [[$${d} more than ${Y} has]].`,thatLess:(d,Y)=>`That is [[$${d} less than ${Y} has]].`,
+  shortMore:(X,d)=>`${X} has [[$${d} more]].`,shortLess:(X,d)=>`${X} has [[$${d} less]].`,
+  askVal:X=>`How much money does ${X} have?`,askMore:(X,Y)=>`[[How much more]] money does ${X} have than ${Y}?`,askLess:(X,Y)=>`[[How much less]] money does ${X} have than ${Y}?`,
+  askDiff:()=>`What is [[the difference]] between their amounts of money?`,askWho:()=>`Who has more money, and [[how much more]]?`,
+  gainSame:(X,d,Y)=>`If ${X} earned [[$${d} more]], ${X} would have [[the same amount as]] ${Y}.`,loseSame:(X,d,Y)=>`If ${X} spent [[$${d}]], ${X} would have [[the same amount as]] ${Y}.`,
+  needMore:(X,d,Y)=>`${X} needs [[$${d} more to have as much as]] ${Y}.`,askNeed:(X,Y)=>`How much more money does ${X} [[need to have as much as]] ${Y}?`,askGive:(X,Y)=>`How much would ${X} have to [[spend to have the same as]] ${Y}?`,
+  moreQ:"Who has more money?",ansVal:(X,n)=>`${X} has $${n}.`,ansDiff:(P,Q,d)=>`${P} has $${d} more than ${Q}. So ${Q} has $${d} less.`}}},
+ cost:{label:"Prices (costs more, cheaper)",make(){const lw=(d,Y)=>Math.random()<.5?`costs [[$${d} less than ${Y}]]`:`is [[$${d} cheaper than ${Y}]]`;return{unit:"dollar",names:()=>shuffle(ITEMS).slice(0,2),
+  has:(X,n)=>`${cap(X)} costs $${n}.`,more:(X,d,Y)=>`${cap(X)} costs [[$${d} more than ${Y}]].`,less:(X,d,Y)=>`${cap(X)} ${lw(d,Y)}.`,
+  thatMore:(d,Y)=>`That is [[$${d} more than ${Y}]].`,thatLess:(d,Y)=>`That is [[$${d} less than ${Y}]].`,
+  shortMore:(X,d)=>`${cap(X)} costs [[$${d} more]].`,shortLess:(X,d)=>`${cap(X)} costs [[$${d} less]].`,
+  askVal:X=>`How much does ${X} cost?`,askMore:(X,Y)=>`[[How much more]] does ${X} cost than ${Y}?`,askLess:(X,Y)=>`[[How much cheaper]] is ${X} than ${Y}?`,
+  askDiff:(X,Y)=>`What is [[the difference in price]] between ${X} and ${Y}?`,askWho:()=>`Which one costs more, and [[by how much]]?`,
+  moreQ:"Which one costs more?",ansVal:(X,n)=>`${cap(X)} costs $${n}.`,ansDiff:(P,Q,d)=>`${cap(P)} costs $${d} more than ${Q}. So ${Q} is $${d} cheaper.`}}},
+ time:{label:"Time (longer, less time)",make(){return{unit:"minute",names:twoNames,
+  has:(X,n)=>`${X} takes ${n} minutes to walk to school.`,more:(X,d,Y)=>`${X} takes [[${d} minutes longer than ${Y}]].`,less:(X,d,Y)=>`${X} takes [[${d} minutes less than ${Y}]].`,
+  thatMore:(d,Y)=>`That is [[${d} minutes longer than ${Y} takes]].`,thatLess:(d,Y)=>`That is [[${d} minutes less than ${Y} takes]].`,
+  shortMore:(X,d)=>`${X} takes [[${d} minutes longer]].`,shortLess:(X,d)=>`${X} takes [[${d} minutes less]].`,
+  askVal:X=>`How long does it take ${X} to walk to school?`,askMore:(X,Y)=>`[[How much longer]] does ${X} take than ${Y}?`,askLess:(X,Y)=>`[[How much less time]] does ${X} take than ${Y}?`,
+  askDiff:()=>`What is [[the difference]] between their walking times?`,askWho:()=>`Who takes longer, and [[by how many minutes]]?`,
+  moreQ:"Who takes more time?",ansVal:(X,n)=>`It takes ${X} ${n} minutes.`,ansDiff:(P,Q,d)=>`${P} takes ${d} minutes longer than ${Q}. So ${Q} takes ${d} minutes less.`}}},
+ points:{label:"Game points (scored more, fewer)",make(){return{unit:"point",names:twoNames,
+  has:(X,n)=>`${X} scored ${n} points.`,more:(X,d,Y)=>`${X} scored [[${d} more points than ${Y}]].`,less:(X,d,Y)=>`${X} scored [[${d} fewer points than ${Y}]].`,
+  thatMore:(d,Y)=>`That is [[${d} more than ${Y} scored]].`,thatLess:(d,Y)=>`That is [[${d} fewer than ${Y} scored]].`,
+  shortMore:(X,d)=>`${X} scored [[${d} more]].`,shortLess:(X,d)=>`${X} scored [[${d} fewer]].`,
+  askVal:X=>`How many points did ${X} score?`,askMore:(X,Y)=>`[[How many more]] points did ${X} score than ${Y}?`,askLess:(X,Y)=>`[[How many fewer]] points did ${X} score than ${Y}?`,
+  askDiff:()=>`What is [[the difference]] between their scores?`,askWho:()=>`Who won, and [[by how many points]]?`,
+  gainSame:(X,d,Y)=>`If ${X} had scored [[${d} more points]], it would have been [[a tie]].`,loseSame:(X,d,Y)=>`If ${X} lost [[${d} points]], it would be [[a tie]].`,
+  needMore:(X,d,Y)=>`${X} needs [[${d} more points to tie with]] ${Y}.`,askNeed:(X,Y)=>`How many more points does ${X} [[need to tie with]] ${Y}?`,askGive:(X,Y)=>`How many points would ${X} have to [[lose for a tie]]?`,
+  moreQ:"Who scored more points?",ansVal:(X,n)=>`${X} scored ${n} points.`,ansDiff:(P,Q,d)=>`${P} scored ${d} more points than ${Q}. So ${Q} scored ${d} fewer.`}}},
+ weight:{label:"Weight (heavier, lighter)",make(){const pet=pickOne(["dog","cat","bag","pumpkin"]);return{unit:"kilogram",names:twoNames,
+  has:(X,n)=>`${X}'s ${pet} weighs ${n} kg.`,more:(X,d,Y)=>`${X}'s ${pet} is [[${d} kg heavier than ${Y}'s]].`,less:(X,d,Y)=>`${X}'s ${pet} is [[${d} kg lighter than ${Y}'s]].`,
+  thatMore:(d,Y)=>`That is [[${d} kg heavier than ${Y}'s ${pet}]].`,thatLess:(d,Y)=>`That is [[${d} kg lighter than ${Y}'s ${pet}]].`,
+  shortMore:(X,d)=>`${X}'s ${pet} is [[${d} kg heavier]].`,shortLess:(X,d)=>`${X}'s ${pet} is [[${d} kg lighter]].`,
+  askVal:X=>`How much does ${X}'s ${pet} weigh?`,askMore:(X,Y)=>`[[How much heavier]] is ${X}'s ${pet} than ${Y}'s?`,askLess:(X,Y)=>`[[How much lighter]] is ${X}'s ${pet} than ${Y}'s?`,
+  askDiff:()=>`What is [[the difference]] between the two weights?`,askWho:()=>`Whose ${pet} is heavier, and [[by how many kilograms]]?`,
+  moreQ:`Whose ${pet} is heavier?`,ansVal:(X,n)=>`${X}'s ${pet} weighs ${n} kg.`,ansDiff:(P,Q,d)=>`${P}'s ${pet} is ${d} kg heavier. So ${Q}'s ${pet} is ${d} kg lighter.`}}},
+ length:{label:"Length (longer, shorter)",make(){const obj=pickOne(["ribbon","rope","paper chain","scarf"]);return{unit:"centimetre",names:twoNames,
+  has:(X,n)=>`${X}'s ${obj} is ${n} cm long.`,more:(X,d,Y)=>`${X}'s ${obj} is [[${d} cm longer than ${Y}'s]].`,less:(X,d,Y)=>`${X}'s ${obj} is [[${d} cm shorter than ${Y}'s]].`,
+  thatMore:(d,Y)=>`That is [[${d} cm longer than ${Y}'s]].`,thatLess:(d,Y)=>`That is [[${d} cm shorter than ${Y}'s]].`,
+  shortMore:(X,d)=>`${X}'s ${obj} is [[${d} cm longer]].`,shortLess:(X,d)=>`${X}'s ${obj} is [[${d} cm shorter]].`,
+  askVal:X=>`How long is ${X}'s ${obj}?`,askMore:(X,Y)=>`[[How much longer]] is ${X}'s ${obj} than ${Y}'s?`,askLess:(X,Y)=>`[[How much shorter]] is ${X}'s ${obj} than ${Y}'s?`,
+  askDiff:()=>`What is [[the difference]] in length?`,askWho:()=>`Whose ${obj} is longer, and [[by how many cm]]?`,
+  loseSame:(X,d,Y)=>`If ${X} cut [[${d} cm off]], the two would be [[the same length]].`,askGive:(X,Y)=>`How many cm would ${X} have to [[cut off to make them the same length]]?`,
+  moreQ:`Whose ${obj} is longer?`,ansVal:(X,n)=>`${X}'s ${obj} is ${n} cm long.`,ansDiff:(P,Q,d)=>`${P}'s ${obj} is ${d} cm longer. So ${Q}'s ${obj} is ${d} cm shorter.`}}}
+};
+const CTX_KEYS=Object.keys(CTX);
+
+/* P = bigger, Q = smaller, b = big value, s = small value, d = difference */
+const TEMPLATES=[
+ {u:"big",g:"Plain",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.more(P,d,Q)}`,c.askVal(P)],why:(P,Q,d)=>`${P} has ${d} more than ${Q}, so ${P} is the bigger one.`},
+ {u:"big",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.shortMore(P,d)}`,c.askVal(P)],why:(P,Q,d)=>`${P} has ${d} more, so ${P} is the bigger one.`},
+ {u:"big",t:1,f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.thatLess(d,P)}`,c.askVal(P)],why:(P,Q,d)=>`${Q}'s amount is ${d} LESS than ${P}'s. So ${P} is the bigger one. Tricky! The "less" word is about ${Q}.`},
+ {u:"big",t:1,f:(c,P,Q,b,s,d)=>[`${c.less(Q,d,P)} ${c.has(Q,s)}`,c.askVal(P)],why:(P,Q,d)=>`${Q} has ${d} LESS than ${P}. So ${P} is the bigger one. Tricky! The "less" word is about ${Q}.`},
+ {u:"big",t:1,need:"gainSame",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.gainSame(Q,d,P)}`,c.askVal(P)],why:(P,Q)=>`${Q} would need MORE to catch up with ${P}. So ${P} is the bigger one.`},
+ {u:"big",t:1,need:"needMore",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.needMore(Q,d,P)}`,c.askVal(P)],why:(P,Q)=>`${Q} needs more to catch up with ${P}. So ${P} is the bigger one.`},
+ {u:"small",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.less(Q,d,P)}`,c.askVal(Q)],why:(P,Q,d)=>`${Q} has ${d} less than ${P}, so ${P} is the bigger one.`},
+ {u:"small",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.shortLess(Q,d)}`,c.askVal(Q)],why:(P,Q,d)=>`${Q} has ${d} less, so ${P} is the bigger one.`},
+ {u:"small",t:1,f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.thatMore(d,Q)}`,c.askVal(Q)],why:(P,Q,d)=>`${P}'s amount is ${d} MORE than ${Q}'s. So ${P} is the bigger one. Tricky! The "more" word is about ${P}, so ${Q} is smaller.`},
+ {u:"small",t:1,f:(c,P,Q,b,s,d)=>[`${c.more(P,d,Q)} ${c.has(P,b)}`,c.askVal(Q)],why:(P,Q,d)=>`${P} has ${d} MORE than ${Q}. So ${P} is the bigger one. Tricky! The "more" word is about ${P}.`},
+ {u:"small",t:1,need:"loseSame",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.loseSame(P,d,Q)}`,c.askVal(Q)],why:(P,Q)=>`${P} would have to lose some to match ${Q}. So ${P} is the bigger one.`},
+ {u:"small",t:1,need:"needMore",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.needMore(Q,d,P)}`,c.askVal(Q)],why:(P,Q)=>`${Q} needs MORE to catch up with ${P}. So ${P} is the bigger one. Tricky! "More" here does not mean add.`},
+ {u:"diff",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.has(Q,s)}`,c.askMore(P,Q)]},
+ {u:"diff",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.has(P,b)}`,c.askMore(P,Q)]},
+ {u:"diff",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.has(Q,s)}`,c.askLess(Q,P)]},
+ {u:"diff",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.has(P,b)}`,c.askDiff(P,Q)]},
+ {u:"diff",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.has(Q,s)}`,c.askWho()]},
+ {u:"diff",t:1,need:"askNeed",f:(c,P,Q,b,s,d)=>[`${c.has(Q,s)} ${c.has(P,b)}`,c.askNeed(Q,P)]},
+ {u:"diff",t:1,need:"askGive",f:(c,P,Q,b,s,d)=>[`${c.has(P,b)} ${c.has(Q,s)}`,c.askGive(P,Q)]}
+];
+function makeSetup(ctxKey,max){
+  const key=ctxKey==="all"?pickOne(CTX_KEYS):ctxKey;const c=CTX[key].make();
+  const lo={10:3,20:6,50:15,100:25}[max]||6;const b=rnd(lo,max);const dMax=max<=20?Math.min(9,b-1):Math.min(Math.floor(b*.6),b-1);
+  const d=rnd(1,Math.max(1,dMax)),s=b-d;const[P,Q]=c.names();return{c,key,P,Q,b,s,d};
+}
+function buildProblem(S,T){
+  const{c,P,Q,b,s,d}=S;c.reset&&c.reset();const[story,question]=T.f(c,P,Q,b,s,d);
+  const why=T.u==="diff"?`${b} is bigger than ${s}, so ${cap(P)} is the bigger one.`:T.why(cap(P),cap(Q),d);
+  const answer=T.u==="big"?c.ansVal(P,b):T.u==="small"?c.ansVal(Q,s):c.ansDiff(cap(P),Q,d);
+  return{story,question,moreQ:c.moreQ,big:{name:P,val:b},small:{name:Q,val:s},unknown:T.u,order:shuffle(["big","small"]),unit:c.unit,tricky:!!T.t,why,answer:cap(answer)};
+}
+const fits=(c,T)=>!T.need||typeof c[T.need]==="function";
+
+/* ================= Practice ================= */
+const ctxOptions=`<option value="all">All kinds</option>`+CTX_KEYS.map(k=>`<option value="${k}">${CTX[k].label}</option>`).join("");
+fCtx.innerHTML=ctxOptions;wCtx.innerHTML=CTX_KEYS.map(k=>`<option value="${k}">${CTX[k].label}</option>`).join("");
+let lastT=-1;
+function newPractice(){
+  const S=makeSetup(fCtx.value,+fMax.value);
+  let pool=TEMPLATES.map((T,i)=>i).filter(i=>{const T=TEMPLATES[i];return fits(S.c,T)&&(fMiss.value==="mix"||T.u===fMiss.value)&&(!fTricky.checked||T.t)});
+  if(!pool.length)pool=TEMPLATES.map((T,i)=>i).filter(i=>fits(S.c,TEMPLATES[i])&&(fMiss.value==="mix"||TEMPLATES[i].u===fMiss.value));
+  if(pool.length>1)pool=pool.filter(i=>i!==lastT);const ti=pickOne(pool);lastT=ti;
+  practice.load(buildProblem(S,TEMPLATES[ti]),"Practice story");
+}
+const practice=new Solver(solverPractice,{onSolved(){addStar("practice")},nextLabel:()=>"New story →",onNext:newPractice});
+[fMiss,fCtx,fMax,fTricky].forEach(x=>x.addEventListener("change",newPractice));
+newPractice();
+
+/* ================= Many ways ================= */
+let wSetup,wProblems=[];
+function drawWays(fresh){
+  if(fresh||!wSetup)wSetup=makeSetup(wCtx.value,+wMax.value);
+  const S=wSetup;wProblems=TEMPLATES.filter(T=>fits(S.c,T)).map(T=>buildProblem(S,T));
+  wFact.innerHTML=`<p class="story">The three numbers: <b>${esc(cap(S.P))}</b> = <b class="num" style="font-family:var(--display);color:var(--cube);font-size:1.3em">${S.b}</b>, <b>${esc(cap(S.Q))}</b> = <b class="num" style="font-family:var(--display);color:var(--cube);font-size:1.3em">${S.s}</b>, difference = <b style="font-family:var(--display);color:var(--extra);font-size:1.3em">${S.d}</b>.</p>${barsHTML({big:{name:S.P,val:S.b},small:{name:S.Q,val:S.s},unit:S.c.unit})}`;
+  const groups=[["big","The bigger amount is missing","Find the whole top bar. Add: smaller + difference."],["small","The smaller amount is missing","Take the extra part away. Subtract: bigger − difference."],["diff","The difference is missing","Find the extra part. Subtract: bigger − smaller."]];
+  let h="",idx=0;
+  for(const[u,title,rule]of groups){
+    h+=`<div class="ghead"><h3>${title}</h3><p class="muted">${rule}</p></div><ol class="ways">`;
+    wProblems.forEach((p,i)=>{if(p.unknown!==u)return;idx++;const e=u==="big"?`${p.small.val} + ${S.d} = ${p.big.val}`:u==="small"?`${p.big.val} − ${S.d} = ${p.small.val}`:`${p.big.val} − ${p.small.val} = ${S.d}`;
+      h+=`<li class="way"><span class="eyebrow">Way ${idx} ${p.tricky?'<span class="badge">Tricky</span>':""}</span><p class="story">${fmt(p.story)} <span class="question">${fmt(p.question)}</span></p>
+        <div class="way-act"><button class="btn ghost sm" data-show="${i}">Show answer</button><button class="btn sm" data-solve="${i}">Solve it step by step</button></div>
+        <p class="ans" id="wa-${i}" hidden>${esc(p.answer)} (${e})</p></li>`});
+    h+=`</ol>`;
+  }
+  wList.innerHTML=h;
+}
+wList.addEventListener("click",e=>{const s=e.target.closest("[data-show]");if(s){document.getElementById("wa-"+s.dataset.show).hidden=false;s.remove()}
+  const v=e.target.closest("[data-solve]");if(v){go("practice");practice.load(wProblems[+v.dataset.solve],"From: many ways to ask")}});
+wCtx.addEventListener("change",()=>drawWays(true));wMax.addEventListener("change",()=>drawWays(true));wNew.addEventListener("click",()=>drawWays(true));
+drawWays(true);
+
+/* ================= routing ================= */
+const VIEWS=["start",...ALL.map(L=>L.id)];
+function show(r){if(!VIEWS.includes(r))r="start";
+  VIEWS.forEach(v=>{const el=document.getElementById("view-"+v);if(el)el.hidden=v!==r});
+  strip.querySelectorAll("button").forEach(b=>{const on=b.dataset.go===r;b.setAttribute("aria-current",on);if(on)b.scrollIntoView({block:"nearest",inline:"center"})});
+  window.scrollTo({top:0})}
+function go(r){try{if(location.hash!=="#"+r)location.hash=r}catch(e){}show(r)}
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g)go(g.dataset.go)});
+resetStars.addEventListener("click",()=>{if(resetStars.dataset.armed){stars={};try{localStorage.setItem("cb-stars","{}")}catch(e){}drawStars();resetStars.dataset.armed="";resetStars.textContent="Reset stars";resetMsg.textContent="Stars cleared."}else{resetStars.dataset.armed="1";resetStars.textContent="Tap again to clear all stars";resetMsg.textContent=""}});
+drawStars();show(location.hash.slice(1)||"start");
+</script>
+
+</body>
+</html>
