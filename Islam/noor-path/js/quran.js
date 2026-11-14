@@ -25,7 +25,7 @@ export async function quranScreen(view, arg) {
   view.append(bar);
   const ready = h('<div class="ready" style="margin-bottom:10px"></div>'); view.append(ready);
   const box = h('<div></div>'); view.append(box);
-  const foot = h(`<div class="pagefoot"><button class="btn icon nextp" aria-label="Next page">${ICON.next}</button><span class="pno"></span><button class="btn icon prevp" aria-label="Previous page">${ICON.back}</button></div>`);
+  const foot = h(`<div class="pagefoot"><button class="btn prevp" aria-label="Previous page">${ICON.back} Previous</button><span class="pno"></span><button class="btn nextp" aria-label="Next page">Next ${ICON.next}</button></div>`);
   view.append(foot);
   const ctl = h('<div class="row c" style="margin-top:12px"></div>'); view.append(ctl);
 
@@ -36,7 +36,7 @@ export async function quranScreen(view, arg) {
   foot.querySelector('.prevp').onclick = () => go(Math.max(1, st.quran.page - 1));
   let sx = 0;
   box.addEventListener('touchstart', e => sx = e.touches[0].clientX, { passive: true });
-  box.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 70) go(st.quran.page + (dx > 0 ? 1 : -1)); });
+  box.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 70) go(st.quran.page + (dx < 0 ? 1 : -1)); });
 
   function go(p) { if (p < 1 || p > 604) return; stopAll(); st.quran.page = p; save(); render(); }
 

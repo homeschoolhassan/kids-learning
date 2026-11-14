@@ -15,8 +15,8 @@ export const ICON = {
   stop: '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg>',
   spk: '<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>',
   mic: '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
-  next: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
-  back: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+  back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
   close: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   teacher: '<svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5zM7 11v5c3 2 7 2 10 0v-5"/></svg>',
   slide: '<svg viewBox="0 0 24 24"><path d="M20 12H4M9 7l-5 5 5 5"/></svg>',
@@ -83,7 +83,7 @@ export function slideCard(word, ref, opts = {}) {
       ${ref ? `<div class="ref">${refLabel(ref)}</div>` : ''}</div>
     <div class="row c" style="margin-top:10px">
       <button class="btn play">${ICON.play} Play</button>
-      <button class="btn step">${ICON.next} Next letter</button>
+      <button class="btn step">Next letter ${ICON.next}</button>
       ${ref ? `<button class="btn hus">${ICON.spk} Husary</button>` : ''}
     </div></div>`);
   let pos = -1, timer = null;

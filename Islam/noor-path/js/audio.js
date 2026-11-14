@@ -31,6 +31,15 @@ function finish() {
   cb && cb();
 }
 el.addEventListener('ended', finish);
+// Phones and tablets (especially iPad/iPhone) only allow sound after a tap.
+// Unlock the player on the very first tap so later Husary playback is allowed.
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function unlock() {
+  document.removeEventListener('pointerdown', unlock, true);
+  if (el.src) return;
+  el.src = SILENT; el.play().then(() => { if (el.src === SILENT) el.pause(); }).catch(() => {});
+}
+document.addEventListener('pointerdown', unlock, true);
 export function stop() { token++; if (endCb || !el.paused) finish(); }
 export const playing = () => !el.paused;
 
