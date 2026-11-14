@@ -54,10 +54,10 @@ h1{font-size:24px}h2{font-size:20px}h3{font-size:17px}
 .btn.rec{background:var(--red-2);border-color:#EDC2B6;color:var(--red)}
 .btn.rec.on{background:var(--red);color:#fff}
 .ar{font-family:var(--quran);direction:rtl;line-height:2.1;font-feature-settings:normal}
-.ar-xl{font-size:clamp(54px,15vw,84px)}
-.ar-l{font-size:clamp(40px,10vw,56px)}
+.ar-xl{font-size:clamp(40px,min(14vw,9vh),84px)}
+.ar-l{font-size:clamp(32px,min(10vw,6.5vh),56px)}
 .ar-m{font-size:34px}
-.wordcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 14px 10px;text-align:center;position:relative}
+.wordcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:4px 14px 8px;text-align:center;position:relative;width:min(100%,520px)}
 .wordcard .ref{font-size:13px;color:var(--ink-3)}
 .u{transition:color .3s}
 .u.done{color:var(--ink)}.u.now{color:var(--blue)}.u.wait{color:var(--ghost)}
@@ -75,14 +75,14 @@ h1{font-size:24px}h2{font-size:20px}h3{font-size:17px}
 .talking .face{animation:bob 1s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-3px)}}
 /* lesson player */
-.player{display:flex;flex-direction:column;gap:12px;min-height:calc(100vh - 190px)}
-.player .stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.player{display:flex;flex-direction:column;gap:10px;height:calc(100dvh - 78px - env(safe-area-inset-top));min-height:420px}
+.player .stage{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:12px;padding:4px 2px}
 .progress{display:flex;gap:6px}
 .progress span{flex:1;height:8px;border-radius:4px;background:var(--line)}
 .progress span.d{background:var(--green)}.progress span.n{background:var(--gold)}
 .steps-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);margin-top:2px}
 .opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));width:100%;max-width:520px}
-.opt{min-height:76px;border-radius:18px;border:1.5px solid var(--line-2);background:var(--card);cursor:pointer;font-size:20px;font-weight:650;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px}
+.opt{min-height:clamp(54px,9vh,76px);border-radius:18px;border:1.5px solid var(--line-2);background:var(--card);cursor:pointer;font-size:20px;font-weight:650;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px}
 .opt .ar{line-height:1.6}
 .opt.ok{border-color:var(--green);background:var(--green-2);color:var(--green-ink)}
 .opt.no{border-color:var(--red);background:var(--red-2);color:var(--red);animation:shake .35s}
@@ -92,7 +92,7 @@ h1{font-size:24px}h2{font-size:20px}h3{font-size:17px}
 .navrow{display:flex;justify-content:space-between;align-items:center;gap:10px}
 /* tiles */
 .tiles{display:flex;flex-direction:row-reverse;justify-content:center;gap:28px;flex-wrap:wrap}
-.tile{position:relative;width:88px;height:100px;border-radius:16px;background:var(--card);border:1.5px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-family:var(--quran);font-size:54px;line-height:1}
+.tile{position:relative;width:clamp(64px,10vh,88px);height:clamp(72px,11vh,100px);border-radius:16px;background:var(--card);border:1.5px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-family:var(--quran);font-size:54px;line-height:1}
 .tile .hand{position:absolute;left:-20px;top:46px;width:20px;height:8px;border-radius:4px;background:var(--green)}
 .tile .nohand{position:absolute;left:-26px;top:36px;width:22px;height:22px;border-radius:50%;background:var(--red-2);color:var(--red);font:700 14px/22px system-ui;text-align:center}
 .tile.blue{color:var(--blue);border-color:var(--blue)}
@@ -156,3 +156,10 @@ table.t td,table.t th{padding:8px 6px;border-bottom:1px solid var(--line);text-a
 #home-btn{background:#0b3d5e;color:#fff;border-radius:8px;padding:7px 12px;font-size:14px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.2);white-space:nowrap}
 #home-btn:hover{background:#1d6ef5}
 .pagefoot .pno{white-space:nowrap;font-size:13px}
+/* lessons and quizzes use the whole screen: no tab bar, buttons always visible */
+body.focus #tabs{display:none}
+body.focus #view{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.player .feedback{min-height:22px}
+@media (max-height:700px){.tutor .face{width:40px;height:40px}.tutor .face svg{width:28px;height:28px}.bubble{font-size:16px;padding:8px 12px}.btn.big{min-height:52px}.dots-sep{display:none}}
+.pagefoot{gap:8px}.pagefoot .btn{min-height:46px;padding:8px 14px;font-size:16px}
+@media (max-height:700px){.slide>.wordcard:first-child{display:none}}

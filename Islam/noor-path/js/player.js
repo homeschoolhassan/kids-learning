@@ -10,6 +10,7 @@ const GOOD = ['good1', 'good2', 'good3', 'good4'];
 export function runSteps(view, { title, steps, labels, onFinish, onExit }) {
   let i = 0, right = 0, total = 0; const per = {};
   view.innerHTML = '';
+  document.body.classList.add('focus');
   const root = h(`<div class="player">
     <div class="navrow"><button class="btn icon exit" aria-label="Close">${ICON.close}</button><div style="flex:1"><div class="progress"></div>${labels ? `<div class="steps-lbl">${labels.map(l => `<span>${l}</span>`).join('')}</div>` : ''}</div></div>
     <div class="tut"></div><div class="stage"></div>

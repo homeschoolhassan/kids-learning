@@ -10,6 +10,7 @@ const view = $('#view');
 
 async function route() {
   stopAll();
+  document.body.classList.remove('focus');
   document.querySelectorAll('.sheet,.scrim').forEach(e => e.remove());
   const [tab, arg] = (location.hash.slice(1) || 'today').split('/');
   $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === (tab === 'lesson' ? 'lessons' : tab)));
