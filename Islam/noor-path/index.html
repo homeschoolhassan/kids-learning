@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Noor Path: Read the Quran</title>
+<meta name="theme-color" content="#F6EFE2">
+<link rel="preload" href="fonts/UthmanicHafs.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div class="brand"><span id="hilal-top"></span><span class="brand-name">Noor Path</span></div>
+    <div class="top-stats"><span class="pill pill-soft" id="star-count">★ 0</span></div>
+  </header>
+  <main id="view" aria-live="polite"></main>
+  <nav id="tabs" aria-label="Main">
+    <button data-tab="today" class="tab"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 1 0 9 7.5A7.5 7.5 0 1 1 12 3z"/></svg><span>Today</span></button>
+    <button data-tab="lessons" class="tab"><svg viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg><span>Lessons</span></button>
+    <button data-tab="quiz" class="tab"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg><span>Quiz</span></button>
+    <button data-tab="quran" class="tab"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"/></svg><span>Quran</span></button>
+    <button data-tab="parents" class="tab"><svg viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M16 14a5 5 0 0 1 5 6"/></svg><span>Parents</span></button>
+  </nav>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
