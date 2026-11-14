@@ -1,5 +1,5 @@
 import { analyse } from './arabic.js';
-import { speak, text, stopVoice } from './voice.js';
+import { speak, text, stopVoice, hasVoice } from './voice.js';
 import * as audio from './audio.js';
 
 export const $ = (s, r = document) => r.querySelector(s);
@@ -41,6 +41,8 @@ export function tutor(id, extra = '') {
 }
 export function setSay(el, id, vars = {}) {
   el.dataset.id = id;
+  // Only show the speaker button when a recording exists for this line.
+  const spk = el.querySelector('.spk'); if (spk) spk.style.display = hasVoice(id) ? '' : 'none';
   let t = text(id);
   for (const k in vars) t = t.replace(`{${k}}`, vars[k]);
   el.querySelector('.say').innerHTML = t;
