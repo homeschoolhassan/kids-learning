@@ -35,7 +35,7 @@ export function runSteps(view, { title, steps, labels, onFinish, onExit }) {
     prev.style.visibility = i ? 'visible' : 'hidden';
     const s = steps[i];
     if (s.type === 'story') { setSay(T, s.say); stage.append(h(`<div style="width:100%;display:flex;flex-direction:column;gap:12px;align-items:center">${s.show}</div>`)); }
-    else if (s.type === 'slide') { setSay(T, s.say || 'j1_f'); stage.append(slideCard(s.word, s.ref, { auto: true })); }
+    else if (s.type === 'slide') { const card = slideCard(s.word, s.ref); stage.append(card); const me = i; setSay(T, s.say || 'j1_f').then(() => { if (i === me && card.isConnected) card.play(); }); }
     else if (s.type === 'q') question(s.q);
     else if (s.type === 'read') { setSay(T, 'read_intro'); stage.append(readAyahView(s.c, s.v, { onSaid: id => setSay(T, id) })); }
   }
@@ -43,7 +43,7 @@ export function runSteps(view, { title, steps, labels, onFinish, onExit }) {
   function question(q) {
     lock(true);
     window.__q = q; // used by automated checks
-    setSay(T, q.say);
+    const sayDone = setSay(T, q.say);
     let first = true, solved = false;
     const done = async (ok, el) => {
       if (solved) return;
@@ -51,9 +51,9 @@ export function runSteps(view, { title, steps, labels, onFinish, onExit }) {
       if (ok) {
         solved = true;
         fb.textContent = '✓'; fb.className = 'feedback good';
-        setSay(T, pick(GOOD));
+        await setSay(T, pick(GOOD));
         lock(false);
-        if (q.ref) { await wait(300); await Promise.race([audio.playWord(q.ref), wait(4000)]); }
+        if (q.ref) await Promise.race([audio.playWord(q.ref), wait(4000)]);
         await wait(500); if (steps[i] && steps[i].q === q) nxt.click();
       } else {
         fb.className = 'feedback try';
@@ -68,7 +68,7 @@ export function runSteps(view, { title, steps, labels, onFinish, onExit }) {
         b.onclick = () => { if (solved) return; b.classList.add(o.ok ? 'ok' : 'no'); if (!o.ok) setTimeout(() => b.classList.remove('no'), 900); done(o.ok, b); };
         opts.append(b);
       });
-      if (q.autoplay) { const a = wrap.querySelector('.again'); a.onclick = () => audio.playWord(q.autoplay); setTimeout(() => audio.playWord(q.autoplay), 600); }
+      if (q.autoplay) { const a = wrap.querySelector('.again'); a.onclick = () => audio.playWord(q.autoplay); sayDone.then(() => { if (!solved && wrap.isConnected) audio.playWord(q.autoplay); }); }
       stage.append(wrap);
     } else if (q.kind === 'tap') {
       const us = analyse(q.word);

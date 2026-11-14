@@ -112,7 +112,9 @@ const G = {
   listen(filter) {
     const pool = words(filter || (() => true), { max: 6 });
     const w = choose(pool); if (!w) return null;
-    const others = shuffle(pool.filter(x => x.t !== w.t)).slice(0, 2);
+    // Look-alike choices: similar length, so she has to read every letter.
+    const near = pool.filter(x => x.t !== w.t && Math.abs(x.len - w.len) <= 1);
+    const others = shuffle(near.length >= 2 ? near : pool.filter(x => x.t !== w.t)).slice(0, 2);
     return { kind: 'pick', say: 'q_listen_pick', autoplay: w.r, word: w.t, ref: w.r, why: 'listen_word', rtl: true,
       options: shuffle([w, ...others]).map(x => ({ html: `<span class="ar" style="font-size:36px">${x.t}</span>`, ok: x.t === w.t })) };
   }
@@ -211,3 +213,18 @@ export function reviewQuestion(item) {
 }
 
 export function listenQuestion() { return G.listen(); }
+
+// Placement check: no lesson words like "hand" or "sukun" yet. Husary reads a real
+// word and she picks it. Each lesson is checked with words that contain its skill.
+const PLACE = {
+  j1: w => w.f.includes('pieces'), j2: w => w.len >= 3, j3: w => /[ثخذزشضظغ]/.test(w.t),
+  j4: w => /[هعغ]/.test(w.t) || w.f.includes('laamalif'), j5: w => w.f.includes('pieces') && w.len >= 4,
+  s1: w => !w.f.includes('shadda') && !w.f.includes('sukun') && !w.f.includes('long'),
+  s2: w => w.f.includes('sukun'), s3: w => w.f.includes('shadda'), s4: w => w.f.includes('long'),
+  s5: w => w.f.includes('tanween'), s6: w => w.f.includes('quiet')
+};
+export function placementQuestion(unitId) {
+  const q = G.listen(PLACE[unitId]);
+  if (q) { q.unit = unitId; q.why = 'place_why'; }
+  return q;
+}

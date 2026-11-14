@@ -46,11 +46,11 @@ export function setSay(el, id, vars = {}) {
   let t = text(id);
   for (const k in vars) t = t.replace(`{${k}}`, vars[k]);
   el.querySelector('.say').innerHTML = t;
-  return talk(el, id);
+  return talk(el, id, vars);
 }
-async function talk(el, id) {
+async function talk(el, id, vars) {
   el.classList.add('talking');
-  await speak(id);
+  await speak(id, vars);
   el.classList.remove('talking');
 }
 

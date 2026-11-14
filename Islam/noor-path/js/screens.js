@@ -1,10 +1,11 @@
 import { h, tutor, setSay, ICON, starsHTML, confetti, toast, stopAll, refLabel, esc, shuffle } from './ui.js';
 import * as store from './store.js';
 import * as audio from './audio.js';
-import { SECTIONS, UNITS, unitById, questionsFor, questionFor, reviewQuestion, listenQuestion } from './lessons.js';
+import { SECTIONS, UNITS, unitById, questionsFor, questionFor, reviewQuestion, listenQuestion, placementQuestion } from './lessons.js';
 import { runSteps } from './player.js';
 import { analyse, features, joinsForward } from './arabic.js';
 import { LINES } from './lines.js';
+import { englishVoices, setVoice, speak } from './voice.js';
 
 const FEATURE_UNIT = { pieces: 'j5', sukun: 's2', shadda: 's3', long: 's4', tanween: 's5', quiet: 's6', wasl: 's6' };
 const READ_ORDER = [...Array.from({ length: 37 }, (_, i) => 114 - i), 1];
@@ -57,7 +58,7 @@ export async function todayScreen(view) {
   view.innerHTML = '';
   if (!st.placement) {
     view.append(tutor('hello_new'));
-    const c = h(`<div class="step"><div class="ic" style="background:var(--gold-2)">🧭</div><div class="tx"><b>Start here: what do you know?</b><span class="muted small">About 10 minutes. Skips what she knows already.</span></div><div class="chk"></div></div>`);
+    const c = h(`<div class="step"><div class="ic" style="background:var(--gold-2)">🧭</div><div class="tx"><b>Start here: what do you know?</b><span class="muted small">Listen to Sheikh Husary and find the word. About 10 minutes.</span></div><div class="chk"></div></div>`);
     c.onclick = () => placement(view);
     view.append(c);
     const skip = h(`<p class="center small"><a href="#today" class="muted">Skip and start from the beginning</a></p>`);
@@ -105,7 +106,7 @@ function review(view) {
 function tally(r) { Object.entries(r.per || {}).forEach(([u, p]) => { if (u && u !== 'undefined') store.recordUnitScore(u, p.right, p.total); }); }
 
 function placement(view) {
-  const qs = UNITS.flatMap(u => questionsFor([u.id], 2));
+  const qs = UNITS.flatMap(u => [placementQuestion(u.id), placementQuestion(u.id)]).filter(Boolean);
   const steps = [{ type: 'story', say: 'place_intro', show: '<div style="font-size:80px">🧭</div>' }, ...qs.map(q => ({ type: 'q', q }))];
   runSteps(view, {
     title: 'All done!', steps,
@@ -242,12 +243,22 @@ export async function parentsScreen(view) {
   view.append(h('<h2>Settings</h2>'));
   const set = h(`<div class="card path">
     <label class="row"><input type="checkbox" class="taj" ${st.settings.tajweed ? 'checked' : ''}> Show tajweed colours</label>
+    <label class="row"><input type="checkbox" class="von" ${st.settings.voiceOn !== false ? 'checked' : ''}> Hilal reads everything aloud</label>
+    <div class="row">Hilal's voice: <select class="vname"></select><button class="btn vtest">▶ Test</button></div>
+    <div class="row">Speed: <input type="range" class="vrate" min="0.7" max="1.1" step="0.05" value="${st.settings.voiceRate || 0.92}"></div>
     <label class="row">Reading path starts at: <select class="rs">${READ_ORDER.map(c => `<option value="${c}" ${st.reading.c === c ? 'selected' : ''}>${idx.surahs[c - 1].en}</option>`).join('')}</select></label>
     <div class="row"><button class="btn exp">Save a backup</button><label class="btn">Restore backup<input type="file" accept=".json" class="imp" hidden></label></div>
     <div class="row"><button class="btn vs">Download voice script</button><span class="small muted">Lines for the tutor's human voice (record each as an mp3 named by its id).</span></div>
     <div class="row"><button class="btn place">Redo the placement check</button><button class="btn rst">Reset all progress</button></div>
   </div>`);
   set.querySelector('.taj').onchange = e => { st.settings.tajweed = e.target.checked; store.save(); };
+  const vs = set.querySelector('.vname');
+  const fillVoices = () => { const list = englishVoices(); const cur = st.settings.voiceName || (list[0] && list[0].name); vs.innerHTML = list.map(v => `<option ${v.name === cur ? 'selected' : ''}>${esc(v.name)}</option>`).join('') || '<option>No voices found</option>'; };
+  fillVoices(); if (window.speechSynthesis) speechSynthesis.addEventListener('voiceschanged', fillVoices);
+  vs.onchange = e => setVoice(e.target.value);
+  set.querySelector('.vtest').onclick = () => speak('hello');
+  set.querySelector('.von').onchange = e => { st.settings.voiceOn = e.target.checked; store.save(); };
+  set.querySelector('.vrate').onchange = e => { st.settings.voiceRate = +e.target.value; store.save(); speak('good2'); };
   set.querySelector('.rs').onchange = e => { st.reading = { c: +e.target.value, v: 1 }; store.save(); toast('Reading path updated'); };
   set.querySelector('.exp').onclick = () => download('noor-path-backup.json', JSON.stringify(st), 'application/json');
   set.querySelector('.imp').onchange = async e => { const f = e.target.files[0]; if (!f) return; store.importState(JSON.parse(await f.text())); toast('Backup restored'); parentsScreen(view); };

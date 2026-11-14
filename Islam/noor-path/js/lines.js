@@ -93,7 +93,8 @@ export const LINES = {
   read_saved: 'Your reading is saved. Listen to yourself, then listen to Husary.',
   read_tapword: 'Tap any word to read it slowly, letter by letter.',
   // placement
-  place_intro: 'Let\'s see what you already know. Just try your best. It\'s not a test!',
+  place_intro: 'Let\'s see what you already know. Sheikh Husary will read a word. Tap the word he reads. Just try your best!',
+  place_why: 'Listen again, and look carefully at every letter. Try once more.',
   place_done: 'Thank you! I know where to start now.',
   // quiz
   quiz_intro: 'Quiz time! Answer as well as you can.',

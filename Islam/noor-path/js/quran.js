@@ -14,13 +14,16 @@ export async function quranScreen(view, arg) {
   const idx = await audio.getIndex();
   const st = state();
   st.quran ||= { page: 604 };
-  if (arg && +arg >= 1 && +arg <= 604) st.quran.page = +arg;
+  st.quran.mode ||= 'surah';       // 'surah' = one surah at a time; 'page' = Mushaf page
+  st.quran.c ||= 114;
+  if (arg && +arg >= 1 && +arg <= 604) { st.quran.page = +arg; st.quran.mode = 'page'; }
   view.innerHTML = '';
   const T = tutor('quran_intro'); view.append(T);
   const bar = h(`<div class="qbar">
     <select class="sur" aria-label="Surah">${idx.surahs.map(s => `<option value="${s.c}">${s.c}. ${s.en} (${s.ar})</option>`).join('')}</select>
     <select class="jz" aria-label="Juz"><option value="">Juz</option>${Array.from({ length: 30 }, (_, i) => `<option value="${i + 1}">Juz ${i + 1}</option>`).join('')}</select>
     <label class="pill pill-soft" style="cursor:pointer"><input type="checkbox" class="taj" ${st.settings.tajweed ? 'checked' : ''}> Tajweed colours</label>
+    <span class="row" style="gap:6px"><button class="pill mode-s">One surah</button><button class="pill mode-p">Mushaf page</button></span>
   </div>`);
   view.append(bar);
   const ready = h('<div class="ready" style="margin-bottom:10px"></div>'); view.append(ready);
@@ -29,22 +32,37 @@ export async function quranScreen(view, arg) {
   view.append(foot);
   const ctl = h('<div class="row c" style="margin-top:12px"></div>'); view.append(ctl);
 
-  bar.querySelector('.sur').onchange = e => { const s = idx.surahs[e.target.value - 1]; go(s.pg[0]); };
-  bar.querySelector('.jz').onchange = async e => { if (!e.target.value) return; go(await juzPage(+e.target.value, idx)); };
+  bar.querySelector('.sur').onchange = e => { const s = idx.surahs[e.target.value - 1]; st.quran.c = s.c; go(s.pg[0]); };
+  bar.querySelector('.jz').onchange = async e => {
+    if (!e.target.value) return;
+    const p = await juzPage(+e.target.value, idx);
+    st.quran.c = idx.pages[p][0]; go(p);
+  };
+  bar.querySelector('.mode-s').onclick = () => { st.quran.mode = 'surah'; save(); render(); };
+  bar.querySelector('.mode-p').onclick = () => { st.quran.mode = 'page'; const s = idx.surahs[st.quran.c - 1]; st.quran.page = s.pg[0]; save(); render(); };
   bar.querySelector('.taj').onchange = e => { st.settings.tajweed = e.target.checked; save(); render(); };
-  foot.querySelector('.nextp').onclick = () => go(Math.min(604, st.quran.page + 1));
-  foot.querySelector('.prevp').onclick = () => go(Math.max(1, st.quran.page - 1));
+  const step = d => {
+    if (st.quran.mode === 'surah') { const c = st.quran.c + d; if (c >= 1 && c <= 114) { stopAll(); st.quran.c = c; save(); render(); } }
+    else go(st.quran.page + d);
+  };
+  foot.querySelector('.nextp').onclick = () => step(1);
+  foot.querySelector('.prevp').onclick = () => step(-1);
   let sx = 0;
   box.addEventListener('touchstart', e => sx = e.touches[0].clientX, { passive: true });
-  box.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 70) go(st.quran.page + (dx < 0 ? 1 : -1)); });
+  box.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 70) step(dx < 0 ? 1 : -1); });
 
   function go(p) { if (p < 1 || p > 604) return; stopAll(); st.quran.page = p; save(); render(); }
 
   async function render() {
+    bar.querySelector('.mode-s').className = 'pill ' + (st.quran.mode === 'surah' ? 'pill-green mode-s' : 'pill-soft mode-s');
+    bar.querySelector('.mode-p').className = 'pill ' + (st.quran.mode === 'page' ? 'pill-green mode-p' : 'pill-soft mode-p');
+    if (st.quran.mode === 'surah') return renderSurah();
     const p = st.quran.page;
     const page = await buildPage(p, idx);
     foot.querySelector('.pno').textContent = `Page ${p} · Juz ${page.juz}`;
-    bar.querySelector('.sur').value = page.firstSurah;
+    foot.querySelector('.prevp').innerHTML = `${ICON.back} Previous`;
+    foot.querySelector('.nextp').innerHTML = `Next ${ICON.next}`;
+    bar.querySelector('.sur').value = page.firstSurah; st.quran.c = page.firstSurah;
     const taj = st.settings.tajweed;
     const m = h(`<div class="mushaf ${taj ? '' : 'notaj'}"></div>`);
     page.lines.forEach(L => {
@@ -65,6 +83,31 @@ export async function quranScreen(view, arg) {
     ctl.innerHTML = '';
     const play = h(`<button class="btn primary">${ICON.play} Listen to this page</button>`);
     play.onclick = () => playFrom(page.ayahs, 0, m);
+    ctl.append(play);
+  }
+
+  // One surah at a time, flowing text, large and easy to follow.
+  async function renderSurah() {
+    const c = st.quran.c, meta = idx.surahs[c - 1];
+    const s = await audio.getSurah(c);
+    const taj = st.settings.tajweed;
+    bar.querySelector('.sur').value = c;
+    foot.querySelector('.pno').textContent = `Surah ${c} · ${meta.n} ayahs`;
+    foot.querySelector('.prevp').innerHTML = `${ICON.back} Previous surah`;
+    foot.querySelector('.nextp').innerHTML = `Next surah ${ICON.next}`;
+    const m = h(`<div class="mushaf ${taj ? '' : 'notaj'}"><div class="surah-head">سُورَةُ ${meta.ar}</div>${meta.bis ? '<div class="bism">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>' : ''}<div class="surahflow"></div></div>`);
+    const flow = m.querySelector('.surahflow');
+    s.v.forEach(v => {
+      v.w.forEach((w, k) => { const sp = h(`<span class="wd" data-key="${c}:${v.n}:${k + 1}">${wordHTML(w, taj)}</span>`); sp.onclick = () => openWordSheet(w.t, [c, v.n, k + 1]); flow.append(sp, ' '); });
+      const e = h(`<span class="end">${toArabicNum(v.n)}</span>`); e.onclick = () => ayahMenu(c, v.n); flow.append(e, ' ');
+    });
+    m.querySelectorAll('.surah-head,.bism').forEach(e => e.style.fontSize = 'clamp(26px,4vw,34px)');
+    box.innerHTML = ''; box.append(m);
+    const ayahs = s.v.map(v => [c, v.n, v.w]);
+    readiness({ ayahs });
+    ctl.innerHTML = '';
+    const play = h(`<button class="btn primary">${ICON.play} Listen to this surah</button>`);
+    play.onclick = () => playFrom(ayahs, 0, m);
     ctl.append(play);
   }
 

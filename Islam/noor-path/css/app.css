@@ -163,3 +163,7 @@ body.focus #view{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
 @media (max-height:700px){.tutor .face{width:40px;height:40px}.tutor .face svg{width:28px;height:28px}.bubble{font-size:16px;padding:8px 12px}.btn.big{min-height:52px}.dots-sep{display:none}}
 .pagefoot{gap:8px}.pagefoot .btn{min-height:46px;padding:8px 14px;font-size:16px}
 @media (max-height:700px){.slide>.wordcard:first-child{display:none}}
+.surahflow{direction:rtl;text-align:justify;text-align-last:center;font-family:var(--quran);font-size:clamp(28px,4.5vw,40px);line-height:2.25;padding:4px 6px}
+.surahflow .wd{cursor:pointer;border-radius:8px;transition:background .2s}
+.surahflow .wd.play{background:var(--gold-2)}.surahflow .end{color:var(--green);cursor:pointer}
+.qbar button.pill{border:1px solid var(--line);cursor:pointer;font:inherit;font-size:14px;font-weight:600}
