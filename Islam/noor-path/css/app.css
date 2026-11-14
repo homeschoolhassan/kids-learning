@@ -153,3 +153,5 @@ table.t td,table.t th{padding:8px 6px;border-bottom:1px solid var(--line);text-a
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (min-width:700px){body{font-size:18px}}
+#home-btn{background:#0b3d5e;color:#fff;border-radius:8px;padding:7px 12px;font-size:14px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.2);white-space:nowrap}
+#home-btn:hover{background:#1d6ef5}
