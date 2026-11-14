@@ -63,16 +63,23 @@ async function playRange(src, from, to, tick) {
 }
 
 // Play one word in Husary's voice. ref = [surah, ayah, wordPosition(1-based)]
-export async function playWord(ref) {
+// opts.rate slows Husary down (pitch is kept); opts.onProgress(0..1) reports how far
+// through the word he is, so letters can light up in step with his voice.
+export async function playWord(ref, opts = {}) {
   const s = await getSurah(ref[0]);
   const v = s.v[ref[1] - 1]; if (!v) return;
   const seg = v.sg.find(x => x[0] === ref[2]);
-  if (!seg) return playRange(s.audio, v.a[0], v.a[1]);
-  return playRange(s.audio, seg[1], seg[2] + 120);
+  const from = seg ? seg[1] : v.a[0], to = seg ? seg[2] + 120 : v.a[1];
+  el.defaultPlaybackRate = el.playbackRate = opts.rate || 1;
+  el.preservesPitch = true;
+  const tick = opts.onProgress ? t => opts.onProgress(Math.min(1, Math.max(0, (t - from) / (to - 120 - from)))) : null;
+  await playRange(s.audio, from, to, tick);
+  el.defaultPlaybackRate = el.playbackRate = 1;
 }
 
 // Play a full ayah (murattal) with a callback(wordPos) as each word is recited.
 export async function playAyah(c, n, onWord) {
+  el.defaultPlaybackRate = el.playbackRate = 1;
   const s = await getSurah(c);
   const v = s.v[n - 1];
   let cur = 0;

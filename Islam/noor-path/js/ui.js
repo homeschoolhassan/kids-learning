@@ -99,8 +99,27 @@ export function slideCard(word, ref, opts = {}) {
     if (pos >= us.length) { if (ref) await audio.playWord(ref); opts.onDone && opts.onDone(); return false; }
     return true;
   }
+  // How long each letter sounds, relative to a plain letter with a short vowel.
+  // Quiet letters take no time; stretched and held letters take longer.
+  const weight = u => u.quiet || u.silentMark || (u.wasl && u.i === 0 && ref) ? 0
+    : u.madd || u.dagger || u.smallWawYa ? 1.7 : u.shadda ? 1.6 : u.tanween ? 1.3 : u.sukun ? 0.8 : 1;
+  const W = us.map(weight), total = W.reduce((a, b) => a + b, 0) || 1;
+  const ends = []; W.reduce((a, w, k) => (ends[k] = (a + w) / total, a + w), 0);
   async function play() {
     clearTimeout(timer); audio.stop(); pos = -1; draw();
+    if (ref) {
+      // Slow Husary: each letter lights up while he is saying it.
+      await audio.playWord(ref, { rate: 0.6, onProgress: f => {
+        const k = ends.findIndex(e => f < e - 0.0001);
+        const np = k < 0 ? us.length - 1 : k;
+        if (np !== pos) { pos = np; draw(); }
+      } });
+      pos = us.length; draw();
+      await wait(500);
+      await audio.playWord(ref);           // then once more at normal speed
+      opts.onDone && opts.onDone();
+      return;
+    }
     const go = async () => {
       const more = await step();
       if (more) timer = setTimeout(go, us[pos] && unitPills(us[pos]) ? 1700 : 1000);
