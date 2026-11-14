@@ -93,11 +93,21 @@ export function slideCard(word, ref, opts = {}) {
     spans.forEach((s, k) => s.className = 'u ' + (pos >= us.length ? 'now' : k < pos ? 'done' : k === pos ? 'now' : 'wait'));
     note.innerHTML = pos >= 0 && pos < us.length ? unitPills(us[pos]) : '';
   }
+  let run = 0;
   async function step() {
     if (pos >= us.length) return false;
     pos++; draw();
     if (pos >= us.length) { if (ref) await audio.playWord(ref); opts.onDone && opts.onDone(); return false; }
     return true;
+  }
+  // Next letter: move one letter and play just that letter's sound from Husary (slowed).
+  async function manualStep() {
+    const my = ++run;
+    clearTimeout(timer); audio.stop();
+    if (pos >= us.length) pos = -1;          // start again from the first letter
+    pos++; draw();
+    if (pos >= us.length) { if (ref) await audio.playWord(ref); opts.onDone && opts.onDone(); return; }
+    if (ref && W[pos] > 0 && my === run) await audio.playWord(ref, { rate: 0.6, part: [pos ? ends[pos - 1] : 0, ends[pos]] });
   }
   // How long each letter sounds, relative to a plain letter with a short vowel.
   // Quiet letters take no time; stretched and held letters take longer.
@@ -106,16 +116,19 @@ export function slideCard(word, ref, opts = {}) {
   const W = us.map(weight), total = W.reduce((a, b) => a + b, 0) || 1;
   const ends = []; W.reduce((a, w, k) => (ends[k] = (a + w) / total, a + w), 0);
   async function play() {
+    const my = ++run;
     clearTimeout(timer); audio.stop(); pos = -1; draw();
     if (ref) {
       // Slow Husary: each letter lights up while he is saying it.
       await audio.playWord(ref, { rate: 0.6, onProgress: f => {
         const k = ends.findIndex(e => f < e - 0.0001);
         const np = k < 0 ? us.length - 1 : k;
-        if (np !== pos) { pos = np; draw(); }
+        if (my === run && np !== pos) { pos = np; draw(); }
       } });
+      if (my !== run) return;
       pos = us.length; draw();
       await wait(500);
+      if (my !== run) return;
       await audio.playWord(ref);           // then once more at normal speed
       opts.onDone && opts.onDone();
       return;
@@ -127,8 +140,8 @@ export function slideCard(word, ref, opts = {}) {
     timer = setTimeout(go, 300);
   }
   el.querySelector('.play').onclick = play;
-  el.querySelector('.step').onclick = () => { clearTimeout(timer); step(); };
-  const hb = el.querySelector('.hus'); if (hb) hb.onclick = () => audio.playWord(ref);
+  el.querySelector('.step').onclick = manualStep;
+  const hb = el.querySelector('.hus'); if (hb) hb.onclick = () => { run++; clearTimeout(timer); pos = us.length; draw(); audio.playWord(ref); };
   el.play = play;
   draw();
   if (opts.auto) setTimeout(play, 500);

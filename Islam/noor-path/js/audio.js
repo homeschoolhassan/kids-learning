@@ -69,7 +69,11 @@ export async function playWord(ref, opts = {}) {
   const s = await getSurah(ref[0]);
   const v = s.v[ref[1] - 1]; if (!v) return;
   const seg = v.sg.find(x => x[0] === ref[2]);
-  const from = seg ? seg[1] : v.a[0], to = seg ? seg[2] + 120 : v.a[1];
+  let from = seg ? seg[1] : v.a[0], to = seg ? seg[2] + 120 : v.a[1];
+  if (opts.part) { // play only a slice of the word, e.g. one letter: [startFraction, endFraction]
+    const d = to - 120 - from;
+    [from, to] = [from + d * opts.part[0], from + d * opts.part[1] + 60];
+  }
   el.defaultPlaybackRate = el.playbackRate = opts.rate || 1;
   el.preservesPitch = true;
   const tick = opts.onProgress ? t => opts.onProgress(Math.min(1, Math.max(0, (t - from) / (to - 120 - from)))) : null;
