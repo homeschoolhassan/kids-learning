@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beep's AI Adventure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+<style id="home-btn-style">
+#home-btn{position:fixed;top:12px;left:12px;z-index:99999;
+  background:#0b3d5e;color:#fff;border:none;border-radius:8px;
+  padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);font-family:'Fredoka',sans-serif;
+  transition:background .2s;}
+#home-btn:hover{background:#1d6ef5;}
+</style>
+<style>
+/* Layout: a sky header with Beep the robot, an island map (9 lessons + word cards + grown-ups notes),
+   and a lesson player: picture scenes read aloud, then a game, then a sticker. */
+:root{
+  --ink:#1d2550; --muted:#5a6388; --paper:#f3f8ff; --card:#fff; --line:#d6e2f2;
+  --sun:#ffc43d; --coral:#ff6a57; --sky:#7cc3f0; --leaf:#53b35a;
+  --display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito",Verdana,system-ui,sans-serif;
+  --c:#3b82f6;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance}
+.emo{font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
+
+/* ---------- header ---------- */
+.sky{position:relative;overflow:hidden;background:linear-gradient(180deg,#5fb4ec 0%,#a9dcff 70%,#d9f0ff 100%);
+  padding:64px 20px 28px;border-bottom:4px solid var(--ink)}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.85;animation:drift 40s linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:55%;height:160%;left:15%;top:-70%}
+.cloud::after{width:40%;height:130%;left:50%;top:-45%}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(120vw)}}
+.sky-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:18px;position:relative;z-index:1;flex-wrap:wrap}
+.sky h1{font-size:clamp(2rem,6vw,3.4rem);color:var(--ink)}
+.sky h1 span{color:#fff;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
+.sky .sub{font-family:var(--display);font-weight:600;color:#17426b;margin-top:6px;font-size:1.05rem}
+.sky .beep-wrap{flex:none;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.toolbar{position:fixed;top:12px;right:12px;z-index:9999;display:flex;gap:8px}
+.tbtn{background:#fff;border:3px solid var(--ink);border-radius:999px;padding:6px 14px;font-family:var(--display);font-weight:600;font-size:15px;box-shadow:0 3px 0 var(--ink)}
+.tbtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.tbtn.off{opacity:.55}
+
+/* ---------- Beep ---------- */
+.beep-light{animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{fill:#ffd166}}
+
+/* ---------- map ---------- */
+main{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.bubble-row{display:flex;align-items:center;gap:14px;margin:6px 0 22px}
+.bubble{position:relative;background:#fff;border:3px solid var(--ink);border-radius:22px;padding:14px 18px;font-size:1.25rem;font-weight:700;flex:1;min-width:0}
+.bubble::before{content:"";position:absolute;left:-14px;top:50%;margin-top:-10px;border:10px solid transparent;border-right:14px solid var(--ink);border-left:0}
+.bubble .say{margin-left:8px}
+.say{border:none;background:var(--sun);border-radius:999px;width:42px;height:42px;font-size:20px;vertical-align:middle;box-shadow:0 3px 0 var(--ink);border:2px solid var(--ink);flex:none}
+.say:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.section-title{font-family:var(--display);font-size:1.5rem;margin:28px 0 14px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:"";flex:1;height:3px;border-radius:3px;background:var(--line)}
+.islands{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px}
+.island{background:none;border:none;padding:6px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;text-align:center}
+.island .disc{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;font-size:56px;
+  background:radial-gradient(circle at 35% 30%,#ffffffaa 0 18%,transparent 19%),var(--c);border:4px solid var(--ink);box-shadow:0 7px 0 var(--ink);transition:transform .15s}
+.island:hover .disc,.island:focus-visible .disc{transform:translateY(-4px) rotate(-3deg)}
+.island .num{position:absolute;top:2px;left:calc(50% - 66px);background:#fff;border:3px solid var(--ink);border-radius:999px;width:36px;height:36px;display:grid;place-items:center;font-family:var(--display);font-weight:700}
+.island .done{position:absolute;top:0;right:calc(50% - 70px);font-size:34px;filter:drop-shadow(0 2px 0 var(--ink))}
+.island .name{font-family:var(--display);font-weight:600;font-size:1.1rem;line-height:1.15}
+.island .what{font-size:.85rem;color:var(--muted);line-height:1.25}
+.stickers{display:flex;flex-wrap:wrap;gap:10px;background:#fff;border:3px dashed var(--line);border-radius:22px;padding:16px}
+.sticker{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-size:30px;border:3px solid var(--ink);background:var(--c);transform:rotate(var(--r,0deg))}
+.sticker.empty{background:#eef3fa;border-style:dashed;border-color:#b9c7da;filter:grayscale(1);opacity:.5}
+.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.extra{background:#fff;border:3px solid var(--ink);border-radius:22px;padding:18px;text-align:left;display:flex;gap:14px;align-items:center;box-shadow:0 5px 0 var(--ink)}
+.extra b{font-family:var(--display);font-size:1.2rem;display:block}
+.extra span.e{font-size:42px}
+.extra small{color:var(--muted);font-size:.9rem}
+
+/* ---------- lesson ---------- */
+.lesson-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.lesson-head .ico{font-size:40px;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--c);border:3px solid var(--ink)}
+.lesson-head h2{font-size:clamp(1.5rem,4vw,2.1rem)}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots i{width:14px;height:14px;border-radius:50%;background:#dbe5f2;border:2px solid var(--ink)}
+.dots i.on{background:var(--c)}
+.dots i.game{border-radius:4px}
+.stage{background:#fff;border:4px solid var(--ink);border-radius:28px;box-shadow:0 8px 0 var(--ink);overflow:hidden}
+.art{min-height:260px;display:grid;place-items:center;padding:22px;background:var(--tint);border-bottom:4px solid var(--ink);text-align:center}
+.art-emoji{font-size:clamp(64px,13vw,120px);line-height:1.1;letter-spacing:.06em}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.tile{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px 14px;min-width:96px;display:flex;flex-direction:column;align-items:center;gap:2px;animation:pop .4s backwards}
+.tile .e{font-size:52px;line-height:1.1}
+.tile b{font-family:var(--display);font-weight:600;font-size:1rem}
+.tile:nth-child(2){animation-delay:.1s}.tile:nth-child(3){animation-delay:.2s}.tile:nth-child(4){animation-delay:.3s}.tile:nth-child(5){animation-delay:.4s}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.flow .arrow{font-size:40px;font-weight:800;color:var(--ink);animation:nudge 1s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(6px)}}
+.flow .tile b{font-size:1.15rem}
+.bigword{font-family:var(--display);font-size:clamp(70px,16vw,150px);font-weight:700;color:#fff;-webkit-text-stroke:4px var(--ink);paint-order:stroke fill;letter-spacing:.08em}
+.tokens{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tok{font-family:var(--display);font-weight:700;font-size:clamp(26px,5vw,40px);padding:8px 16px;border:3px solid var(--ink);border-radius:12px;box-shadow:0 5px 0 var(--ink);animation:pop .4s backwards}
+.tok:nth-child(2){animation-delay:.15s}.tok:nth-child(3){animation-delay:.3s}.tok:nth-child(4){animation-delay:.45s}
+.textrow{display:flex;gap:14px;align-items:center;padding:20px 22px}
+.textrow .t{font-size:clamp(1.25rem,3vw,1.6rem);font-weight:800;line-height:1.35;flex:1}
+.quiz{display:flex;gap:12px;flex-wrap:wrap;padding:0 22px 22px}
+.qopt{flex:1;min-width:120px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:12px;font-family:var(--display);font-size:1.2rem;font-weight:600;box-shadow:0 5px 0 var(--ink);display:flex;flex-direction:column;align-items:center}
+.qopt .e{font-size:48px}
+.qopt.right{background:#d8f8de}
+.qopt.wrong{background:#ffe0dc;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+.big{border:4px solid var(--ink);border-radius:999px;padding:14px 26px;font-family:var(--display);font-weight:700;font-size:1.3rem;background:#fff;box-shadow:0 6px 0 var(--ink)}
+.big:active{transform:translateY(3px);box-shadow:0 3px 0 var(--ink)}
+.big.go{background:var(--c);color:#fff;-webkit-text-stroke:.5px var(--ink)}
+.big:disabled{opacity:.4;cursor:default}
+.game-intro{padding:20px 22px 0}
+
+/* ---------- sort game ---------- */
+.sg{padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.stars{display:flex;gap:4px;font-size:26px;min-height:34px}
+.sg-card{width:min(260px,70vw);min-height:200px;border:4px solid var(--ink);border-radius:26px;background:var(--tint);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center;box-shadow:0 6px 0 var(--ink)}
+.sg-card .e{font-size:96px;line-height:1.1}
+.sg-card .n{font-family:var(--display);font-weight:600;font-size:1.35rem}
+.sg-card.fly{animation:fly .6s forwards}
+@keyframes fly{to{transform:translateY(60px) scale(.3);opacity:0}}
+.sg-card.in{animation:pop .35s}
+.feedback{min-height:56px;font-weight:800;font-size:1.2rem;text-align:center;max-width:620px}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:620px}
+.bin{border:4px solid var(--ink);border-radius:24px;background:var(--bc);padding:16px 10px;font-family:var(--display);font-weight:700;font-size:1.25rem;box-shadow:0 6px 0 var(--ink);display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink)}
+.bin .bi{font-size:44px}
+.bin:active{transform:translateY(3px);box-shadow:0 3px 0 var(--ink)}
+
+/* ---------- maze ---------- */
+.maze-wrap{padding:18px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.grid{display:grid;gap:6px;background:#bfe3c4;padding:10px;border:4px solid var(--ink);border-radius:18px}
+.cell{width:clamp(52px,13vw,76px);aspect-ratio:1;border-radius:12px;background:#e9f8ea;display:grid;place-items:center;font-size:clamp(30px,7vw,44px);position:relative}
+.cell.rock{background:#c9b79c}
+.cell svg{width:88%;height:88%}
+.cell.bump{animation:shake .4s}
+.prog{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;width:100%;max-width:560px;background:#fff;border:3px dashed var(--ink);border-radius:16px;padding:8px;align-items:center}
+.prog .chip{font-size:28px;width:44px;height:44px;border-radius:10px;background:#e8f0fe;border:2px solid var(--ink);display:grid;place-items:center}
+.prog .chip.now{background:var(--sun)}
+.prog .ph{color:var(--muted);font-weight:700;padding-left:6px}
+.pad{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pad button{width:68px;height:68px;font-size:34px;border:4px solid var(--ink);border-radius:18px;background:#fff;box-shadow:0 5px 0 var(--ink)}
+.pad button.run{width:auto;padding:0 22px;background:var(--leaf);color:#fff;font-family:var(--display);font-weight:700;font-size:1.4rem}
+.pad button:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.pad button:disabled{opacity:.4}
+
+/* ---------- teach game ---------- */
+.boxes{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:640px}
+.box{border:4px solid var(--ink);border-radius:22px;background:#fff;padding:10px;min-height:150px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.box h3{font-size:1.2rem;display:flex;align-items:center;gap:6px}
+.box h3 .e{font-size:36px}
+.box .things{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.box .things svg{width:34px;height:34px}
+.box button.pick{width:100%;border:3px solid var(--ink);border-radius:16px;background:var(--bc);font-family:var(--display);font-weight:700;font-size:1.15rem;padding:10px;box-shadow:0 4px 0 var(--ink)}
+.rules{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.rules button{border:3px solid var(--ink);border-radius:16px;background:#fff;padding:10px 16px;font-family:var(--display);font-weight:600;font-size:1.1rem;box-shadow:0 4px 0 var(--ink)}
+.yesno{display:flex;gap:12px}
+
+/* ---------- story ---------- */
+.story{font-family:var(--display);font-size:clamp(1.4rem,3.6vw,2rem);font-weight:600;text-align:center;padding:18px;line-height:1.5}
+.story .w{display:inline-block;background:#fde2f0;border:2px solid var(--ink);border-radius:10px;padding:0 8px;margin:2px;animation:pop .35s}
+.story .blank{display:inline-block;min-width:90px;border-bottom:4px dashed var(--ink);margin:0 4px}
+.guesses{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px;margin:0 auto;padding:0 18px 20px}
+.guess{display:grid;grid-template-columns:1fr;border:3px solid var(--ink);border-radius:16px;background:#fff;padding:10px 14px;text-align:left;box-shadow:0 4px 0 var(--ink);position:relative;overflow:hidden}
+.guess .bar{position:absolute;inset:0 auto 0 0;background:#fbcfe8;transition:width .8s}
+.guess .lbl{position:relative;font-family:var(--display);font-weight:700;font-size:1.3rem;display:flex;justify-content:space-between;gap:8px}
+.guess .lbl small{font-family:var(--body);font-size:.85rem;color:var(--muted);align-self:center}
+
+/* ---------- throw ---------- */
+.throw svg{width:100%;max-width:680px;display:block;margin:0 auto;background:linear-gradient(#d8f0ff,#f3fbff);border:4px solid var(--ink);border-radius:20px}
+.meter{display:flex;align-items:center;gap:10px;font-weight:800}
+.meter .m{width:200px;height:20px;border:3px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
+.meter .m i{display:block;height:100%;background:linear-gradient(90deg,#ff6a57,#ffc43d,#53b35a);transition:width .6s}
+
+/* ---------- prompt maker ---------- */
+.pm{padding:18px;display:grid;gap:16px}
+.pm .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pm .row > b{font-family:var(--display);width:100%;font-size:1.15rem}
+.pm .opt{border:3px solid var(--ink);border-radius:14px;background:#fff;padding:6px 12px;font-family:var(--display);font-weight:600;font-size:1.05rem;display:flex;align-items:center;gap:6px;box-shadow:0 3px 0 var(--ink)}
+.pm .opt .e{font-size:30px}
+.pm .opt.sel{background:#c7d2fe;transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.swatch{width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);display:inline-block}
+.prompt-line{background:#1d2550;color:#e0e7ff;border-radius:16px;padding:14px 18px;font-family:var(--display);font-size:clamp(1.1rem,3vw,1.45rem);font-weight:600}
+.prompt-line .slot{color:#ffd166}
+.canvas{border:4px solid var(--ink);border-radius:20px;overflow:hidden;background:#eef2ff;display:grid;place-items:center;min-height:240px}
+.canvas svg{width:100%;max-width:560px;display:block}
+.reveal{animation:reveal 1.1s ease-out}
+@keyframes reveal{from{filter:blur(18px) saturate(0);opacity:.2}}
+
+/* ---------- future ---------- */
+.dreams{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:18px}
+.dream{border:3px solid var(--ink);border-radius:20px;background:#fff;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 5px 0 var(--ink);font-family:var(--display);font-weight:600;font-size:1.1rem}
+.dream .e{font-size:52px}
+.cert{margin:18px;border:6px double var(--ink);border-radius:20px;background:#fffdf3;padding:26px 22px;text-align:center;display:grid;gap:10px}
+.cert h3{font-size:clamp(1.5rem,4vw,2.2rem);color:#b45309}
+.cert .nm{font-family:var(--display);font-size:clamp(1.8rem,5vw,2.6rem);font-weight:700;border-bottom:3px dashed var(--ink);padding:0 20px;justify-self:center;min-width:220px}
+.cert input{font:inherit;font-family:var(--display);font-size:1.3rem;border:3px solid var(--ink);border-radius:12px;padding:6px 12px;text-align:center;max-width:280px;justify-self:center}
+.cert .row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+
+/* ---------- celebrate ---------- */
+.overlay{position:fixed;inset:0;background:#1d2550cc;z-index:20000;display:grid;place-items:center;padding:16px;animation:fade .3s}
+@keyframes fade{from{opacity:0}}
+.celebrate{background:#fff;border:5px solid var(--ink);border-radius:30px;max-width:520px;width:100%;padding:26px 22px;text-align:center;display:grid;gap:12px;justify-items:center;animation:pop .45s}
+.celebrate .bigsticker{width:150px;height:150px;border-radius:50%;background:var(--c);border:5px solid var(--ink);display:grid;place-items:center;font-size:76px;transform:rotate(-8deg);box-shadow:0 8px 0 var(--ink);animation:spin 1s ease-out}
+@keyframes spin{from{transform:rotate(-200deg) scale(.2)}}
+.celebrate h2{font-size:2rem}
+.talk{background:#fff7e0;border:2px dashed #d4a017;border-radius:16px;padding:10px 14px;font-size:1rem;text-align:left}
+.celebrate .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.confetti{position:fixed;top:-20px;width:12px;height:18px;z-index:20001;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* ---------- word cards & grown-ups ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.wcard{perspective:800px;background:none;border:none;padding:0;height:190px}
+.wcard .inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.wcard.flip .inner{transform:rotateY(180deg)}
+.wcard .f,.wcard .b{position:absolute;inset:0;backface-visibility:hidden;border:3px solid var(--ink);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;box-shadow:0 5px 0 var(--ink)}
+.wcard .f{background:#fff}
+.wcard .f .e{font-size:58px}
+.wcard .f b{font-family:var(--display);font-size:1.3rem}
+.wcard .b{background:var(--c);transform:rotateY(180deg);font-weight:800;font-size:1.02rem;line-height:1.35;text-align:center}
+.grown{background:#fff;border:3px solid var(--ink);border-radius:24px;padding:22px 24px;font-size:1rem;line-height:1.6}
+.grown h3{font-size:1.3rem;margin:18px 0 6px}
+.grown h3:first-child{margin-top:0}
+.grown ul,.grown ol{margin:0;padding-left:1.3em}
+.grown table{border-collapse:collapse;width:100%;font-size:.95rem}
+.grown td,.grown th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.grown th{background:#eef4fb;font-family:var(--display)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+
+@media (max-width:560px){
+  .sky{padding-top:60px}
+  .island .disc{width:100px;height:100px;font-size:48px}
+  .island .num{left:calc(50% - 58px)}
+  .island .done{right:calc(50% - 60px)}
+  .islands{grid-template-columns:repeat(2,1fr)}
+  .textrow{padding:16px}
+  .big{padding:12px 18px;font-size:1.1rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body > *:not(#print-area){display:none!important}
+  #print-area{display:block!important}
+  #print-area .cert{margin:0;break-inside:avoid}
+}
+#print-area{display:none}
+</style>
+</head>
+<body>
+<a id="home-btn" href="../index.html">🏠 Home</a>
+
+<div class="toolbar">
+  <button class="tbtn" id="mapBtn" hidden>🗺️ Map</button>
+  <button class="tbtn" id="voiceBtn" aria-pressed="true">🔊 Read to me</button>
+</div>
+
+<header class="sky">
+  <div class="cloud" style="width:150px;height:40px;top:22px;animation-delay:-8s"></div>
+  <div class="cloud" style="width:110px;height:30px;top:90px;animation-delay:-25s;animation-duration:55s"></div>
+  <div class="cloud" style="width:190px;height:46px;top:140px;animation-delay:-2s;animation-duration:65s"></div>
+  <div class="sky-inner">
+    <div class="beep-wrap" id="headerBeep"></div>
+    <div>
+      <h1>Beep's <span>AI</span> Adventure</h1>
+      <div class="sub">Computers · Coding · AI · Talking Robots · The Future</div>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+<footer>Hassan Family · Kids Learning Portal · Beep's AI Adventure</footer>
+<div id="print-area"></div>
+
+<script>
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const app = $("#app");
+
+/* ---------- saved progress (per browser) ---------- */
+const KEY = "beep-ai-adventure-v1";
+let save = { done: {}, name: "", dream: null };
+try { Object.assign(save, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
+
+/* ---------- voice ---------- */
+let voiceOn = true, voice = null;
+try { voiceOn = localStorage.getItem(KEY + "-voice") !== "off"; } catch (e) {}
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+  const pref = ["Google US English", "Microsoft Aria", "Microsoft Jenny", "Samantha", "Microsoft Zira", "Google UK English Female"];
+  voice = pref.map(p => vs.find(v => v.name.includes(p))).find(Boolean) || vs.find(v => /en-(US|CA|GB)/i.test(v.lang)) || vs[0] || null;
+}
+if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+let navToken = 0;
+function speak(text, cb) {
+  const nav = navToken;
+  let called = false;
+  const finish = () => { if (!called) { called = true; if (nav === navToken && cb) cb(); } };
+  const plain = String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, "").trim();
+  if (!voiceOn || !("speechSynthesis" in window) || !plain) {
+    if (cb) setTimeout(finish, 900 + plain.length * 30);
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(plain);
+  if (voice) u.voice = voice;
+  u.rate = 0.92; u.pitch = 1.12;
+  if (cb) {
+    u.onend = () => setTimeout(finish, 250);
+    u.onerror = () => setTimeout(finish, 600);
+    setTimeout(finish, 2500 + plain.length * 95); // safety net
+  }
+  speechSynthesis.speak(u);
+}
+function hush() { navToken++; if ("speechSynthesis" in window) speechSynthesis.cancel(); }
+function sayBtn(text) { return `<button class="say emo" data-say="${esc(text)}" aria-label="Read aloud">🔊</button>`; }
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-say]");
+  if (b) { e.stopPropagation(); const was = voiceOn; voiceOn = true; speak(b.dataset.say); voiceOn = was; }
+});
+const voiceBtn = $("#voiceBtn");
+function drawVoiceBtn() { voiceBtn.textContent = voiceOn ? "🔊 Read to me" : "🔇 Quiet"; voiceBtn.classList.toggle("off", !voiceOn); voiceBtn.setAttribute("aria-pressed", voiceOn); }
+voiceBtn.onclick = () => { voiceOn = !voiceOn; try { localStorage.setItem(KEY + "-voice", voiceOn ? "on" : "off"); } catch (e) {} if (!voiceOn) hush(); drawVoiceBtn(); };
+drawVoiceBtn();
+
+/* ---------- little sounds ---------- */
+let AC = null;
+function tone(f, d, type = "sine", when = 0, vol = 0.12) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + when;
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + 0.05);
+  } catch (e) {}
+}
+const sfx = {
+  ding: () => { tone(880, .15); tone(1320, .25, "sine", .1); },
+  boop: () => tone(200, .3, "triangle", 0, .15),
+  click: () => tone(620, .06, "square", 0, .04),
+  fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i === 3 ? .5 : .18, "triangle", i * .14, .12)),
+  whoosh: () => { tone(300, .3, "sawtooth", 0, .03); tone(500, .3, "sawtooth", .05, .03); }
+};
+
+/* ---------- Beep the robot (original character) ---------- */
+function beep(mood = "happy", size = 120) {
+  const eye = mood === "think"
+    ? `<ellipse cx="46" cy="55" rx="6" ry="7" fill="#5ef0ff"/><ellipse cx="74" cy="55" rx="6" ry="7" fill="#5ef0ff"/>`
+    : mood === "wow"
+    ? `<circle cx="45" cy="59" r="9" fill="#5ef0ff"/><circle cx="75" cy="59" r="9" fill="#5ef0ff"/><circle cx="48" cy="56" r="3" fill="#fff"/><circle cx="78" cy="56" r="3" fill="#fff"/>`
+    : mood === "oops"
+    ? `<path d="M38 56 l14 6 M38 62 l14 -6" stroke="#5ef0ff" stroke-width="4" stroke-linecap="round"/><path d="M68 56 l14 6 M68 62 l14 -6" stroke="#5ef0ff" stroke-width="4" stroke-linecap="round"/>`
+    : `<ellipse cx="45" cy="58" rx="7" ry="9" fill="#5ef0ff"/><ellipse cx="75" cy="58" rx="7" ry="9" fill="#5ef0ff"/><circle cx="47" cy="55" r="2.5" fill="#fff"/><circle cx="77" cy="55" r="2.5" fill="#fff"/>`;
+  const mouth = {
+    happy: `<path d="M46 76 Q60 88 74 76" stroke="#5ef0ff" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    wow: `<circle cx="60" cy="80" r="6" fill="none" stroke="#5ef0ff" stroke-width="4"/>`,
+    think: `<path d="M50 80 H70" stroke="#5ef0ff" stroke-width="4" stroke-linecap="round"/>`,
+    oops: `<path d="M44 82 Q50 74 56 82 Q62 90 68 82 Q74 74 78 82" stroke="#5ef0ff" stroke-width="4" fill="none" stroke-linecap="round"/>`
+  }[mood] || "";
+  return `<svg class="beep" viewBox="0 0 120 140" width="${size}" height="${Math.round(size * 140 / 120)}" aria-label="Beep the robot" role="img">
+    <line x1="60" y1="10" x2="60" y2="28" stroke="#1d2550" stroke-width="4"/>
+    <circle class="beep-light" cx="60" cy="9" r="7" fill="#ff6a57" stroke="#1d2550" stroke-width="3"/>
+    <rect x="3" y="50" width="14" height="28" rx="6" fill="#ffc43d" stroke="#1d2550" stroke-width="3.5"/>
+    <rect x="103" y="50" width="14" height="28" rx="6" fill="#ffc43d" stroke="#1d2550" stroke-width="3.5"/>
+    <rect x="14" y="27" width="92" height="76" rx="24" fill="#e6eefb" stroke="#1d2550" stroke-width="4"/>
+    <rect x="25" y="38" width="70" height="56" rx="16" fill="#1d2550"/>
+    ${eye}${mouth}
+    <rect x="34" y="105" width="52" height="30" rx="11" fill="#7cc3f0" stroke="#1d2550" stroke-width="4"/>
+    <circle cx="60" cy="120" r="6" fill="#ffc43d" stroke="#1d2550" stroke-width="2.5"/>
+  </svg>`;
+}
+$("#headerBeep").innerHTML = beep("happy", 110);
+
+/* ---------- art helpers ---------- */
+const big = e => `<div class="art-emoji emo">${e}</div>`;
+const tiles = arr => `<div class="tiles">${arr.map(([e, b]) => `<div class="tile"><span class="e emo">${e}</span><b>${b}</b></div>`).join("")}</div>`;
+const flow = arr => `<div class="flow">${arr.map((x, i) => (i ? `<span class="arrow">➜</span>` : "") + `<div class="tile"><span class="e emo">${x[0]}</span><b>${x[1]}</b></div>`).join("")}</div>`;
+const tokens = arr => `<div class="tokens">${arr.map(([t, c]) => `<span class="tok" style="background:${c}">${t}</span>`).join("")}</div>`;
+const neuralArt = () => {
+  const L = [[3, 90], [4, 250], [4, 410], [2, 570]], nodes = [];
+  L.forEach(([n, x], li) => { for (let i = 0; i < n; i++) nodes.push({ li, x, y: 160 + (i - (n - 1) / 2) * 70 }); });
+  let lines = "", d = 0;
+  for (let li = 0; li < L.length - 1; li++)
+    nodes.filter(a => a.li === li).forEach(a => nodes.filter(b => b.li === li + 1).forEach(b => {
+      lines += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#94a3b8" stroke-width="3"/>
+      <line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#14b8a6" stroke-width="5" stroke-linecap="round" stroke-dasharray="14 400" stroke-dashoffset="414"><animate attributeName="stroke-dashoffset" from="414" to="0" dur="1.6s" begin="${(li * .5 + (d++ % 5) * .12).toFixed(2)}s" repeatCount="indefinite"/></line>`;
+    }));
+  const circ = nodes.map(n => `<circle cx="${n.x}" cy="${n.y}" r="22" fill="#fff" stroke="#1d2550" stroke-width="4"/><circle cx="${n.x}" cy="${n.y}" r="9" fill="#14b8a6"><animate attributeName="r" values="7;12;7" dur="1.6s" begin="${(n.li * .5).toFixed(1)}s" repeatCount="indefinite"/></circle>`).join("");
+  return `<svg viewBox="40 20 580 280" style="width:100%;max-width:560px">${lines}${circ}
+    <text x="90" y="300" text-anchor="middle" font-family="Fredoka" font-size="20" font-weight="600" fill="#1d2550">IN</text>
+    <text x="330" y="300" text-anchor="middle" font-family="Fredoka" font-size="20" font-weight="600" fill="#1d2550">THINK</text>
+    <text x="570" y="300" text-anchor="middle" font-family="Fredoka" font-size="20" font-weight="600" fill="#1d2550">OUT</text></svg>`;
+};
+
+/* =====================================================================
+   LESSONS
+   ===================================================================== */
+const CH = [
+{
+  id: "computer", icon: "🖥️", color: "#60a5fa", title: "Meet the Computer", what: "What computers are and how they work",
+  scenes: [
+    { art: `<div style="display:flex;align-items:center;gap:10px">${beep("happy", 150)}<span class="art-emoji emo">👋</span></div>`,
+      text: "Hi! I'm Beep, a friendly robot. Let's go on an adventure to learn about computers and AI!" },
+    { art: tiles([["📱", "Phone"], ["💻", "Laptop"], ["🖥️", "Computer"], ["⌚", "Watch"], ["🎮", "Game"]]),
+      text: "A computer is a machine that follows instructions. Phones, tablets and laptops are all computers!" },
+    { art: flow([["⌨️", "IN"], ["🔲", "THINK"], ["🖥️", "OUT"]]),
+      text: "Every computer has three jobs. It takes things IN. It THINKS. Then it sends things OUT." },
+    { art: flow([["👀", "Eyes in"], ["🧠", "Brain thinks"], ["🗣️", "Mouth out"]]),
+      text: "You do it too! Your eyes and ears take things in. Your brain thinks. Your mouth and hands send things out." },
+    { art: flow([["🏢", "Long ago"], ["📱", "Today"]]),
+      text: "Long, long ago, one computer was as big as a whole room! Now a computer can fit in your pocket." },
+    { art: big("🤔"), text: "Quick question! Which one of these is a computer?",
+      quiz: { opts: [["🍎", "Apple"], ["📱", "Tablet"], ["🧸", "Teddy"]], ans: 1, yes: "Yes! A tablet is a computer. It follows instructions!", no: "Not that one. Try again!" } }
+  ],
+  game: { name: "In or Out?", intro: "Game time! Does it put things INTO the computer, or does it bring things OUT? Tap the right box!", run: g => sortGame(g, {
+    bins: [{ icon: "➡️💻", label: "Goes IN", color: "#bfdbfe" }, { icon: "💻➡️", label: "Comes OUT", color: "#fde68a" }],
+    ask: it => `${it.n}. In or out?`,
+    items: [
+      { e: "⌨️", n: "Keyboard", a: 0, why: "A keyboard puts letters IN." },
+      { e: "🖱️", n: "Mouse", a: 0, why: "A mouse puts your clicks IN." },
+      { e: "🎤", n: "Microphone", a: 0, why: "A microphone puts your voice IN." },
+      { e: "📷", n: "Camera", a: 0, why: "A camera puts pictures IN." },
+      { e: "🖥️", n: "Screen", a: 1, why: "A screen shows pictures OUT." },
+      { e: "🔊", n: "Speaker", a: 1, why: "A speaker sends sounds OUT." },
+      { e: "🖨️", n: "Printer", a: 1, why: "A printer sends paper OUT." }
+    ] }) },
+  talk: "Walk around your home together. How many computers can you find? (Phone, TV, car, microwave…)"
+},
+{
+  id: "code", icon: "🧩", color: "#4ade80", title: "Robot Instructions", what: "Code, programs and bugs",
+  scenes: [
+    { art: `<div style="display:flex;align-items:center;gap:10px">${beep("think", 140)}<span class="art-emoji emo">📜</span></div>`,
+      text: "Computers are super fast. But they only do EXACTLY what we tell them. Nothing more!" },
+    { art: tiles([["1️⃣", "Step"], ["2️⃣", "Step"], ["3️⃣", "Step"]]),
+      text: "A list of steps for a computer is called a program, or code. People who write code are called programmers." },
+    { art: `<div style="display:flex;align-items:center;gap:10px"><span class="art-emoji emo">🫙🍞</span>${beep("oops", 130)}</div>`,
+      text: "If I tell Beep: put jam on the bread... but I forget to say: open the jar... Oops! Beep is stuck!" },
+    { art: `<div class="tiles"><div class="tile"><span class="e emo">🧦➜👟</span><b>✅ Yes!</b></div><div class="tile"><span class="e emo">👟➜🧦</span><b>❌ Silly!</b></div></div>`,
+      text: "Order matters! Socks first, then shoes. Not shoes, then socks!" },
+    { art: big("🤖❗"), text: "A mistake in code has a funny name. What is it called?",
+      quiz: { opts: [["🐞", "Bug"], ["🍕", "Pizza"], ["🌈", "Rainbow"]], ans: 0, yes: "Yes! A mistake in code is called a bug. Fixing it is called debugging!", no: "Ha ha, no! Try again." } }
+  ],
+  game: { name: "Code Beep Home", intro: "Help Beep reach the battery! Tap the arrows to make a plan. Then press Go!", run: g => mazeGame(g) },
+  talk: "Play ‘Robot Grown-up’: your child gives you exact steps to brush your teeth. Do only what they say — did they forget a step?"
+},
+{
+  id: "data", icon: "🍎", color: "#fb923c", title: "Learning from Examples", what: "Data, patterns and machine learning",
+  scenes: [
+    { art: big("🐱🐈😺🐈‍⬛"), text: "How do you know a cat is a cat? Because you have seen LOTS of cats!" },
+    { art: flow([["🖼️🖼️🖼️", "Examples"], ["💻", "Computer"]]),
+      text: "Computers can learn the same way. We show them lots and lots of examples. All those examples are called data." },
+    { art: big("🔴🔵🔴🔵🔴❓"), text: "Then the computer looks for a pattern. A pattern is something that repeats. What comes next?",
+      quiz: { opts: [["🔵", "Blue"], ["🟢", "Green"], ["🟡", "Yellow"]], ans: 0, yes: "Yes! Red, blue, red, blue... blue comes next! You found the pattern!", no: "Look again: red, blue, red, blue..." } },
+    { art: flow([["📚", "Examples"], ["🤖", "Learns"], ["💡", "Smart guess"]]),
+      text: "When a computer learns from examples, we call it Machine Learning. More examples help it learn better!" }
+  ],
+  game: { name: "Teach Beep", intro: "Now YOU are the teacher! Sort some toys, and Beep will try to learn your secret rule.", run: g => teachGame(g) },
+  talk: "Find a pattern on clothes, tiles or a book. Can your child make a pattern with toys for you to finish?"
+},
+{
+  id: "ai", icon: "✨", color: "#a78bfa", title: "What is AI?", what: "Artificial Intelligence, all around us",
+  scenes: [
+    { art: `<div class="bigword">AI</div>`,
+      text: "AI stands for Artificial Intelligence. Artificial means made by people. Intelligence means being smart." },
+    { art: `<div class="tiles"><div class="tile"><span class="e emo">📏</span><b>Normal program:<br>follows rules</b></div><div class="tile"><span class="e emo">📚</span><b>AI:<br>learns from examples</b></div></div>`,
+      text: "Normal programs only follow rules that people write. AI programs can learn from examples, like you taught Beep!" },
+    { art: tiles([["🗺️", "Maps"], ["🎤", "Voice helpers"], ["📷", "Cameras"], ["🌐", "Translators"]]),
+      text: "You might already use AI! Maps that find the fastest road. Phones that understand your voice. Apps that change words into another language." },
+    { art: tiles([["🩺", "Doctors"], ["🚜", "Farmers"], ["🔭", "Scientists"], ["🌦️", "Weather"]]),
+      text: "AI helps doctors look at pictures of bones. It helps farmers grow food, and helps scientists study space and the weather!" },
+    { art: `<div style="display:flex;align-items:center;gap:10px"><span class="art-emoji emo">✏️</span>${beep("happy", 130)}</div>`,
+      text: "But AI is not alive. It doesn't eat, sleep or grow. It is a tool that people made, like a super-smart pencil!" }
+  ],
+  game: { name: "Alive or Not?", intro: "Is it alive, or is it a thing? Tap the right box!", run: g => sortGame(g, {
+    bins: [{ icon: "🌱", label: "Alive", color: "#bbf7d0" }, { icon: "⚙️", label: "Not alive", color: "#e2e8f0" }],
+    ask: it => `${it.n}. Alive, or not alive?`,
+    items: [
+      { e: "🐱", n: "Cat", a: 0, why: "A cat eats, sleeps and grows. It's alive!" },
+      { e: "🤖", n: "Robot", a: 1, why: "A robot is a machine. It's not alive." },
+      { e: "🌳", n: "Tree", a: 0, why: "A tree drinks water and grows. It's alive!" },
+      { e: "💬", n: "AI helper", a: 1, why: "An AI helper is a computer program. It's not alive, it's a tool." },
+      { e: "🧒", n: "You!", a: 0, why: "You are alive! And super smart." },
+      { e: "📱", n: "Tablet", a: 1, why: "A tablet is a machine. Not alive." },
+      { e: "🐦", n: "Bird", a: 0, why: "A bird eats and grows. It's alive!" }
+    ] }) },
+  talk: "If you had an AI helper, what would you ask it to help with? What would you still want to do yourself?"
+},
+{
+  id: "llm", icon: "💬", color: "#f472b6", title: "The Word-Guessing Machine", what: "Large Language Models (LLMs) and tokens",
+  scenes: [
+    { art: `<div style="display:flex;align-items:center;gap:10px">${beep("wow", 130)}<span class="art-emoji emo">💬</span></div>`,
+      text: "Some AIs can talk and write! They are called Large Language Models. L L M, for short." },
+    { art: tiles([["🐘", "Large"], ["🔤", "Language"], ["🧠", "Model"]]),
+      text: "Large means HUGE. Language means words. Model means the brain the computer built while it was learning." },
+    { art: big("📚📚📚📚📚"),
+      text: "An LLM read so many words, it would take a person thousands of years to read them all!" },
+    { art: `<div class="bigword" style="font-size:clamp(30px,6vw,54px);letter-spacing:0">Twinkle, twinkle,<br>little ___</div>`,
+      text: "It learned one special trick: guessing the next word! Can you do it too? Twinkle, twinkle, little...",
+      quiz: { opts: [["⭐", "star"], ["🚗", "car"], ["🍌", "banana"]], ans: 0, yes: "Yes, star! You guessed the next word, just like an LLM does!", no: "Hmm, that sounds silly! Try again." } },
+    { art: tokens([["rain", "#fde68a"], ["bow", "#a5f3fc"], ["play", "#bbf7d0"], ["ing", "#fbcfe8"]]),
+      text: "LLMs build sentences one little piece at a time. The pieces are called tokens. They are like building bricks for words!" },
+    { art: `<div style="display:flex;align-items:center;gap:10px">${beep("oops", 130)}<span class="art-emoji emo">🙋</span></div>`,
+      text: "LLMs are clever, but sometimes they guess wrong and say things that are not true. So always check with a grown-up!" }
+  ],
+  game: { name: "Story Builder", intro: "Let's make a story together, one word at a time. Beep shows its guesses. You pick the word!", run: g => storyGame(g) },
+  talk: "Take turns telling a story, one word each — just like an LLM picks one token at a time."
+},
+{
+  id: "brain", icon: "🧠", color: "#2dd4bf", title: "Inside the AI Brain", what: "Neural networks, training and models",
+  scenes: [
+    { art: neuralArt(),
+      text: "Inside many AIs is a neural network. It's an idea people got from studying our brains!" },
+    { art: flow([["🧠", "Your brain"], ["💬", "Messages"], ["🕸️", "AI network"]]),
+      text: "Your brain has billions of tiny cells called neurons. They pass messages to each other. An AI has lots of tiny number-helpers that pass messages too." },
+    { art: big("❌❌✔️✔️✔️"),
+      text: "At first, the AI's guesses are wrong. So it practises... and practises... and gets a little better every time. That's called training!" },
+    { art: flow([["🚲", "Wobble"], ["🚲", "Wobble"], ["🚴", "Whoosh!"]]),
+      text: "It's just like you learning to ride a bike. Wobble, wobble... then whoosh!" },
+    { art: big("🏢⚡💻💻💻"),
+      text: "Big AIs practise on thousands of computers, inside giant buildings called data centers." },
+    { art: flow([["🏋️", "Training"], ["🧠", "Model"]]),
+      text: "When training is done, everything the AI learned is saved. That saved brain is called a model!" }
+  ],
+  game: { name: "Train Beep", intro: "Beep wants to throw the ball into the basket. Tell Beep if it went too far, or not far enough. That's how you train it!", run: g => throwGame(g) },
+  talk: "What did you get better at by practising? How many tries did it take? AI learns by practising too."
+},
+{
+  id: "safe", icon: "🛡️", color: "#f87171", title: "Smart & Safe with AI", what: "Being the boss, privacy and kindness",
+  scenes: [
+    { art: `<div style="display:flex;align-items:center;gap:10px"><span class="art-emoji emo">👑🧒</span>${beep("happy", 120)}</div>`,
+      text: "AI is a helper. YOU are the boss! Always use your own amazing brain too." },
+    { art: flow([["🤖", "Says something"], ["🤔", "Hmm?"], ["🧑‍🧒", "Ask a grown-up"]]),
+      text: "AI can make mistakes. If something sounds strange or silly, check with a grown-up." },
+    { art: tiles([["🏠", "Address"], ["🔑", "Password"], ["🪪", "Full name"]]),
+      text: "Keep private things private! Don't tell a computer where you live, your password, or your full name, unless your grown-up says it's okay." },
+    { art: flow([["😟", "Worried?"], ["✋", "Stop"], ["🧑‍🧒", "Tell"]]),
+      text: "If anything on a screen makes you feel worried or scared, stop and tell a grown-up right away. You won't be in trouble." },
+    { art: big("❤️🌳⚽"),
+      text: "Be kind online, just like in real life. And remember: screens off sometimes, and go play outside!" }
+  ],
+  game: { name: "Safe or Stop?", intro: "Is it safe? Or should you stop and ask a grown-up? Tap the right box!", run: g => sortGame(g, {
+    bins: [{ icon: "👍", label: "Safe", color: "#bbf7d0" }, { icon: "✋", label: "Stop & ask", color: "#fecaca" }],
+    ask: it => it.n,
+    items: [
+      { e: "🦕", n: "Ask AI for a story about a dinosaur, with your grown-up", a: 0, why: "Yes! A dinosaur story together is fun and safe." },
+      { e: "🏠", n: "Tell the AI where you live", a: 1, why: "Stop! Where you live is private." },
+      { e: "🌈", n: "Ask why the sky is blue", a: 0, why: "Great question! Asking questions is how we learn." },
+      { e: "🔑", n: "Share your password", a: 1, why: "Stop! Passwords are secret, just for you and your grown-up." },
+      { e: "🙈", n: "Believe everything a computer says", a: 1, why: "Stop! Computers can make mistakes. Check with a grown-up." },
+      { e: "😟", n: "You see something scary on a screen", a: 1, why: "Stop and tell a grown-up right away. You did nothing wrong." },
+      { e: "🎨", n: "Draw a picture with AI together with your family", a: 0, why: "Yes! Making things together is a great way to use AI." }
+    ] }) },
+  talk: "Make a family rule together: when can we use AI, and who do we use it with?"
+},
+{
+  id: "prompt", icon: "🪄", color: "#818cf8", title: "Magic Words", what: "Prompts: asking AI clearly",
+  scenes: [
+    { art: `<div style="display:flex;align-items:center;gap:10px"><span class="art-emoji emo">🪄💬</span>${beep("wow", 120)}</div>`,
+      text: "When we ask an AI for help, the words we use are called a prompt." },
+    { art: `<div class="tiles"><div class="tile"><span class="e emo">❓</span><b>"Draw something"</b></div><div class="tile"><span class="e emo">🐱🌙</span><b>"Draw a cat<br>on the moon"</b></div></div>`,
+      text: "A good prompt is clear. Draw something, is tricky. Draw a cat on the moon, is clear!" },
+    { art: flow([["✏️", "Ask"], ["👀", "Look"], ["➕", "Add details"]]),
+      text: "If the answer isn't right, ask again and add more details. That's what AI experts do!" }
+  ],
+  game: { name: "Picture Prompt Maker", intro: "Pick your magic words, and Beep's drawing machine will make your picture!", run: g => promptGame(g) },
+  talk: "Describe a picture with words while your grown-up draws it — no peeking! Were the words clear enough?"
+},
+{
+  id: "future", icon: "🚀", color: "#fbbf24", title: "The Future & You", what: "Super skills and your dream",
+  scenes: [
+    { art: big("🌍🚀🤖"),
+      text: "When you grow up, AI will help people do amazing things. And YOU could help build it!" },
+    { art: tiles([["🔢", "Maths"], ["📖", "Reading"], ["🧩", "Puzzles"], ["❓", "Questions"]]),
+      text: "People who build AI are called AI engineers and scientists. They love maths, reading, puzzles, and asking lots of questions." },
+    { art: tiles([["🔍", "Curious"], ["📚", "Keep learning"], ["❤️", "Be kind"], ["💡", "Think"], ["💪", "Never give up"]]),
+      text: "Here are your super skills for the future: be curious, keep learning, be kind, think for yourself, and never give up!" },
+    { art: `<div style="display:flex;align-items:center;gap:10px"><span class="art-emoji emo">🧒🤝</span>${beep("happy", 130)}</div>`,
+      text: "AI can help with lots of jobs. But people bring big ideas, kindness and good choices. The world needs YOU!" }
+  ],
+  game: { name: "My Future Dream", intro: "What would you like to do when you grow up? Pick your dream!", run: g => futureGame(g) },
+  talk: "What problem in the world would your child like to fix when they grow up? How could AI help?"
+}
+];
+
+const WORDS = [
+  ["💻", "Computer", "A machine that follows instructions."],
+  ["🧩", "Code", "A list of steps that tells a computer what to do. Also called a program."],
+  ["🐞", "Bug", "A mistake in code. Programmers find and fix bugs!"],
+  ["🖼️", "Data", "Lots of examples, like pictures, sounds and words."],
+  ["🔁", "Pattern", "Something that repeats, or stays the same."],
+  ["📚", "Machine Learning", "When a computer learns from examples."],
+  ["✨", "AI", "Artificial Intelligence. Computer programs that learn and help."],
+  ["💬", "LLM", "Large Language Model. An AI that learned from lots of words, so it can write and talk."],
+  ["🧱", "Token", "A little piece of a word. LLMs build sentences from tokens."],
+  ["🕸️", "Neural Network", "Lots of tiny connected number-helpers inside an AI. The idea came from the brain."],
+  ["🏋️", "Training", "When an AI practises again and again to get better."],
+  ["🧠", "Model", "Everything an AI learned, saved so it can be used."],
+  ["🪄", "Prompt", "The words you give an AI to ask for help."],
+  ["🤖", "Robot", "A machine that can move and do jobs."],
+  ["🏢", "Data Center", "A giant building full of computers."],
+  ["🧑‍💻", "Programmer", "A person who writes code."]
+];
+
+/* =====================================================================
+   VIEWS
+   ===================================================================== */
+const mapBtn = $("#mapBtn");
+mapBtn.onclick = () => { hush(); renderMap(); };
+
+function renderMap(scrollTo) {
+  hush();
+  mapBtn.hidden = true;
+  document.body.style.removeProperty("--c");
+  const n = CH.filter(c => save.done[c.id]).length;
+  const hello = n === 0
+    ? "Hi! I'm Beep! Tap island number 1 to start our adventure. Can you collect all 9 stickers?"
+    : n === CH.length
+    ? `WOW! You collected all 9 stickers! You are a Future AI Expert${save.name ? ", " + save.name : ""}!`
+    : `Welcome back! You have ${n} sticker${n > 1 ? "s" : ""}. Let's get the next one!`;
+  app.innerHTML = `
+    <div class="bubble-row">${beep(n === CH.length ? "wow" : "happy", 90)}<div class="bubble">${hello} ${sayBtn(hello)}</div></div>
+    <div class="section-title">🗺️ Adventure Islands</div>
+    <div class="islands">${CH.map((c, i) => `
+      <button class="island" data-i="${i}" style="--c:${c.color}">
+        <span class="num">${i + 1}</span>${save.done[c.id] ? `<span class="done emo">⭐</span>` : ""}
+        <span class="disc emo">${c.icon}</span>
+        <span class="name">${c.title}</span><span class="what">${c.what}</span>
+      </button>`).join("")}</div>
+    <div class="section-title">⭐ My Sticker Book · ${n} / ${CH.length}</div>
+    <div class="stickers">${CH.map((c, i) => `<div class="sticker emo ${save.done[c.id] ? "" : "empty"}" style="--c:${c.color};--r:${(i % 3 - 1) * 8}deg" title="${esc(c.title)}">${c.icon}</div>`).join("")}
+      ${n === CH.length ? `<div class="sticker emo" style="--c:#ffd700;--r:6deg">🏆</div>` : ""}</div>
+    <div class="section-title">🎒 More</div>
+    <div class="extras">
+      <button class="extra" id="wordsBtn"><span class="e emo">🃏</span><span><b>Beep's Word Cards</b><small>Tap a card to flip it and hear what the word means</small></span></button>
+      <button class="extra" id="grownBtn"><span class="e emo">🧑‍🧒</span><span><b>For Grown-ups</b><small>How to use this, talk prompts, and the road to becoming an AI expert</small></span></button>
+    </div>`;
+  $$(".island").forEach(b => b.onclick = () => { sfx.click(); openLesson(+b.dataset.i); });
+  $("#wordsBtn").onclick = renderWords;
+  $("#grownBtn").onclick = renderGrownups;
+  window.scrollTo({ top: scrollTo ? $(".islands").offsetTop - 80 : 0, behavior: "smooth" });
+}
+
+/* ---------- lesson player ---------- */
+function openLesson(ci) {
+  hush();
+  const c = CH[ci];
+  let si = 0;
+  mapBtn.hidden = false;
+  document.body.style.setProperty("--c", c.color);
+  const total = c.scenes.length + 1;
+
+  function head(step) {
+    return `<div class="lesson-head"><span class="ico emo">${c.icon}</span><div><div style="font-weight:800;color:var(--muted)">Island ${ci + 1}</div><h2>${c.title}</h2></div>
+      <div class="dots">${Array.from({ length: total }, (_, k) => `<i class="${k <= step ? "on" : ""} ${k === total - 1 ? "game" : ""}"></i>`).join("")}</div></div>`;
+  }
+
+  function scene() {
+    const s = c.scenes[si];
+    app.innerHTML = head(si) + `
+      <div class="stage" style="--tint:${c.color}33">
+        <div class="art">${s.art}</div>
+        <div class="textrow">${sayBtn(s.text)}<div class="t">${s.text}</div></div>
+        ${s.quiz ? `<div class="quiz">${s.quiz.opts.map(([e, l], k) => `<button class="qopt" data-k="${k}"><span class="e emo">${e}</span>${l}</button>`).join("")}</div>` : ""}
+      </div>
+      <div class="nav">
+        <button class="big" id="back" ${si === 0 ? "" : ""}>◀ ${si === 0 ? "Map" : "Back"}</button>
+        <button class="big go" id="next">${si === c.scenes.length - 1 ? "Play the game! 🎮" : "Next ▶"}</button>
+      </div>`;
+    speak(s.text);
+    if (s.quiz) $$(".qopt").forEach(b => b.onclick = () => {
+      const k = +b.dataset.k;
+      if (k === s.quiz.ans) { b.classList.add("right"); sfx.ding(); speak(s.quiz.yes); }
+      else { b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); sfx.boop(); speak(s.quiz.no); }
+    });
+    $("#back").onclick = () => { sfx.click(); if (si === 0) renderMap(true); else { si--; scene(); } };
+    $("#next").onclick = () => { sfx.click(); if (si < c.scenes.length - 1) { si++; scene(); } else game(); };
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function game() {
+    app.innerHTML = head(total - 1) + `
+      <div class="stage" style="--tint:${c.color}33">
+        <div class="textrow game-intro">${sayBtn(c.game.intro)}<div class="t">🎮 ${c.game.name}<br><span style="font-weight:700;font-size:.85em">${c.game.intro}</span></div></div>
+        <div id="game"></div>
+      </div>
+      <div class="nav"><button class="big" id="back">◀ Back</button><span></span></div>`;
+    $("#back").onclick = () => { si = c.scenes.length - 1; scene(); };
+    speak(c.game.intro);
+    const g = $("#game");
+    g.done = () => finish(ci);
+    c.game.run(g);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  scene();
+}
+
+function finish(ci) {
+  const c = CH[ci];
+  const first = !save.done[c.id];
+  save.done[c.id] = true; persist();
+  sfx.fanfare(); confetti();
+  const all = CH.every(x => save.done[x.id]);
+  const msg = all ? `Amazing! You finished ALL the islands! You are a Future AI Expert!` : `Hooray! You earned the ${c.title} sticker!`;
+  const ov = document.createElement("div");
+  ov.className = "overlay";
+  ov.innerHTML = `<div class="celebrate" style="--c:${c.color}">
+    <div class="bigsticker emo">${all ? "🏆" : c.icon}</div>
+    <h2>${all ? "Future AI Expert!" : "Sticker earned!"}</h2>
+    <div style="font-weight:800;font-size:1.15rem">${msg} ${sayBtn(msg)}</div>
+    <div class="talk"><b>🧑‍🧒 Talk together:</b> ${c.talk}</div>
+    <div class="btns">
+      <button class="big" id="toMap">🗺️ Map</button>
+      ${ci < CH.length - 1 ? `<button class="big go" id="toNext" style="--c:${CH[ci + 1].color}">Next island ${CH[ci + 1].icon}</button>` : ""}
+    </div></div>`;
+  document.body.appendChild(ov);
+  setTimeout(() => speak(msg), 700);
+  $("#toMap", ov).onclick = () => { ov.remove(); renderMap(true); };
+  const nx = $("#toNext", ov);
+  if (nx) nx.onclick = () => { ov.remove(); openLesson(ci + 1); };
+}
+
+function confetti() {
+  const cols = ["#ff6a57", "#ffc43d", "#53b35a", "#7cc3f0", "#a78bfa", "#f472b6"];
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement("i");
+    s.className = "confetti";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.background = cols[i % cols.length];
+    s.style.animationDuration = 1.8 + Math.random() * 1.8 + "s";
+    s.style.animationDelay = Math.random() * .5 + "s";
+    s.style.borderRadius = i % 2 ? "50%" : "3px";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 4500);
+  }
+}
+
+/* =====================================================================
+   GAME: sorting into two boxes (used by islands 1, 4, 7)
+   ===================================================================== */
+function sortGame(g, cfg) {
+  const items = shuffle(cfg.items.slice());
+  let i = 0, locked = false, firstTry = true, stars = 0, askT = 0;
+  g.innerHTML = `<div class="sg">
+    <div class="stars emo" id="stars"></div>
+    <div class="sg-card" id="card"><span class="e emo"></span><span class="n"></span></div>
+    <div class="feedback" id="fb" aria-live="polite"></div>
+    <div class="bins">${cfg.bins.map((b, k) => `<button class="bin" data-k="${k}" style="--bc:${b.color}"><span class="bi emo">${b.icon}</span>${b.label}</button>`).join("")}</div>
+  </div>`;
+  const card = $("#card", g), fb = $("#fb", g);
+  function show() {
+    const it = items[i];
+    $(".e", card).textContent = it.e; $(".n", card).textContent = it.n;
+    card.className = "sg-card"; void card.offsetWidth; card.classList.add("in");
+    $("#stars", g).textContent = "⭐".repeat(stars) + "▫️".repeat(items.length - i);
+    fb.textContent = ""; locked = false; firstTry = true;
+    clearTimeout(askT); askT = setTimeout(() => speak(cfg.ask(it)), i === 0 ? 2600 : 200);
+  }
+  $$(".bin", g).forEach(b => b.onclick = () => {
+    if (locked) return;
+    const it = items[i], k = +b.dataset.k;
+    clearTimeout(askT);
+    if (k === it.a) {
+      locked = true; sfx.ding(); if (firstTry) stars++;
+      fb.textContent = "✅ " + it.why;
+      card.classList.add("fly");
+      speak("Yes! " + it.why, () => { i++; if (i < items.length) show(); else { $("#stars", g).textContent = "⭐".repeat(stars); g.done(); } });
+    } else {
+      firstTry = false; sfx.boop();
+      card.classList.remove("in"); card.style.animation = "shake .4s"; setTimeout(() => card.style.animation = "", 420);
+      fb.textContent = "Hmm, try the other box! 🙂";
+      speak("Hmm, try the other box!");
+    }
+  });
+  show();
+}
+
+/* =====================================================================
+   GAME: arrow-code maze (island 2)
+   ===================================================================== */
+function mazeGame(g) {
+  const LV = [
+    ["....",
+     "B..*",
+     "...."],
+    ["B#..",
+     ".#..",
+     "...*"],
+    ["B.#..",
+     "..#.*",
+     "....."]
+  ];
+  const DIR = { U: [0, -1, "⬆️"], D: [0, 1, "⬇️"], L: [-1, 0, "⬅️"], R: [1, 0, "➡️"] };
+  let lv = 0, prog = [], pos, start, goal, rocks, W, H, running = false;
+
+  function load() {
+    const m = LV[lv]; H = m.length; W = m[0].length; rocks = new Set(); prog = [];
+    m.forEach((row, y) => [...row].forEach((ch, x) => {
+      if (ch === "B") start = [x, y];
+      if (ch === "*") goal = [x, y];
+      if (ch === "#") rocks.add(x + "," + y);
+    }));
+    pos = start.slice();
+    g.innerHTML = `<div class="maze-wrap">
+      <div style="font-family:var(--display);font-weight:700;font-size:1.2rem">Level ${lv + 1} of ${LV.length}</div>
+      <div class="grid" id="grid" style="grid-template-columns:repeat(${W},auto)"></div>
+      <div class="prog" id="prog"></div>
+      <div class="feedback" id="fb" aria-live="polite"></div>
+      <div class="pad">
+        <button data-d="L" aria-label="left" class="emo">⬅️</button><button data-d="U" aria-label="up" class="emo">⬆️</button>
+        <button data-d="D" aria-label="down" class="emo">⬇️</button><button data-d="R" aria-label="right" class="emo">➡️</button>
+      </div>
+      <div class="pad"><button id="undo" aria-label="undo" class="emo">↩️</button><button id="clear" aria-label="clear" class="emo">🗑️</button><button class="run" id="run">▶ Go!</button></div>
+    </div>`;
+    $$("[data-d]", g).forEach(b => b.onclick = () => { if (running || prog.length >= 12) return; sfx.click(); prog.push(b.dataset.d); drawProg(); });
+    $("#undo", g).onclick = () => { if (!running) { prog.pop(); drawProg(); } };
+    $("#clear", g).onclick = () => { if (!running) { prog = []; drawProg(); } };
+    $("#run", g).onclick = run;
+    draw(); drawProg();
+    if (lv > 0) speak(`Level ${lv + 1}! Watch out for the rocks.`);
+  }
+  function draw(bump) {
+    let html = "";
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const k = x + "," + y, here = pos[0] === x && pos[1] === y, isGoal = goal[0] === x && goal[1] === y;
+      html += `<div class="cell ${rocks.has(k) ? "rock" : ""} ${here && bump ? "bump" : ""}">${here ? beep(bump ? "oops" : isGoal ? "wow" : "happy", 60) : isGoal ? `<span class="emo">🔋</span>` : rocks.has(k) ? `<span class="emo">🪨</span>` : ""}</div>`;
+    }
+    $("#grid", g).innerHTML = html;
+  }
+  function drawProg(now = -1) {
+    $("#prog", g).innerHTML = prog.length ? prog.map((d, i) => `<span class="chip emo ${i === now ? "now" : ""}">${DIR[d][2]}</span>`).join("") : `<span class="ph">Your code goes here…</span>`;
+  }
+  function run() {
+    if (running) return;
+    if (!prog.length) { speak("Tap some arrows first!"); return; }
+    running = true; pos = start.slice(); draw();
+    const fb = $("#fb", g); fb.textContent = "";
+    let step = 0;
+    const tick = () => {
+      if (step >= prog.length) {
+        running = false;
+        if (pos[0] === goal[0] && pos[1] === goal[1]) {
+          sfx.ding(); fb.textContent = "🎉 Your code worked! Beep got the battery!";
+          speak("Hooray! Your code worked! Beep got the battery!", () => { lv++; if (lv < LV.length) load(); else g.done(); });
+        } else {
+          sfx.boop(); fb.textContent = "Beep stopped before the battery. Add more steps!";
+          speak("Beep stopped too early. Add more steps!", () => { pos = start.slice(); draw(); drawProg(); });
+        }
+        return;
+      }
+      drawProg(step);
+      const [dx, dy] = DIR[prog[step]];
+      const nx = pos[0] + dx, ny = pos[1] + dy;
+      if (nx < 0 || ny < 0 || nx >= W || ny >= H || rocks.has(nx + "," + ny)) {
+        draw(true); sfx.boop(); running = false;
+        fb.textContent = `🐞 Oops, a bug at step ${step + 1}! Fix that arrow and try again.`;
+        speak("Oops! Beep bumped into something. That's a bug! Let's fix the code.", () => { pos = start.slice(); draw(); });
+        return;
+      }
+      pos = [nx, ny]; sfx.click(); draw(); step++;
+      setTimeout(tick, 520);
+    };
+    setTimeout(tick, 300);
+  }
+  load();
+}
+
+/* =====================================================================
+   GAME: Teach Beep — a real (tiny) machine-learning model (island 3)
+   The child sorts shapes into two toy boxes; Beep counts which colours and
+   shapes went where (a simple Naive Bayes model) and predicts new shapes.
+   ===================================================================== */
+function teachGame(g) {
+  const COLORS = { red: "#ef4444", blue: "#3b82f6", yellow: "#facc15", green: "#22c55e" };
+  const shapeSVG = (c, s, size = 120) => {
+    const f = COLORS[c];
+    const inner = s === "circle" ? `<circle cx="50" cy="50" r="38" fill="${f}" stroke="#1d2550" stroke-width="5"/>`
+      : s === "square" ? `<rect x="14" y="14" width="72" height="72" rx="10" fill="${f}" stroke="#1d2550" stroke-width="5"/>`
+      : `<path d="M50 10 L90 86 H10 Z" fill="${f}" stroke="#1d2550" stroke-width="5" stroke-linejoin="round"/>`;
+    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}">${inner}</svg>`;
+  };
+  const name = t => `${t.c} ${t.s}`;
+  const train = shuffle([["red", "circle"], ["red", "square"], ["blue", "triangle"], ["yellow", "circle"], ["green", "square"], ["blue", "circle"]].map(([c, s]) => ({ c, s })));
+  const test = shuffle([["red", "triangle"], ["yellow", "square"], ["green", "circle"], ["blue", "square"], ["green", "triangle"], ["yellow", "triangle"]].map(([c, s]) => ({ c, s }))).slice(0, 5);
+  const data = []; // {c,s,box}
+  let ti = 0, qi = 0, right = 0;
+  const BOX = [{ e: "🐱", n: "Cat's box", col: "#fde68a" }, { e: "🐶", n: "Dog's box", col: "#bfdbfe" }];
+
+  function predict(t) {
+    const score = [0, 1].map(b => {
+      const inB = data.filter(d => d.box === b), n = inB.length;
+      const pc = (inB.filter(d => d.c === t.c).length + 1) / (n + 4);
+      const ps = (inB.filter(d => d.s === t.s).length + 1) / (n + 3);
+      return ((n + 1) / (data.length + 2)) * pc * ps;
+    });
+    return score[0] >= score[1] ? 0 : 1;
+  }
+  function boxesHTML(pickable) {
+    return `<div class="boxes">${BOX.map((b, k) => `<div class="box"><h3><span class="e emo">${b.e}</span>${b.n}</h3>
+      <div class="things">${data.filter(d => d.box === k).map(d => shapeSVG(d.c, d.s, 34)).join("")}</div>
+      ${pickable ? `<button class="pick" data-k="${k}" style="--bc:${b.col}">Put it here</button>` : ""}</div>`).join("")}</div>`;
+  }
+
+  // Step 1: choose a secret rule
+  function chooseRule() {
+    g.innerHTML = `<div class="sg"><div class="feedback">Pick a secret rule. Which toys does the 🐱 cat like?</div>
+      <div class="rules">
+        <button data-r="red">🐱 likes <b style="color:#ef4444">RED</b> toys</button>
+        <button data-r="circle">🐱 likes <b>CIRCLES</b> ⚪</button>
+        <button data-r="blue">🐱 likes <b style="color:#3b82f6">BLUE</b> toys</button>
+        <button data-r="own">🤫 I'll make my own rule</button>
+      </div>
+      <div style="color:var(--muted);font-weight:700;text-align:center;max-width:520px">Don't tell Beep! Beep has to learn the rule from your examples.</div></div>`;
+    setTimeout(() => speak("Pick a secret rule. Which toys does the cat like? Don't tell Beep!"), 2600);
+    $$("[data-r]", g).forEach(b => b.onclick = () => { sfx.click(); rule = b.dataset.r; teach(); });
+  }
+  let rule = "own";
+  const ruleText = () => ({ red: "The cat likes red toys.", circle: "The cat likes circles.", blue: "The cat likes blue toys.", own: "Use your own rule." }[rule]);
+
+  // Step 2: child sorts training examples
+  function teach() {
+    if (ti >= train.length) return guessIntro();
+    const t = train[ti];
+    g.innerHTML = `<div class="sg">
+      <div class="feedback">Teach Beep! ${ruleText()} Where does this toy go? (${ti + 1} of ${train.length})</div>
+      <div class="sg-card in">${shapeSVG(t.c, t.s)}<span class="n">${name(t)}</span></div>
+      ${boxesHTML(true)}</div>`;
+    speak(`${name(t)}. Cat's box, or dog's box?`);
+    $$(".pick", g).forEach(b => b.onclick = () => { sfx.ding(); data.push({ ...t, box: +b.dataset.k }); ti++; teach(); });
+  }
+
+  // Step 3: Beep guesses, child checks
+  function guessIntro() {
+    g.innerHTML = `<div class="sg"><div style="display:flex;align-items:center;gap:10px">${beep("think", 100)}<div class="feedback">Beep is thinking about your examples… Now Beep will guess where NEW toys go!</div></div>
+      ${boxesHTML(false)}<button class="big go" id="go">Let Beep guess! 🤖</button></div>`;
+    speak("Beep looked at your examples and found a pattern. Now Beep will guess where new toys go. Tell Beep if it's right!");
+    $("#go", g).onclick = guess;
+  }
+  function guess() {
+    if (qi >= test.length) return wrap();
+    const t = test[qi], p = predict(t);
+    g.innerHTML = `<div class="sg">
+      <div class="feedback">New toy ${qi + 1} of ${test.length}</div>
+      <div class="sg-card in">${shapeSVG(t.c, t.s)}<span class="n">${name(t)}</span></div>
+      <div style="display:flex;align-items:center;gap:10px">${beep("think", 70)}<div class="bubble" style="font-size:1.15rem">I think it goes in the ${BOX[p].e} ${BOX[p].n}!</div></div>
+      <div class="yesno"><button class="big" id="yes" style="background:#bbf7d0">✅ Right!</button><button class="big" id="no" style="background:#fecaca">❌ Wrong</button></div>
+      ${boxesHTML(false)}</div>`;
+    speak(`A ${name(t)}. I think it goes in the ${BOX[p].n}! Am I right?`);
+    $("#yes", g).onclick = () => { sfx.ding(); right++; data.push({ ...t, box: p }); qi++; speak("Yay! I learned well!", guess); };
+    $("#no", g).onclick = () => { sfx.boop(); data.push({ ...t, box: 1 - p }); qi++; speak(`Oops! It goes in the ${BOX[1 - p].n}. Thanks for teaching me. Now I know more!`, guess); };
+  }
+  function wrap() {
+    const msg = `Beep got ${right} out of ${test.length} right! Beep learned from YOUR examples. That's machine learning! More examples help Beep learn even better.`;
+    g.innerHTML = `<div class="sg"><div style="display:flex;align-items:center;gap:10px">${beep("wow", 100)}<div class="feedback">${msg}</div></div>
+      ${boxesHTML(false)}<button class="big go" id="fin">Get my sticker ⭐</button></div>`;
+    speak(msg);
+    $("#fin", g).onclick = () => g.done();
+  }
+  chooseRule();
+}
+
+/* =====================================================================
+   GAME: Story Builder — next-word guessing like an LLM (island 5)
+   ===================================================================== */
+function storyGame(g) {
+  const STORIES = [
+    { start: "Once upon a time, there was a", slots: [
+      [["dragon", 55, "🐉"], ["princess", 33, "👸"], ["potato", 12, "🥔"]],
+      ["who loved to"],
+      [["fly", 50, "🪽"], ["dance", 35, "💃"], ["burp", 15, "😝"]],
+      ["in the"],
+      [["sky", 52, "☁️"], ["garden", 36, "🌷"], ["bathtub", 12, "🛁"]],
+      ["every"],
+      [["day", 60, "☀️"], ["night", 30, "🌙"], ["Tuesday", 10, "📅"]] ] },
+    { start: "My robot friend likes to eat", slots: [
+      [["cookies", 45, "🍪"], ["pizza", 40, "🍕"], ["socks", 15, "🧦"]],
+      ["and drink"],
+      [["juice", 50, "🧃"], ["milk", 38, "🥛"], ["rainbows", 12, "🌈"]],
+      ["before going to"],
+      [["sleep", 55, "😴"], ["school", 33, "🏫"], ["the moon", 12, "🌙"]] ] }
+  ];
+  let si = 0;
+  function play() {
+    const st = STORIES[si];
+    const words = [{ t: st.start, fixed: true }];
+    let k = 0, agree = 0, picks = 0;
+    function step() {
+      while (k < st.slots.length && st.slots[k].length === 1) { words.push({ t: st.slots[k][0], fixed: true }); k++; }
+      const sentence = words.map(w => w.fixed ? w.t : `<span class="w">${w.t}</span>`).join(" ");
+      if (k >= st.slots.length) return end(words.map(w => w.t).join(" ") + ".");
+      const opts = st.slots[k];
+      g.innerHTML = `<div class="story">${sentence} <span class="blank"></span></div>
+        <div style="display:flex;align-items:center;gap:10px;justify-content:center;padding:0 18px 10px">${beep("think", 60)}<b>Beep's guesses for the next word:</b></div>
+        <div class="guesses">${opts.map(([w, p, e], i) => `<button class="guess" data-i="${i}"><span class="bar" style="width:0"></span>
+          <span class="lbl"><span><span class="emo">${e}</span> ${w}</span><small>${i === 0 ? "⭐ Beep's best guess · " : ""}${p}%</small></span></button>`).join("")}</div>`;
+      requestAnimationFrame(() => $$(".guess .bar", g).forEach((b, i) => b.style.width = opts[i][1] + "%"));
+      speak(words.map(w => w.t).join(" ") + "... What comes next?");
+      $$(".guess", g).forEach(b => b.onclick = () => {
+        const i = +b.dataset.i; sfx.ding(); picks++; if (i === 0) agree++;
+        words.push({ t: opts[i][0] }); k++; step();
+      });
+    }
+    function end(story) {
+      const msg = `You and Beep agreed ${agree} out of ${picks} times. Beep picks words it saw a lot in stories. You can pick ANY word. That's your creativity!`;
+      g.innerHTML = `<div class="story">📖 ${story}</div>
+        <div class="sg"><div style="display:flex;align-items:center;gap:10px">${beep("wow", 80)}<div class="feedback">${msg}</div></div>
+        <div class="yesno">${si === 0 ? `<button class="big" id="again">Make another story 📝</button>` : ""}<button class="big go" id="fin">Get my sticker ⭐</button></div></div>`;
+      speak(story + " ... " + msg);
+      const a = $("#again", g); if (a) a.onclick = () => { si = 1; play(); };
+      $("#fin", g).onclick = () => g.done();
+    }
+    step();
+  }
+  setTimeout(play, 0);
+}
+
+/* =====================================================================
+   GAME: Train Beep to throw — learning from feedback (island 6)
+   ===================================================================== */
+function throwGame(g) {
+  const W = 680, GROUND = 230, X0 = 80, HOOP = 470 + Math.round(Math.random() * 90);
+  let power = Math.random() < .5 ? .08 : .95, stepSz = .3, lastDir = 0, tries = 0, busy = false, landed = null;
+  const dist = p => X0 + 40 + p * 520;
+  g.innerHTML = `<div class="sg throw">
+    <svg viewBox="0 0 ${W} 270" id="field">
+      <rect x="0" y="${GROUND}" width="${W}" height="40" fill="#86efac" stroke="#1d2550" stroke-width="3"/>
+      <g transform="translate(${X0 - 50},${GROUND - 117})">${beep("happy", 84).replace('class="beep"', 'class="beep" id="tb"')}</g>
+      <g transform="translate(${HOOP},${GROUND})">
+        <rect x="-34" y="-46" width="68" height="46" rx="8" fill="#fbbf24" stroke="#1d2550" stroke-width="4"/>
+        <path d="M-34 -30 H34 M-34 -14 H34 M-17 -46 V0 M0 -46 V0 M17 -46 V0" stroke="#1d2550" stroke-width="2" opacity=".5"/>
+        <text y="-56" text-anchor="middle" font-size="30">🧺</text>
+      </g>
+      <g id="marks"></g>
+      <circle id="ball" cx="${X0 + 40}" cy="${GROUND - 60}" r="13" fill="#ff6a57" stroke="#1d2550" stroke-width="3"/>
+    </svg>
+    <div class="meter">🧠 Beep's skill <span class="m"><i id="skill" style="width:10%"></i></span> <span id="tries">Practice: 0</span></div>
+    <div class="feedback" id="fb" aria-live="polite">Press Throw!</div>
+    <div class="yesno" id="ctrl"><button class="big go" id="throw">🏀 Throw!</button></div>
+  </div>`;
+  const ball = $("#ball", g), fb = $("#fb", g);
+  function animate(to, cb) {
+    const sx = X0 + 40, sy = GROUND - 60, t0 = performance.now(), dur = 1000, peak = 70 + (to - sx) * .25;
+    sfx.whoosh();
+    const f = now => {
+      const t = Math.min(1, (now - t0) / dur), x = sx + (to - sx) * t;
+      const y = sy + (GROUND - 13 - sy) * t - peak * 4 * t * (1 - t);
+      ball.setAttribute("cx", x); ball.setAttribute("cy", y);
+      if (t < 1) requestAnimationFrame(f); else cb();
+    };
+    requestAnimationFrame(f);
+  }
+  function setCtrl(html) { $("#ctrl", g).innerHTML = html; }
+  function doThrow() {
+    if (busy) return; busy = true; tries++;
+    $("#tries", g).textContent = "Practice: " + tries;
+    landed = dist(power);
+    animate(landed, () => {
+      busy = false;
+      $("#marks", g).insertAdjacentHTML("beforeend", `<circle cx="${landed}" cy="${GROUND + 8}" r="5" fill="#1d2550" opacity=".35"/>`);
+      const err = landed - HOOP;
+      $("#skill", g).style.width = Math.max(10, 100 - Math.abs(err) / 4) + "%";
+      if (Math.abs(err) < 30) {
+        sfx.fanfare(); ball.setAttribute("cy", GROUND - 30);
+        const msg = `SCORE! Beep did it after ${tries} practice throws! You trained Beep by telling it what went wrong. That's how AI learns!`;
+        fb.textContent = "🎉 " + msg; speak(msg);
+        setCtrl(`<button class="big go" id="fin">Get my sticker ⭐</button>`);
+        $("#fin", g).onclick = () => g.done();
+        return;
+      }
+      fb.textContent = "Where did the ball land? Help Beep learn!";
+      speak("Where did the ball land? Was it too short, or too far?");
+      setCtrl(`<button class="big" data-f="-1" style="background:#fde68a">⬅️ Too far!<br><small>Throw softer</small></button>
+               <button class="big" data-f="1" style="background:#bfdbfe">Too short! ➡️<br><small>Throw harder</small></button>`);
+      $$("[data-f]", g).forEach(b => b.onclick = () => feedback(+b.dataset.f, err));
+    });
+  }
+  function feedback(dir, err) {
+    const truth = err < 0 ? 1 : -1;
+    if (dir !== truth) {
+      sfx.boop();
+      const m = err < 0 ? "Hmm, look again! The ball landed BEFORE the basket. Was it too short?" : "Hmm, look again! The ball went PAST the basket. Was it too far?";
+      fb.textContent = m; speak(m); return;
+    }
+    sfx.ding();
+    if (lastDir && dir !== lastDir) stepSz *= .5;
+    lastDir = dir;
+    power = Math.min(1, Math.max(0, power + dir * stepSz));
+    const m = dir > 0 ? "Okay! I'll throw a bit harder." : "Okay! I'll throw a bit softer.";
+    fb.textContent = "🤖 " + m;
+    ball.setAttribute("cx", X0 + 40); ball.setAttribute("cy", GROUND - 60);
+    setCtrl(`<button class="big go" id="throw">🏀 Throw again!</button>`);
+    $("#throw", g).onclick = doThrow;
+    speak(m);
+  }
+  $("#throw", g).onclick = doThrow;
+}
+
+/* =====================================================================
+   GAME: Picture Prompt Maker (island 8)
+   ===================================================================== */
+function promptGame(g) {
+  const ANIMALS = [["cat", "🐱", 300, 182], ["dog", "🐶", 300, 182], ["elephant", "🐘", 292, 190], ["dinosaur", "🦖", 262, 190], ["penguin", "🐧", 300, 180], ["bunny", "🐰", 300, 196]];
+  const HATS = [["red", "#ef4444"], ["blue", "#3b82f6"], ["green", "#22c55e"], ["purple", "#a855f7"], ["yellow", "#facc15"]];
+  const PLACES = [["the moon", "🌙", "on"], ["the beach", "🏖️", "at"], ["a forest", "🌲", "in"], ["outer space", "🪐", "in"], ["the snow", "❄️", "in"]];
+  const EXTRAS = [["a balloon", "🎈"], ["an ice cream", "🍦"], ["a ball", "⚽"], ["a guitar", "🎸"], ["a flower", "🌻"]];
+  const pick = { a: null, h: null, p: null, x: null };
+  let made = 0;
+
+  const opt = (key, list, render) => list.map((it, i) => `<button class="opt" data-key="${key}" data-i="${i}">${render(it)}</button>`).join("");
+  g.innerHTML = `<div class="pm">
+    <div class="canvas" id="cv"><div style="text-align:center;padding:20px"><button class="big" id="vague">Try: "Draw something" 🤷</button></div></div>
+    <div class="prompt-line" id="pl"></div>
+    <div class="row"><b>1. Which animal?</b>${opt("a", ANIMALS, ([n, e]) => `<span class="e emo">${e}</span>${n}`)}</div>
+    <div class="row"><b>2. What colour hat?</b>${opt("h", HATS, ([n, c]) => `<span class="swatch" style="background:${c}"></span>${n}`)}</div>
+    <div class="row"><b>3. Where?</b>${opt("p", PLACES, ([n, e]) => `<span class="e emo">${e}</span>${n}`)}</div>
+    <div class="row"><b>4. Holding what?</b>${opt("x", EXTRAS, ([n, e]) => `<span class="e emo">${e}</span>${n.replace(/^an? /, "")}`)}</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button class="big go" id="make">✨ Make my picture!</button></div>
+    <div class="feedback" id="fb" style="justify-self:center"></div>
+  </div>`;
+  const slot = (v, ph) => v ? `<span class="slot">${v}</span>` : `<span class="slot">___</span>`;
+  function promptText(plain) {
+    const a = pick.a != null ? ANIMALS[pick.a][0] : null, h = pick.h != null ? HATS[pick.h][0] : null,
+          p = pick.p != null ? PLACES[pick.p][0] : null, x = pick.x != null ? EXTRAS[pick.x][0] : null;
+    const prep = pick.p != null ? PLACES[pick.p][2] : "in";
+    if (plain) return `Draw a ${a} wearing a ${h} hat ${prep} ${p}, holding ${x}.`;
+    return `🪄 Draw a ${slot(a)} wearing a ${slot(h)} hat ${pick.p != null ? prep : "in"} ${slot(p)}, holding ${slot(x)}.`;
+  }
+  const drawPL = () => $("#pl", g).innerHTML = promptText(false);
+  drawPL();
+  $$(".opt", g).forEach(b => b.onclick = () => {
+    sfx.click();
+    const key = b.dataset.key;
+    pick[key] = +b.dataset.i;
+    $$(`.opt[data-key="${key}"]`, g).forEach(o => o.classList.toggle("sel", o === b));
+    drawPL();
+  });
+  $("#vague", g).onclick = () => {
+    $("#cv", g).innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:20px">${beep("think", 100)}<span class="art-emoji emo">❓〰️❓</span></div>`;
+    const m = "Hmm... something? I don't know what to draw! Use clear words to tell me.";
+    $("#fb", g).textContent = "🤖 " + m; speak(m);
+  };
+  function scene() {
+    const bgs = {
+      0: { sky: "#1e1b4b", ground: "#cbd5e1", deco: `<text x="80" y="70" font-size="40">⭐</text><text x="480" y="60" font-size="30">✨</text><text x="530" y="120" font-size="44">🌍</text>` },
+      1: { sky: "#7dd3fc", ground: "#fde68a", deco: `<rect x="0" y="230" width="600" height="25" fill="#38bdf8"/><text x="480" y="80" font-size="56">☀️</text><text x="60" y="235" font-size="40">🐚</text>` },
+      2: { sky: "#bbf7d0", ground: "#4ade80", deco: `<text x="30" y="250" font-size="90">🌲</text><text x="470" y="250" font-size="100">🌳</text><text x="420" y="80" font-size="40">🐦</text>` },
+      3: { sky: "#020617", ground: "#334155", deco: `<text x="60" y="90" font-size="56">🪐</text><text x="470" y="80" font-size="44">🚀</text><text x="300" y="50" font-size="24">⭐</text><text x="520" y="170" font-size="20">✨</text>` },
+      4: { sky: "#e0f2fe", ground: "#ffffff", deco: `<text x="60" y="80" font-size="34">❄️</text><text x="480" y="110" font-size="34">❄️</text><text x="470" y="255" font-size="70">⛄</text>` }
+    }[pick.p];
+    const hat = HATS[pick.h][1];
+    return `<svg viewBox="0 0 600 340" class="reveal">
+      <rect width="600" height="340" fill="${bgs.sky}"/>
+      <ellipse cx="300" cy="330" rx="420" ry="100" fill="${bgs.ground}" stroke="#1d2550" stroke-width="3"/>
+      ${bgs.deco}
+      <text x="300" y="300" font-size="150" text-anchor="middle" class="emo">${ANIMALS[pick.a][1]}</text>
+      <g transform="translate(${ANIMALS[pick.a][2]},${ANIMALS[pick.a][3] - 28}) rotate(-8) scale(.85)"><path d="M-48 18 L0 -62 L48 18 Z" fill="${hat}" stroke="#1d2550" stroke-width="5" stroke-linejoin="round"/>
+        <circle cx="0" cy="-64" r="11" fill="#fff" stroke="#1d2550" stroke-width="4"/><rect x="-58" y="12" width="116" height="16" rx="8" fill="#fff" stroke="#1d2550" stroke-width="4"/></g>
+      <text x="420" y="270" font-size="74" text-anchor="middle" class="emo">${EXTRAS[pick.x][1]}</text>
+    </svg>`;
+  }
+  $("#make", g).onclick = () => {
+    const missing = ["a", "h", "p", "x"].filter(k => pick[k] == null);
+    if (missing.length) {
+      sfx.boop();
+      const m = "Oops! Some words are missing. Fill in every blank so Beep knows exactly what to draw!";
+      $("#fb", g).textContent = m; speak(m); return;
+    }
+    sfx.whoosh();
+    $("#cv", g).innerHTML = scene();
+    made++;
+    const say = promptText(true);
+    const m = made === 1 ? "Ta-da! Now change ONE word and make another picture. See how the picture changes!" : "Wonderful! Clear words make great pictures. You're a prompt expert!";
+    $("#fb", g).textContent = "🤖 " + m;
+    speak(say + " ... " + m);
+    if (made === 2) {
+      const b = document.createElement("button");
+      b.className = "big go"; b.textContent = "Get my sticker ⭐"; b.style.justifySelf = "center";
+      b.onclick = () => g.done();
+      $(".pm", g).appendChild(b);
+    }
+  };
+}
+
+/* =====================================================================
+   GAME: My Future Dream + certificate (island 9)
+   ===================================================================== */
+const DREAMS = [
+  ["🩺", "Doctor", "use AI to help find sicknesses early and help people get well"],
+  ["🚀", "Space Explorer", "send smart robots to explore Mars and the stars"],
+  ["🤖", "Robot Builder", "build kind, helpful robots"],
+  ["🌱", "Farmer", "use AI and drones to grow healthy food for everyone"],
+  ["🔬", "Scientist", "use AI to discover new medicines"],
+  ["👩‍🏫", "Teacher", "use AI to help every child learn"],
+  ["🎮", "Game Maker", "make fun games that help kids learn"],
+  ["🎨", "Artist", "create amazing art and stories"],
+  ["🌍", "Planet Protector", "use AI to protect animals and nature"],
+  ["🧑‍💻", "AI Engineer", "build the next AI that helps the whole world"]
+];
+function certHTML(d, nameVal, editable) {
+  const stickers = CH.map(c => `<span class="emo" style="font-size:28px;opacity:${save.done[c.id] || c.id === "future" ? 1 : .25}">${c.icon}</span>`).join("");
+  return `<div class="cert">
+    <div style="font-size:48px" class="emo">🏅</div>
+    <h3>Future AI Expert</h3>
+    <div style="font-weight:700">This certificate is proudly given to</div>
+    ${editable ? `<input id="nm" placeholder="Your name" maxlength="24" value="${esc(nameVal)}" aria-label="Your name">` : `<div class="nm">${esc(nameVal) || "&nbsp;"}</div>`}
+    <div style="font-size:1.1rem;font-weight:700">for learning about computers, code, AI and LLMs on Beep's AI Adventure.</div>
+    <div style="font-size:1.15rem"><span class="emo" style="font-size:34px">${d[0]}</span><br>I dream of being a <b>${d[1]}</b> who will <b>${d[2]}</b>.</div>
+    <div class="row">${stickers}</div>
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center">${beep("happy", 50)}<i>— Beep the Robot · ${new Date().toLocaleDateString()}</i></div>
+  </div>`;
+}
+function futureGame(g) {
+  g.innerHTML = `<div class="dreams">${DREAMS.map((d, i) => `<button class="dream" data-i="${i}"><span class="e emo">${d[0]}</span>${d[1]}</button>`).join("")}</div>`;
+  $$(".dream", g).forEach(b => b.onclick = () => {
+    sfx.ding();
+    const d = DREAMS[+b.dataset.i];
+    save.dream = +b.dataset.i; persist();
+    g.innerHTML = certHTML(d, save.name, true) + `<div class="yesno" style="justify-content:center;padding:0 18px 20px;flex-wrap:wrap">
+      <button class="big" id="pr">🖨️ Print</button><button class="big" id="other">Pick another dream</button><button class="big go" id="fin">Get my sticker ⭐</button></div>`;
+    speak(`A ${d[1]}! What a wonderful dream. You will ${d[2]}. The future needs you!`);
+    $("#nm", g).oninput = e => { save.name = e.target.value.trim(); persist(); };
+    $("#pr", g).onclick = () => { $("#print-area").innerHTML = certHTML(d, save.name, false); window.print(); };
+    $("#other", g).onclick = () => futureGame(g);
+    $("#fin", g).onclick = () => g.done();
+  });
+}
+
+/* =====================================================================
+   EXTRA VIEWS: word cards, grown-ups
+   ===================================================================== */
+function renderWords() {
+  hush(); mapBtn.hidden = false;
+  const colors = CH.map(c => c.color);
+  app.innerHTML = `<div class="bubble-row">${beep("happy", 80)}<div class="bubble">Tap a card to flip it and hear what the word means! ${sayBtn("Tap a card to flip it and hear what the word means!")}</div></div>
+    <div class="cards">${WORDS.map(([e, w, d], i) => `<button class="wcard" data-i="${i}" style="--c:${colors[i % colors.length]}"><div class="inner">
+      <div class="f"><span class="e emo">${e}</span><b>${w}</b></div><div class="b">${d}</div></div></button>`).join("")}</div>`;
+  $$(".wcard").forEach(b => b.onclick = () => {
+    b.classList.toggle("flip");
+    const [, w, d] = WORDS[+b.dataset.i];
+    speak(b.classList.contains("flip") ? `${w}. ${d}` : w);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderGrownups() {
+  hush(); mapBtn.hidden = false;
+  app.innerHTML = `<div class="grown">
+    <h3>👋 How to use Beep's AI Adventure</h3>
+    <ul>
+      <li>Made for ages <b>4–7</b>. Sit together and do <b>one island per sitting</b> (about 10–15 minutes). Each island has short picture pages, then a game, then a sticker.</li>
+      <li>Every page is <b>read aloud</b> using your device's built-in voice (best in Chrome or Edge). Tap 🔊 to hear any line again, or switch to 🔇 Quiet and read it yourself.</li>
+      <li>Progress and stickers are saved in this browser only. Nothing is sent anywhere.</li>
+      <li>After each island, a <b>Talk together</b> question appears. The conversation matters more than the screen.</li>
+    </ul>
+    <h3>🗺️ What each island teaches</h3>
+    <table><tr><th>Island</th><th>Big idea</th><th>The game teaches</th></tr>
+      <tr><td>1 · Meet the Computer</td><td>Input → processing → output</td><td>Sorting devices into input/output</td></tr>
+      <tr><td>2 · Robot Instructions</td><td>Programs, sequence, bugs</td><td>Writing an arrow program, debugging it</td></tr>
+      <tr><td>3 · Learning from Examples</td><td>Data, patterns, machine learning</td><td>Your child labels examples; a real tiny model (Naive Bayes) learns their rule and predicts</td></tr>
+      <tr><td>4 · What is AI?</td><td>AI = learning from examples; AI is a tool, not alive</td><td>Alive vs. not alive</td></tr>
+      <tr><td>5 · Word-Guessing Machine</td><td>LLMs predict the next token</td><td>Building a story with Beep's probability bars</td></tr>
+      <tr><td>6 · Inside the AI Brain</td><td>Neural networks, training, models</td><td>Training by feedback: too far / too short</td></tr>
+      <tr><td>7 · Smart &amp; Safe</td><td>Privacy, checking answers, telling an adult</td><td>Safe vs. stop-and-ask scenarios</td></tr>
+      <tr><td>8 · Magic Words</td><td>Prompts: clear words get better results</td><td>Building a prompt, changing one word</td></tr>
+      <tr><td>9 · The Future &amp; You</td><td>Skills that matter: curiosity, maths, reading, kindness</td><td>Choosing a dream; printable certificate</td></tr>
+    </table>
+    <h3>🧩 Screen-free activities that build the same skills</h3>
+    <ul>
+      <li><b>Robot Grown-up:</b> you follow your child's instructions literally (making a sandwich, walking to the door). Missing steps = bugs.</li>
+      <li><b>Sorting rules:</b> sort toys by a secret rule and let the other person guess it. This is what machine learning does.</li>
+      <li><b>Pattern beads:</b> make bead or block patterns and ask “what comes next?”</li>
+      <li><b>One-word stories:</b> take turns adding one word at a time, like an LLM.</li>
+      <li><b>Describe and draw:</b> one person describes, the other draws without looking. Clear words = a better picture (prompting).</li>
+    </ul>
+    <h3>🚀 The road to becoming an AI expert</h3>
+    <ol>
+      <li><b>Ages 4–7 (now):</b> this adventure, unplugged games, and ScratchJr (free tablet app for 5–7 year olds) to snap together code blocks. Lots of reading, counting and puzzles.</li>
+      <li><b>Ages 7–9:</b> Scratch (block coding), Code.org courses, and training simple image models together with Google's Teachable Machine.</li>
+      <li><b>Ages 10–13:</b> Python basics, logic puzzles, maths confidence (fractions, graphs, chance), small robotics kits, making simple games.</li>
+      <li><b>Teens:</b> algebra, statistics and probability, Python data projects, intro machine-learning courses, science fairs and competitions.</li>
+      <li><b>Always:</b> curiosity, reading widely, writing clearly, kindness and ethics. Strong thinkers and communicators make the best AI builders.</li>
+    </ol>
+    <h3>🛡️ AI at home</h3>
+    <ul>
+      <li>Most AI chat apps are designed for teens and adults. At this age, use AI <b>together</b>, never alone.</li>
+      <li>Model good habits out loud: “Let's check if that's true,” “We don't share our address,” “I'll ask it more clearly.”</li>
+      <li>Remind them: AI is a tool people made. It can be wrong, and they are the boss of their own thinking.</li>
+    </ul>
+    <p style="margin-top:16px"><button class="big" id="reset">🔄 Reset stickers</button></p>
+  </div>`;
+  $("#reset").onclick = () => { if (confirm("Reset all stickers and start again?")) { save = { done: {}, name: "", dream: null }; persist(); renderMap(); } };
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+renderMap();
+</script>
+</body>
+</html>

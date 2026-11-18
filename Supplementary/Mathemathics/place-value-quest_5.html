@@ -1,0 +1,1890 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Place Value Quest</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:         #0D1B2E;
+  --surface:    #172438;
+  --card:       #1C2D42;
+  --cardhi:     #243550;
+  --border:     #2C4060;
+  --text:       #EEF3FF;
+  --muted:      #7A9DC0;
+  --dim:        #3A5070;
+  --gold:       #FFCB47;
+  --gold-bg:    rgba(255,203,71,.12);
+  --gold-glow:  0 0 22px rgba(255,203,71,.35);
+  --green:      #52D473;
+  --green-bg:   rgba(82,212,115,.12);
+  --red:        #FF6B6B;
+  --red-bg:     rgba(255,107,107,.12);
+  --teal:       #2DD4CF;
+  --teal-bg:    rgba(45,212,207,.12);
+  --purple:     #A78BFA;
+  --purple-bg:  rgba(167,139,250,.12);
+  --blue:       #60A5FA;
+  --blue-bg:    rgba(96,165,250,.12);
+  --orange:     #FB923C;
+  --orange-bg:  rgba(251,146,60,.12);
+  --r:   14px;
+  --rsm:  8px;
+  --rxl: 22px;
+  --shadow: 0 6px 24px rgba(0,0,0,.45);
+}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#ECF2FF;--surface:#FFFFFF;--card:#F3F8FF;--cardhi:#E4EFFF;
+  --border:#BFCFE8;--text:#0D1B2E;--muted:#4A6880;--dim:#C0D0E0;
+  --shadow:0 6px 24px rgba(0,40,100,.1);
+}}
+:root[data-theme="light"]{
+  --bg:#ECF2FF;--surface:#FFFFFF;--card:#F3F8FF;--cardhi:#E4EFFF;
+  --border:#BFCFE8;--text:#0D1B2E;--muted:#4A6880;--dim:#C0D0E0;
+  --shadow:0 6px 24px rgba(0,40,100,.1);
+}
+:root[data-theme="dark"]{
+  --bg:#0D1B2E;--surface:#172438;--card:#1C2D42;--cardhi:#243550;
+  --border:#2C4060;--text:#EEF3FF;--muted:#7A9DC0;--dim:#3A5070;
+  --shadow:0 6px 24px rgba(0,0,0,.45);
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:'Nunito','Helvetica Rounded',Arial,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  overflow-x:hidden;line-height:1.5;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;outline:none}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:var(--rsm)}
+input{font-family:inherit}
+
+/* ── HEADER ── */
+#hdr{
+  position:sticky;top:0;z-index:50;
+  background:var(--surface);border-bottom:2px solid var(--border);
+  box-shadow:var(--shadow);
+}
+#hdr-inner{
+  max-width:880px;margin:0 auto;padding:0 16px;
+  display:flex;align-items:center;gap:8px;min-height:60px;flex-wrap:wrap;
+}
+#logo{
+  font-size:1.35rem;font-weight:900;color:var(--gold);
+  text-shadow:var(--gold-glow);letter-spacing:-.3px;white-space:nowrap;
+  margin-right:4px;
+}
+nav{display:flex;gap:4px;flex-wrap:wrap;padding:8px 0}
+.nb{
+  padding:8px 14px;border-radius:var(--r);font-weight:800;font-size:.88rem;
+  color:var(--muted);transition:background .15s,color .15s;white-space:nowrap;
+}
+.nb:hover{background:var(--cardhi);color:var(--text)}
+.nb.on{background:var(--gold);color:#0D1B2E}
+
+/* ── MAIN ── */
+main{max-width:880px;margin:0 auto;padding:24px 16px;width:100%}
+
+/* ── SECTIONS ── */
+.sec{display:none}.sec.on{display:block}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:var(--rxl);padding:24px;margin-bottom:18px;
+}
+.card-sm{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:16px}
+
+/* ── TYPE SCALE ── */
+h1{font-size:clamp(1.5rem,4vw,2rem);font-weight:900;text-wrap:balance;line-height:1.15}
+h2{font-size:clamp(1.15rem,3vw,1.45rem);font-weight:800;text-wrap:balance;line-height:1.2}
+h3{font-size:1.05rem;font-weight:700}
+.eyebrow{
+  font-size:.78rem;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:6px
+}
+.sub{color:var(--muted);font-weight:600;margin-bottom:22px;font-size:.95rem}
+p.body{color:var(--muted);line-height:1.7}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:12px 22px;
+  border-radius:var(--r);font-weight:800;font-size:.95rem;
+  transition:transform .1s,box-shadow .15s;cursor:pointer;
+}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);color:#0D1B2E;box-shadow:0 4px 14px var(--gold-bg)}
+.btn-gold:hover{box-shadow:0 6px 22px rgba(255,203,71,.45);transform:translateY(-1px)}
+.btn-ghost{background:var(--card);color:var(--text);border:2px solid var(--border)}
+.btn-ghost:hover{background:var(--cardhi)}
+.btn-teal{background:var(--teal);color:#0D1B2E}
+.btn-teal:hover{box-shadow:0 4px 18px rgba(45,212,207,.4);transform:translateY(-1px)}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-sm{padding:9px 16px;font-size:.88rem}
+.btn-lg{padding:15px 30px;font-size:1.05rem;border-radius:var(--rxl)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+
+/* ── MODE TOGGLE ── */
+.mode-bar{
+  display:flex;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:4px;gap:4px;width:fit-content;margin-bottom:20px;
+}
+.mb{
+  padding:9px 18px;border-radius:var(--rsm);font-weight:800;font-size:.9rem;
+  color:var(--muted);transition:all .15s;
+}
+.mb.on{background:var(--gold);color:#0D1B2E}
+
+/* ── SCOREBOARD ── */
+.scorebar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:12px 18px;margin-bottom:18px;
+}
+.si{display:flex;align-items:center;gap:5px;font-weight:800;font-size:.95rem}
+.streak-chip{
+  background:linear-gradient(135deg,var(--gold),#FF8C42);
+  color:#0D1B2E;padding:3px 11px;border-radius:20px;font-weight:900;font-size:.85rem;
+}
+
+/* ── NUMBER DISPLAY ── */
+.numdisp{
+  font-size:clamp(2.4rem,9vw,4.8rem);font-weight:900;
+  letter-spacing:1px;text-align:center;padding:20px 12px;
+  font-variant-numeric:tabular-nums;line-height:1;word-break:break-word;
+  user-select:none;
+}
+.nd-comma{opacity:.45;font-weight:700}
+.nd-hl{
+  color:var(--gold);
+  text-shadow:0 0 22px rgba(255,203,71,.55);
+  position:relative;
+}
+.nd-hl::after{
+  content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+  width:6px;height:6px;background:var(--gold);border-radius:50%;
+  box-shadow:0 0 8px rgba(255,203,71,.7);
+}
+
+/* ── PLACE CHART (challenge) ── */
+.pc-wrap{overflow-x:auto;padding:8px 0 4px}
+.pc-grid{
+  display:inline-flex;align-items:flex-end;gap:2px;
+  padding:4px;min-width:fit-content;
+}
+.pc-col{display:flex;flex-direction:column;align-items:center;gap:3px}
+.pc-label{
+  font-size:.58rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--muted);text-align:center;
+  line-height:1.2;max-width:46px;
+}
+.pc-box{
+  width:44px;height:52px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--rsm);font-size:1.5rem;font-weight:900;
+  border:2px solid var(--border);background:var(--surface);
+  font-variant-numeric:tabular-nums;
+}
+.pc-box.g-tri{border-color:var(--orange);background:var(--orange-bg)}
+.pc-box.g-b{border-color:var(--purple);background:var(--purple-bg)}
+.pc-box.g-m{border-color:var(--teal);background:var(--teal-bg)}
+.pc-box.g-t{border-color:var(--blue);background:var(--blue-bg)}
+.pc-box.g-o{border-color:var(--green);background:var(--green-bg)}
+.pc-box.hl{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+.pc-sep{
+  width:16px;height:52px;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;font-weight:900;color:var(--muted);opacity:.5;
+}
+.pc-group-label{
+  font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  padding:2px 8px;border-radius:10px;margin-top:4px;
+}
+.gl-tri{color:var(--orange);background:var(--orange-bg)}
+.gl-b{color:var(--purple);background:var(--purple-bg)}
+.gl-m{color:var(--teal);background:var(--teal-bg)}
+.gl-t{color:var(--blue);background:var(--blue-bg)}
+.gl-o{color:var(--green);background:var(--green-bg)}
+
+/* ── CHOICES ── */
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}
+.ch{
+  padding:15px 12px;border-radius:var(--r);font-size:.95rem;font-weight:700;
+  text-align:center;border:2px solid var(--border);background:var(--card);
+  color:var(--text);transition:all .15s;cursor:pointer;line-height:1.3;
+}
+.ch:hover:not(:disabled){border-color:var(--gold);background:var(--cardhi);transform:translateY(-2px)}
+.ch.correct{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green)!important}
+.ch.wrong{border-color:var(--red)!important;background:var(--red-bg)!important;color:var(--red)!important}
+.ch:disabled{cursor:default}
+
+/* ── FEEDBACK ── */
+.feedback{
+  margin-top:14px;padding:14px 18px;border-radius:var(--r);
+  font-size:1rem;font-weight:700;text-align:center;display:none;line-height:1.4;
+}
+.fb-ok{background:var(--green-bg);border:2px solid var(--green);color:var(--green);display:block}
+.fb-no{background:var(--red-bg);border:2px solid var(--red);color:var(--red);display:block}
+
+/* ── INPUT ── */
+.ans-input{
+  display:block;width:100%;max-width:380px;margin:14px auto;
+  padding:13px 18px;font-size:1.05rem;font-weight:700;text-align:center;
+  background:var(--surface);color:var(--text);
+  border:2px solid var(--border);border-radius:var(--r);outline:none;
+  transition:border-color .15s;
+}
+.ans-input:focus{border-color:var(--gold)}
+
+/* ── REVEAL BOX ── */
+.reveal-box{
+  text-align:center;padding:20px 16px;background:var(--surface);
+  border-radius:var(--r);border:2px solid var(--border);margin-top:14px;
+}
+.reveal-txt{
+  font-size:1.3rem;font-weight:800;color:var(--gold);margin-top:14px;
+  display:none;animation:fadeUp .35s ease;text-wrap:balance;
+}
+.reveal-txt.show{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CONFETTI CANVAS ── */
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:9990}
+
+/* ── CELEBRATION MODAL ── */
+#celeb-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9991;display:none;
+}
+#celeb-overlay.on{display:block}
+#celeb{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);
+  background:var(--surface);border:3px solid var(--gold);border-radius:var(--rxl);
+  padding:32px 40px;text-align:center;z-index:9992;max-width:88vw;
+  box-shadow:0 0 60px rgba(255,203,71,.25);display:none;
+}
+#celeb.on{
+  display:block;
+  animation:celebIn .38s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes celebIn{from{transform:translate(-50%,-50%) scale(.7);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+#celeb .emoji{font-size:3rem;margin-bottom:8px}
+#celeb h2{font-size:1.7rem;margin-bottom:8px}
+#celeb .msg{color:var(--muted);font-weight:600;font-size:1rem;margin-bottom:18px;line-height:1.5}
+
+/* ── STARS ── */
+.stars{display:flex;gap:4px;justify-content:center;margin:8px 0}
+.star{font-size:1.4rem}
+.star.earn{animation:starPop .4s ease}
+@keyframes starPop{0%{transform:scale(0)}60%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+/* ── PROGRESS BAR ── */
+.prog-track{height:8px;background:var(--dim);border-radius:4px;overflow:hidden;margin:8px 0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),#FF8C42);border-radius:4px;transition:width .5s ease}
+
+/* ── LEVEL CARDS ── */
+.lv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.lv-card{
+  background:var(--card);border:2px solid var(--border);border-radius:var(--r);
+  padding:16px;cursor:pointer;transition:all .15s;
+}
+.lv-card:hover{border-color:var(--gold);background:var(--cardhi);transform:translateY(-2px)}
+.lv-card.sel{border-color:var(--gold);background:var(--gold-bg);box-shadow:var(--gold-glow)}
+.lv-num{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.lv-name{font-size:1.05rem;font-weight:900;margin-bottom:3px}
+.lv-range{font-size:.82rem;color:var(--muted);font-weight:600}
+
+/* ── BADGE ── */
+.badge{
+  display:inline-block;padding:5px 13px;border-radius:20px;
+  font-size:.82rem;font-weight:800;border:2px solid;
+}
+
+/* ── LEARN VISUALS ── */
+.dblock{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:var(--rsm);font-weight:900;font-size:1.15rem;
+}
+.db-o{background:var(--green-bg);border:2px solid var(--green);color:var(--green)}
+.db-t{background:var(--blue-bg);border:2px solid var(--blue);color:var(--blue)}
+.db-h{background:var(--purple-bg);border:2px solid var(--purple);color:var(--purple)}
+.db-th{background:var(--teal-bg);border:2px solid var(--teal);color:var(--teal)}
+.db-m{background:var(--red-bg);border:2px solid var(--red);color:var(--red)}
+.db-b{background:var(--gold-bg);border:2px solid var(--gold);color:var(--gold)}
+
+.ex-num{
+  font-size:clamp(1.6rem,5vw,2.8rem);font-weight:900;
+  font-variant-numeric:tabular-nums;text-align:center;padding:12px;color:var(--gold);
+}
+.ex-row{
+  background:var(--surface);border-radius:var(--r);padding:16px 18px;
+  margin-bottom:12px;border:1.5px solid var(--border);
+}
+.ex-label{font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.ex-expanded{font-size:.95rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.ex-reading{font-size:1.05rem;font-weight:800;color:var(--teal);line-height:1.4}
+
+/* ── LEARN CHART ── */
+.lc-wrap{overflow-x:auto;padding:4px 0 8px}
+.lc-grid{display:inline-flex;align-items:flex-end;gap:0;padding:4px}
+.lc-col{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:52px}
+.lc-label{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:center;line-height:1.25;max-width:50px}
+.lc-box{
+  width:48px;height:54px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--rsm);font-size:1.6rem;font-weight:900;
+  border:2px solid var(--border);background:var(--surface);
+}
+.lc-tri{border-color:var(--orange)!important;background:var(--orange-bg)!important;color:var(--orange)}
+.lc-b{border-color:var(--purple)!important;background:var(--purple-bg)!important;color:var(--purple)}
+.lc-m{border-color:var(--teal)!important;background:var(--teal-bg)!important;color:var(--teal)}
+.lc-t{border-color:var(--blue)!important;background:var(--blue-bg)!important;color:var(--blue)}
+.lc-o{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green)}
+.lc-sep{width:18px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:var(--muted);opacity:.4}
+.lc-glab{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:10px;margin-top:3px}
+
+/* ── FLEX / UTILS ── */
+.fc{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fcc{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.tc{text-align:center}.g{color:var(--gold)}.muted{color:var(--muted)}.fw8{font-weight:800}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #hdr-inner{padding:0 12px}
+  .nb{padding:7px 10px;font-size:.82rem}
+  .card{padding:16px 14px}
+  main{padding:16px 12px}
+  .choices{grid-template-columns:1fr 1fr}
+  .pc-box{width:36px;height:46px;font-size:1.25rem}
+  .lc-box{width:42px;height:48px;font-size:1.4rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ── COMMA CHALLENGE ── */
+.cc-area{padding:8px 0 12px;text-align:center;overflow:visible}
+.cc-row{display:inline-flex;align-items:center;gap:0;justify-content:center;flex-wrap:nowrap}
+.cc-dbox{
+  width:48px;height:58px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:1.8rem;font-weight:900;border-radius:var(--rsm);
+  background:var(--surface);border:2px solid var(--border);
+  font-variant-numeric:tabular-nums;user-select:none;flex-shrink:0;
+}
+.cc-slot{
+  width:28px;height:58px;display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:6px;transition:background .12s;
+  position:relative;flex-shrink:0;
+}
+.cc-slot:hover .cc-slot-hint{opacity:.5}
+.cc-slot-hint{
+  width:4px;height:36px;background:var(--dim);border-radius:2px;
+  opacity:.2;transition:opacity .12s;
+}
+.cc-slot.filled .cc-slot-hint{display:none}
+.cc-slot.filled::after{
+  content:',';font-size:2rem;font-weight:900;color:var(--gold);
+  line-height:1;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+}
+.cc-slot.drop-active{background:var(--gold-bg)}
+
+.cc-lrow{display:inline-flex;align-items:stretch;gap:0;justify-content:center;margin-top:4px;flex-wrap:nowrap}
+.cc-lzone{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;border-radius:var(--rsm);border:2px dashed var(--dim);
+  font-size:.78rem;font-weight:800;color:var(--muted);cursor:pointer;
+  padding:4px 8px;transition:border-color .15s,background .15s;
+  text-align:center;line-height:1.2;white-space:nowrap;
+  user-select:none;
+}
+.cc-lzone:hover{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+.cc-lzone.filled{border-style:solid;border-color:var(--teal);background:var(--teal-bg);color:var(--teal)}
+.cc-lzone.drop-active{border-color:var(--gold);background:var(--gold-bg)}
+.cc-lsep{display:inline-flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--dim);font-weight:700;flex-shrink:0}
+
+.cc-palette{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:14px 12px;margin:16px 0;
+}
+.cc-ptool{
+  padding:9px 16px;border-radius:var(--rsm);font-size:.92rem;font-weight:800;
+  border:2px solid var(--border);background:var(--card);color:var(--text);
+  cursor:pointer;transition:all .15s;user-select:none;
+}
+.cc-ptool:hover:not(.used){border-color:var(--gold);background:var(--cardhi)}
+.cc-ptool.sel{border-color:var(--gold);background:var(--gold-bg);color:var(--gold);box-shadow:var(--gold-glow)}
+.cc-ptool.used{opacity:.35;cursor:default;border-color:var(--dim)}
+
+.drag-ghost{
+  position:fixed;z-index:9999;pointer-events:none;
+  padding:8px 14px;border-radius:var(--rsm);font-size:.92rem;font-weight:800;
+  background:var(--gold);color:#0D1B2E;box-shadow:0 4px 16px rgba(255,203,71,.5);
+  opacity:.9;transform:translate(-50%,-50%);display:none;
+}
+</style>
+</head>
+<body>
+
+<!-- Confetti canvas -->
+<canvas id="cfx"></canvas>
+<!-- Drag ghost -->
+<div class="drag-ghost" id="drag-ghost"></div>
+
+<!-- Celebration modal -->
+<div id="celeb-overlay" onclick="closeCeleb()"></div>
+<div id="celeb">
+  <div class="emoji" id="c-emoji">🎉</div>
+  <h2 id="c-title">Amazing!</h2>
+  <p class="msg" id="c-msg">You are learning so well!</p>
+  <button class="btn btn-gold btn-lg" onclick="closeCeleb()">Keep Going! ✨</button>
+</div>
+
+<!-- App -->
+<header id="hdr">
+  <div id="hdr-inner">
+    <div id="logo">🌟 Place Value Quest</div>
+    <nav>
+      <button class="nb on" onclick="gotoSec('learn',this)">📚 Learn</button>
+      <button class="nb"    onclick="gotoSec('pvc',this)">🎯 Place Value</button>
+      <button class="nb"    onclick="gotoSec('rnc',this)">🗣️ Read Numbers</button>
+      <button class="nb"    onclick="gotoSec('cc',this)">📍 Group Digits</button>
+      <button class="nb"    onclick="gotoSec('level',this)">⚙️ My Level</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════ LEARN ══════════════════════ -->
+<div class="sec on" id="sec-learn">
+  <div class="eyebrow">📚 Learning Zone</div>
+  <h1>Place Value &amp; Reading Numbers</h1>
+  <p class="sub">Explore how every digit has a place — and a value!</p>
+
+  <!-- 1. What is place value -->
+  <div class="card">
+    <h2 style="margin-bottom:12px">🏠 What is Place Value?</h2>
+    <p class="body">Every digit in a number has a <strong style="color:var(--gold)">place</strong>. Its place tells you <em>what it is worth</em>. The same digit can mean different things depending on where it sits!</p>
+    <div style="margin-top:20px;text-align:center">
+      <div style="font-size:.9rem;font-weight:700;color:var(--muted);margin-bottom:10px">Look at the number <span style="color:var(--gold)">345</span>:</div>
+      <div style="display:inline-flex;gap:14px;align-items:flex-start;justify-content:center;flex-wrap:wrap">
+        <div style="text-align:center">
+          <div class="dblock db-h">3</div>
+          <div style="font-size:.8rem;font-weight:800;color:var(--purple);margin-top:5px">Hundreds<br><span style="font-size:.95rem">= 300</span></div>
+        </div>
+        <div style="font-size:2rem;font-weight:900;color:var(--muted);padding-top:4px">+</div>
+        <div style="text-align:center">
+          <div class="dblock db-t">4</div>
+          <div style="font-size:.8rem;font-weight:800;color:var(--blue);margin-top:5px">Tens<br><span style="font-size:.95rem">= 40</span></div>
+        </div>
+        <div style="font-size:2rem;font-weight:900;color:var(--muted);padding-top:4px">+</div>
+        <div style="text-align:center">
+          <div class="dblock db-o">5</div>
+          <div style="font-size:.8rem;font-weight:800;color:var(--green);margin-top:5px">Ones<br><span style="font-size:.95rem">= 5</span></div>
+        </div>
+        <div style="font-size:2rem;font-weight:900;color:var(--muted);padding-top:4px">=</div>
+        <div style="font-size:2.4rem;font-weight:900;color:var(--gold);padding-top:2px">345</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Groups of three -->
+  <div class="card">
+    <h2 style="margin-bottom:12px">👥 Numbers Live in Groups of Three</h2>
+    <p class="body">Big numbers are split into <strong style="color:var(--gold)">groups of 3 digits</strong>, each group has its own name. Colour shows which group each digit belongs to!</p>
+    <div class="lc-wrap mt16" id="learn-chart"></div>
+  </div>
+
+  <!-- 3. Commas -->
+  <div class="card">
+    <h2 style="margin-bottom:12px">📌 Commas Make Reading Easy</h2>
+    <p class="body">We put a comma between each group of three. This makes big numbers much easier to read.</p>
+    <div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:20px;justify-content:center;align-items:center">
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px">Hard to read:</div>
+        <div style="font-size:2.2rem;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums">4582917</div>
+      </div>
+      <div style="font-size:2rem;color:var(--gold)">→</div>
+      <div style="text-align:center">
+        <div style="font-size:.8rem;font-weight:700;color:var(--green);margin-bottom:4px">Easy to read:</div>
+        <div style="font-size:2.2rem;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums">4,582,917</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;background:var(--surface);border-radius:var(--r);padding:12px 16px;font-size:.92rem;font-weight:700;color:var(--muted)">
+      📍 <span style="color:var(--gold)">4</span> million &nbsp;|&nbsp; <span style="color:var(--teal)">582</span> thousand &nbsp;|&nbsp; <span style="color:var(--green)">917</span> ones
+    </div>
+  </div>
+
+  <!-- 4. Expanded form -->
+  <div class="card">
+    <h2 style="margin-bottom:12px">🧩 Expanded Form</h2>
+    <p class="body">We can "expand" a number to show each digit's true value. It's like unwrapping a present!</p>
+    <div class="mt16" id="learn-expanded"></div>
+  </div>
+
+  <!-- 5. How to read -->
+  <div class="card">
+    <h2 style="margin-bottom:12px">🗣️ How to Read a Big Number</h2>
+    <p class="body">Read the digits in each group, say the group name, move to the next group. Don't say "ones" at the very end!</p>
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;border:1.5px solid var(--border)">
+        <div style="font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:6px">Step-by-step: 7,345,291</div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--muted);line-height:2">
+          1️⃣ &nbsp;<strong style="color:var(--red)">7</strong> → "seven" → +million → <strong style="color:var(--gold)">seven million</strong><br>
+          2️⃣ &nbsp;<strong style="color:var(--teal)">345</strong> → "three hundred forty-five" → +thousand → <strong style="color:var(--gold)">three hundred forty-five thousand</strong><br>
+          3️⃣ &nbsp;<strong style="color:var(--green)">291</strong> → "two hundred ninety-one" → (no "ones"!)<br>
+          ✅ &nbsp;"<strong style="color:var(--gold)">seven million three hundred forty-five thousand two hundred ninety-one</strong>"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Progressive examples -->
+  <div class="card">
+    <h2 style="margin-bottom:4px">📈 Examples — Small to Huge!</h2>
+    <p class="body mb16">Tap any 🔊 to hear it read aloud.</p>
+    <div id="learn-examples"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PLACE VALUE CHALLENGE ══════════════════════ -->
+<div class="sec" id="sec-pvc">
+  <div class="eyebrow">🎯 Challenge</div>
+  <h1>Place Value Challenge</h1>
+  <p class="sub">What place is the highlighted digit in?</p>
+
+  <div class="scorebar">
+    <div class="si">⭐ <span id="pvc-pts">0</span> pts</div>
+    <div class="si">🔥 Streak: <span class="streak-chip" id="pvc-streak">0</span></div>
+    <div class="si">✅ <span id="pvc-corr">0</span>/<span id="pvc-tot">0</span></div>
+    <div style="flex:1;min-width:0"></div>
+    <div style="font-size:.82rem;font-weight:700;color:var(--muted)">Max: <span id="pvc-max-lbl">Hundreds</span></div>
+  </div>
+
+  <div class="mode-bar">
+    <button class="mb on" id="pvc-mb-a" onclick="setPvcMode('A')">🆎 With Options</button>
+    <button class="mb"    id="pvc-mb-b" onclick="setPvcMode('B')">✏️ Without Options</button>
+  </div>
+
+  <div class="card" id="pvc-card">
+    <div class="tc muted" style="font-size:.88rem;font-weight:700;margin-bottom:4px">Which place is the <span style="color:var(--gold)">golden digit</span> in?</div>
+    <div class="numdisp" id="pvc-num">–</div>
+    <div class="pc-wrap"><div class="pc-grid" id="pvc-chart"></div></div>
+
+    <div id="pvc-body-a">
+      <div class="choices" id="pvc-choices"></div>
+    </div>
+
+    <div id="pvc-body-b" style="display:none">
+      <input type="text" class="ans-input" id="pvc-input" placeholder="Type the place name…" autocomplete="off"
+        onkeydown="if(event.key==='Enter')checkPvcFree()">
+      <div class="fcc"><button class="btn btn-gold mt8" onclick="checkPvcFree()">Check ✓</button></div>
+    </div>
+
+    <div class="feedback" id="pvc-fb"></div>
+    <div class="btn-row fcc mt16">
+      <button class="btn btn-ghost" onclick="nextPvc()">Next Question ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ READ NUMBER CHALLENGE ══════════════════════ -->
+<div class="sec" id="sec-rnc">
+  <div class="eyebrow">🗣️ Reading Challenge</div>
+  <h1>Read the Number</h1>
+  <p class="sub">Can you read this number aloud?</p>
+
+  <div class="scorebar">
+    <div class="si">⭐ <span id="rnc-pts">0</span> pts</div>
+    <div class="si">🔥 Streak: <span class="streak-chip" id="rnc-streak">0</span></div>
+    <div class="si">✅ <span id="rnc-corr">0</span>/<span id="rnc-tot">0</span></div>
+    <div style="flex:1;min-width:0"></div>
+    <div style="font-size:.82rem;font-weight:700;color:var(--muted)">Max: <span id="rnc-max-lbl">Hundreds</span></div>
+  </div>
+
+  <div class="mode-bar">
+    <button class="mb on" id="rnc-mb-a" onclick="setRncMode('A')">🆎 With Options</button>
+    <button class="mb"    id="rnc-mb-b" onclick="setRncMode('B')">🔍 Self-Read</button>
+  </div>
+
+  <div class="card" id="rnc-card">
+    <div class="tc muted" style="font-size:.88rem;font-weight:700;margin-bottom:4px">How do you read this number?</div>
+    <div class="numdisp" id="rnc-num">–</div>
+
+    <div id="rnc-body-a">
+      <div class="choices" id="rnc-choices" style="grid-template-columns:1fr"></div>
+    </div>
+
+    <div id="rnc-body-b" style="display:none">
+      <div class="reveal-box">
+        <p style="font-weight:700;color:var(--muted)">Try reading it yourself — then tap Reveal:</p>
+        <div class="fcc" style="gap:10px;margin-top:14px">
+          <button class="btn btn-teal" onclick="hearNumber()">🔊 Hear It</button>
+          <button class="btn btn-ghost" onclick="revealReading()">👁️ Reveal</button>
+        </div>
+        <div class="reveal-txt" id="rnc-reveal-txt"></div>
+      </div>
+    </div>
+
+    <div class="feedback" id="rnc-fb"></div>
+    <div class="btn-row fcc mt16">
+      <button class="btn btn-teal btn-sm" onclick="hearNumber()" id="hear-main">🔊 Hear It</button>
+      <button class="btn btn-ghost" onclick="nextRnc()">Next Number ➜</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ GROUP DIGITS (COMMA CHALLENGE) ══════════════════════ -->
+<div class="sec" id="sec-cc">
+  <div class="eyebrow">📍 Group Digits Challenge</div>
+  <h1>Place the Commas!</h1>
+  <p class="sub">Separate the digits into groups of 3 — then name each group.</p>
+
+  <div class="scorebar">
+    <div class="si">⭐ <span id="cc-pts">0</span> pts</div>
+    <div class="si">🔥 Streak: <span class="streak-chip" id="cc-streak">0</span></div>
+    <div class="si">✅ <span id="cc-corr">0</span>/<span id="cc-tot">0</span></div>
+    <div style="flex:1;min-width:0"></div>
+    <div style="font-size:.82rem;font-weight:700;color:var(--muted)">Max: <span id="cc-max-lbl">Hundreds</span></div>
+  </div>
+
+  <div class="card">
+    <div class="tc muted" style="font-size:.88rem;font-weight:700;margin-bottom:8px">
+      1️⃣ Select a tool from the palette, then tap where to place it.<br>
+      2️⃣ Put commas between every group of 3 digits (from the right).<br>
+      3️⃣ Drag or tap the group name under each section.
+    </div>
+
+    <!-- Number display -->
+    <div class="cc-area" id="cc-area"></div>
+
+    <!-- Tool palette -->
+    <div class="cc-palette" id="cc-palette"></div>
+
+    <div class="feedback" id="cc-fb"></div>
+    <div class="btn-row fcc mt8">
+      <button class="btn btn-gold" onclick="checkCC()">✓ Check</button>
+      <button class="btn btn-ghost" onclick="nextCC()">Next ➜</button>
+      <button class="btn btn-teal btn-sm" onclick="ccHearNumber()">🔊 Hear It</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ MY LEVEL ══════════════════════ -->
+<div class="sec" id="sec-level">
+  <div class="eyebrow">⚙️ Settings</div>
+  <h1>My Level</h1>
+  <p class="sub">Choose how big you want your numbers!</p>
+
+  <div class="card">
+    <h2 style="margin-bottom:16px">🎓 Quick Level Presets</h2>
+    <div class="lv-grid" id="lv-presets"></div>
+  </div>
+  <div class="card">
+    <h2 style="margin-bottom:16px">🎯 Custom Maximum Place</h2>
+    <div class="lv-grid" id="lv-custom"></div>
+  </div>
+  <div class="card">
+    <h2 style="margin-bottom:16px">🏆 Your Stats</h2>
+    <div id="lv-stats"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════
+var PLACES = [
+  {key:'ones',            label:'Ones',              shortLabel:'Ones',             max:9,          group:'o'},
+  {key:'tens',            label:'Tens',              shortLabel:'Tens',             max:99,         group:'o'},
+  {key:'hundreds',        label:'Hundreds',          shortLabel:'Hundreds',         max:999,        group:'o'},
+  {key:'thousands',       label:'Thousands',         shortLabel:'Thousands',        max:9999,       group:'t'},
+  {key:'ten-thousands',   label:'Ten-thousands',     shortLabel:'Ten-th\'sands',    max:99999,      group:'t'},
+  {key:'hundred-thousands',label:'Hundred-thousands',shortLabel:'Hund-th\'sands',  max:999999,     group:'t'},
+  {key:'millions',        label:'Millions',          shortLabel:'Millions',         max:9999999,    group:'m'},
+  {key:'ten-millions',    label:'Ten-millions',      shortLabel:'Ten-millions',     max:99999999,   group:'m'},
+  {key:'hundred-millions',label:'Hundred-millions',  shortLabel:'Hund-millions',    max:999999999,  group:'m'},
+  {key:'billions',         label:'Billions',          shortLabel:'Billions',         max:9999999999,    group:'b'},
+  {key:'ten-billions',    label:'Ten-billions',      shortLabel:'Ten-billions',     max:99999999999,   group:'b'},
+  {key:'hundred-billions',label:'Hundred-billions',  shortLabel:'Hund-billions',    max:999999999999,  group:'b'},
+  {key:'trillions',       label:'Trillions',         shortLabel:'Trillions',        max:9999999999999, group:'tri'},
+];
+
+var LEVEL_PRESETS = [
+  {name:'Level 1 — Starter',   emoji:'🌱', placeIdx:2,  desc:'Ones to Hundreds'},
+  {name:'Level 2 — Explorer',  emoji:'🚀', placeIdx:5,  desc:'Thousands to Hundred-thousands'},
+  {name:'Level 3 — Champion',  emoji:'⭐', placeIdx:6,  desc:'Up to Millions'},
+  {name:'Level 4 — Hero',      emoji:'🏆', placeIdx:8,  desc:'Ten-millions to Hundred-millions'},
+  {name:'Level 5 — Legend',    emoji:'👑', placeIdx:9,  desc:'Up to One Billion'},
+  {name:'Level 6 — Titan',     emoji:'🌌', placeIdx:12, desc:'Up to One Trillion'},
+];
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+var S = {
+  maxPlace: 2,       // index into PLACES
+  pvcMode: 'A',
+  rncMode: 'A',
+  pvcPts: 0, pvcStreak: 0, pvcBest: 0, pvcCorr: 0, pvcTot: 0,
+  rncPts: 0, rncStreak: 0, rncBest: 0, rncCorr: 0, rncTot: 0,
+  pvcQ: null,        // current PVC question
+  rncQ: null,        // current RNC question
+  pvcDone: false,    // answered this question
+  rncDone: false,
+  badges: [],
+};
+
+// ════════════════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════════════════
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+function fmt(n){return n.toLocaleString('en-US')}
+
+function shuffle(a){
+  var b=[].concat(a);
+  for(var i=b.length-1;i>0;i--){var j=ri(0,i);var t=b[i];b[i]=b[j];b[j]=t;}
+  return b;
+}
+
+function digitAt(n,pos){return Math.floor(n/Math.pow(10,pos))%10}
+
+function numDigits(n){
+  if(n===0)return 1;
+  return Math.floor(Math.log10(Math.max(n,1)))+1;
+}
+
+function genNum(maxIdx){
+  var mx=PLACES[maxIdx].max;
+  var mn=maxIdx===0?1:PLACES[maxIdx-1].max+1;
+  // 30% chance of using a lower range for variety
+  if(Math.random()<0.3&&maxIdx>0){
+    var lowerIdx=ri(0,maxIdx-1);
+    mn=lowerIdx===0?1:PLACES[lowerIdx-1].max+1;
+    mx=PLACES[lowerIdx].max;
+  }
+  return ri(Math.max(mn,1),mx);
+}
+
+// Number → English words (supports up to 9.999 trillion)
+function n2w(n){
+  if(n===0)return 'zero';
+  var ones=['','one','two','three','four','five','six','seven','eight','nine',
+            'ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen',
+            'seventeen','eighteen','nineteen'];
+  var ts=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  function t3(x){
+    if(x===0)return '';
+    var r='';
+    if(x>=100){r+=ones[Math.floor(x/100)]+' hundred';x%=100;if(x)r+=' ';}
+    if(x>=20){r+=ts[Math.floor(x/10)];if(x%10)r+='-'+ones[x%10];}
+    else if(x>0)r+=ones[x];
+    return r;
+  }
+  var r='';
+  var tri=Math.floor(n/1e12);n=n%1e12;
+  var bil=Math.floor(n/1e9);n=n%1e9;
+  var mil=Math.floor(n/1e6);n=n%1e6;
+  var th=Math.floor(n/1e3);n=n%1e3;
+  if(tri){r+=t3(tri)+' trillion';if(bil||mil||th||n)r+=' ';}
+  if(bil){r+=t3(bil)+' billion';if(mil||th||n)r+=' ';}
+  if(mil){r+=t3(mil)+' million';if(th||n)r+=' ';}
+  if(th){r+=t3(th)+' thousand';if(n)r+=' ';}
+  if(n)r+=t3(n);
+  return r;
+}
+
+// Expanded form string
+function expandedForm(n){
+  if(n===0)return '0';
+  var s=n.toString();
+  var parts=[];
+  for(var i=0;i<s.length;i++){
+    var d=parseInt(s[i]);
+    if(d===0)continue;
+    var pos=s.length-1-i;
+    var val=d*Math.pow(10,pos);
+    parts.push(val.toLocaleString('en-US'));
+  }
+  return parts.join(' + ');
+}
+
+// ════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════
+function gotoSec(name,btn){
+  document.querySelectorAll('.sec').forEach(function(el){el.classList.remove('on')});
+  document.querySelectorAll('.nb').forEach(function(el){el.classList.remove('on')});
+  var sec=document.getElementById('sec-'+name);
+  if(sec)sec.classList.add('on');
+  if(btn)btn.classList.add('on');
+  if(name==='pvc'){initPvc();}
+  if(name==='rnc'){initRnc();}
+  if(name==='cc'){initCC();}
+  if(name==='level'){renderLevel();}
+  if(name==='learn'){renderLearn();}
+}
+
+// ════════════════════════════════════════════════════
+// SPEECH
+// ════════════════════════════════════════════════════
+var speechTimer=null;
+
+function speakText(txt,rate){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  if(speechTimer)clearTimeout(speechTimer);
+  speechTimer=setTimeout(function(){
+    var u=new SpeechSynthesisUtterance(txt);
+    u.rate=rate||0.72;
+    u.pitch=1.05;
+    u.volume=0.95;
+    var voices=window.speechSynthesis.getVoices();
+    var v=voices.find(function(x){
+      return(x.lang==='en-US'||x.lang==='en-GB')&&
+        (x.name.includes('Samantha')||x.name.includes('Karen')||
+         x.name.includes('Google')||x.name.includes('Natural')||
+         x.name.includes('Female')||x.name.includes('Microsoft'));
+    })||voices.find(function(x){return x.lang.startsWith('en');})||null;
+    if(v)u.voice=v;
+    window.speechSynthesis.speak(u);
+  },80);
+}
+
+function hearNumber(){
+  if(S.rncQ)speakText(n2w(S.rncQ.num),0.68);
+}
+
+// ════════════════════════════════════════════════════
+// CONFETTI
+// ════════════════════════════════════════════════════
+var cfFrame=null;
+var cfParts=[];
+
+function launchConfetti(){
+  var canvas=document.getElementById('cfx');
+  var ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  var cols=['#FFCB47','#52D473','#2DD4CF','#FF6B6B','#A78BFA','#60A5FA','#FB923C'];
+  cfParts=[];
+  for(var i=0;i<130;i++){
+    cfParts.push({
+      x:Math.random()*canvas.width,y:-10-Math.random()*120,
+      vx:(Math.random()-.5)*5,vy:2+Math.random()*5,
+      col:cols[ri(0,cols.length-1)],
+      sz:5+Math.random()*9,rot:Math.random()*360,
+      rs:(Math.random()-.5)*9,
+      sh:Math.random()<.5?'r':'c'
+    });
+  }
+  if(cfFrame)cancelAnimationFrame(cfFrame);
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var any=false;
+    cfParts.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.1;p.rot+=p.rs;
+      if(p.y<canvas.height+30){any=true;}
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.col;
+      if(p.sh==='r'){ctx.fillRect(-p.sz/2,-p.sz/4,p.sz,p.sz/2);}
+      else{ctx.beginPath();ctx.arc(0,0,p.sz/2,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+    });
+    if(any){cfFrame=requestAnimationFrame(draw);}
+    else{ctx.clearRect(0,0,canvas.width,canvas.height);}
+  }
+  draw();
+  setTimeout(function(){
+    if(cfFrame)cancelAnimationFrame(cfFrame);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  },3500);
+}
+
+// ════════════════════════════════════════════════════
+// CELEBRATION
+// ════════════════════════════════════════════════════
+var CHEER=['🎉','⭐','🏆','🌟','💫','🎊','🚀','✨','💎','👑'];
+var MSG=['Brilliant!','Fantastic!','Superb!','You nailed it!','Outstanding!','You rock!','Incredible!','Amazing work!'];
+
+function showCeleb(streak){
+  var overlay=document.getElementById('celeb-overlay');
+  var box=document.getElementById('celeb');
+  var emoji=document.getElementById('c-emoji');
+  var title=document.getElementById('c-title');
+  var msg=document.getElementById('c-msg');
+  emoji.textContent=CHEER[ri(0,CHEER.length-1)];
+  title.textContent=MSG[ri(0,MSG.length-1)];
+  if(streak>=3){
+    msg.textContent='🔥 '+streak+' in a row! You\'re on fire!';
+  }else{
+    msg.textContent='Keep learning — you are doing amazingly! 🎈';
+  }
+  overlay.classList.add('on');
+  box.classList.remove('on');
+  void box.offsetWidth;
+  box.classList.add('on');
+  launchConfetti();
+}
+
+function closeCeleb(){
+  document.getElementById('celeb-overlay').classList.remove('on');
+  document.getElementById('celeb').classList.remove('on');
+}
+
+// ════════════════════════════════════════════════════
+// RENDER HIGHLIGHTED NUMBER (for PVC)
+// ════════════════════════════════════════════════════
+function renderHL(containerId,num,hlPos){
+  var numStr=num.toString();
+  var fmtStr=fmt(num);
+  var total=numStr.length;
+  var numStrIdx=0;
+  var html='';
+  for(var i=0;i<fmtStr.length;i++){
+    var ch=fmtStr[i];
+    if(ch===','){
+      html+='<span class="nd-comma">,</span>';
+    }else{
+      var posFromRight=total-1-numStrIdx;
+      if(posFromRight===hlPos){
+        html+='<span class="nd-hl">'+ch+'</span>';
+      }else{
+        html+='<span>'+ch+'</span>';
+      }
+      numStrIdx++;
+    }
+  }
+  document.getElementById(containerId).innerHTML=html;
+}
+
+// ════════════════════════════════════════════════════
+// RENDER PLACE CHART (below highlighted number)
+// ════════════════════════════════════════════════════
+function renderPlaceChart(containerId,num,hlPos){
+  var numStr=num.toString();
+  var total=numStr.length;
+  var html='';
+  // Build columns right-to-left (highest place first, but display left-to-right)
+  var cols=[];
+  for(var i=0;i<total;i++){
+    var posFromRight=total-1-i;
+    var dig=parseInt(numStr[i]);
+    var place=PLACES[posFromRight]||null;
+    if(!place)continue;
+    var grp=place.group;
+    cols.push({dig:dig,pos:posFromRight,place:place,grp:grp,hl:posFromRight===hlPos});
+  }
+  // Group them for separator rendering
+  var prevGroup='';
+  for(var c=0;c<cols.length;c++){
+    var col=cols[c];
+    // Separator between groups
+    if(c>0&&col.grp!==cols[c-1].grp){
+      html+='<div class="pc-sep">,</div>';
+    }
+    var boxCls='pc-box g-'+col.grp+(col.hl?' hl':'');
+    html+='<div class="pc-col">';
+    html+='<div class="pc-label">'+col.place.shortLabel+'</div>';
+    html+='<div class="'+boxCls+'">'+col.dig+'</div>';
+    html+='</div>';
+  }
+  document.getElementById(containerId).innerHTML=html;
+}
+
+// ════════════════════════════════════════════════════
+// PLACE VALUE CHALLENGE (PVC)
+// ════════════════════════════════════════════════════
+function setPvcMode(m){
+  S.pvcMode=m;
+  document.getElementById('pvc-mb-a').classList.toggle('on',m==='A');
+  document.getElementById('pvc-mb-b').classList.toggle('on',m==='B');
+  newPvcQ();
+}
+
+function initPvc(){
+  updatePvcBar();
+  newPvcQ();
+}
+
+function updatePvcBar(){
+  document.getElementById('pvc-pts').textContent=S.pvcPts;
+  document.getElementById('pvc-streak').textContent=S.pvcStreak;
+  document.getElementById('pvc-corr').textContent=S.pvcCorr;
+  document.getElementById('pvc-tot').textContent=S.pvcTot;
+  document.getElementById('pvc-max-lbl').textContent=PLACES[S.maxPlace].label;
+}
+
+function newPvcQ(){
+  S.pvcDone=false;
+  // Clear feedback
+  var fb=document.getElementById('pvc-fb');
+  fb.textContent='';fb.className='feedback';
+  // Clear input
+  var inp=document.getElementById('pvc-input');
+  if(inp)inp.value='';
+  // Generate
+  var num=genNum(S.maxPlace);
+  // Force number to use at least the min for variety
+  var numStr=num.toString();
+  var nLen=numStr.length;
+  var hlPos=ri(0,nLen-1); // position from right
+  var hlDigit=digitAt(num,hlPos);
+  var correctPlace=PLACES[hlPos];
+  S.pvcQ={num:num,hlPos:hlPos,correctPlace:correctPlace,hlDigit:hlDigit};
+  // Render
+  renderHL('pvc-num',num,hlPos);
+  renderPlaceChart('pvc-chart',num,hlPos);
+  // Mode
+  if(S.pvcMode==='A'){
+    document.getElementById('pvc-body-a').style.display='';
+    document.getElementById('pvc-body-b').style.display='none';
+    renderPvcChoices(correctPlace);
+  }else{
+    document.getElementById('pvc-body-a').style.display='none';
+    document.getElementById('pvc-body-b').style.display='';
+  }
+  updatePvcBar();
+}
+
+function renderPvcChoices(correctPlace){
+  var correct=correctPlace.label;
+  // Gather distractors from all places up to maxPlace
+  var pool=[];
+  for(var i=0;i<=S.maxPlace;i++){
+    if(PLACES[i].label!==correct)pool.push(PLACES[i].label);
+  }
+  // Ensure 3 distractors
+  var extras=['Ones','Tens','Hundreds','Thousands','Millions','Billions'];
+  for(var e=0;e<extras.length&&pool.length<3;e++){
+    if(extras[e]!==correct&&pool.indexOf(extras[e])<0)pool.push(extras[e]);
+  }
+  var opts=shuffle([correct].concat(pool.slice(0,3)));
+  var html='';
+  opts.forEach(function(lbl){
+    var isC=(lbl===correct)?'true':'false';
+    html+='<button class="ch" data-correct="'+isC+'" data-label="'+lbl+'" onclick="checkPvcChoice(this)">'+lbl+'</button>';
+  });
+  document.getElementById('pvc-choices').innerHTML=html;
+}
+
+function checkPvcChoice(el){
+  if(S.pvcDone)return;
+  var isCorrect=(el.getAttribute('data-correct')==='true');
+  S.pvcDone=true;
+  S.pvcTot++;
+  var fb=document.getElementById('pvc-fb');
+  var btns=document.querySelectorAll('#pvc-choices .ch');
+  btns.forEach(function(b){
+    b.disabled=true;
+    if(b===el){b.classList.add(isCorrect?'correct':'wrong');}
+    else if(b.getAttribute('data-label')===S.pvcQ.correctPlace.label){b.classList.add('correct');}
+  });
+  if(isCorrect){
+    S.pvcCorr++;S.pvcStreak++;S.pvcPts+=10+(S.pvcStreak>1?S.pvcStreak*2:0);
+    if(S.pvcStreak>S.pvcBest)S.pvcBest=S.pvcStreak;
+    fb.textContent='✅ Correct! '+el.getAttribute('data-label')+' — great job!';
+    fb.className='feedback fb-ok';
+    speakText('Correct! Well done!',0.8);
+    if(S.pvcStreak>0&&S.pvcStreak%3===0)showCeleb(S.pvcStreak);
+    else launchConfetti();
+  }else{
+    S.pvcStreak=0;
+    fb.textContent='❌ Not quite! It was the '+S.pvcQ.correctPlace.label+' place. You\'ve got this!';
+    fb.className='feedback fb-no';
+    speakText('The answer was '+S.pvcQ.correctPlace.label,0.75);
+  }
+  updatePvcBar();
+  checkBadges();
+}
+
+function checkPvcFree(){
+  if(S.pvcDone)return;
+  var inp=document.getElementById('pvc-input');
+  var ans=(inp.value||'').trim().toLowerCase();
+  if(!ans)return; // don't accept empty
+  var correct=S.pvcQ.correctPlace.label.toLowerCase();
+  var noHypC=correct.replace(/-/g,' ');
+  var noHypA=ans.replace(/-/g,' ');
+  var isC=ans===correct||noHypA===noHypC;
+  if(!isC&&ans.length>2){
+    // Allow compact: "tenmillions"
+    isC=correct.replace(/[-\s]/g,'')===ans.replace(/[\s]/g,'');
+  }
+  checkPvcResult(isC);
+  inp.disabled=true;
+}
+
+function checkPvcResult(isCorrect){
+  if(S.pvcDone)return;
+  S.pvcDone=true;S.pvcTot++;
+  var fb=document.getElementById('pvc-fb');
+  if(isCorrect){
+    S.pvcCorr++;S.pvcStreak++;S.pvcPts+=10+(S.pvcStreak>1?S.pvcStreak*2:0);
+    if(S.pvcStreak>S.pvcBest)S.pvcBest=S.pvcStreak;
+    fb.textContent='✅ Correct! '+S.pvcQ.correctPlace.label+' — brilliant!';
+    fb.className='feedback fb-ok';
+    speakText('Correct! Brilliant!',0.8);
+    if(S.pvcStreak>0&&S.pvcStreak%3===0)showCeleb(S.pvcStreak);
+    else launchConfetti();
+  }else{
+    S.pvcStreak=0;
+    fb.textContent='❌ Good try! It\'s the '+S.pvcQ.correctPlace.label+' place. Keep going!';
+    fb.className='feedback fb-no';
+    speakText('The answer was '+S.pvcQ.correctPlace.label,0.75);
+  }
+  updatePvcBar();
+  checkBadges();
+}
+
+function nextPvc(){
+  var inp=document.getElementById('pvc-input');
+  if(inp)inp.disabled=false;
+  newPvcQ();
+}
+
+// ════════════════════════════════════════════════════
+// READ NUMBER CHALLENGE (RNC)
+// ════════════════════════════════════════════════════
+function setRncMode(m){
+  S.rncMode=m;
+  document.getElementById('rnc-mb-a').classList.toggle('on',m==='A');
+  document.getElementById('rnc-mb-b').classList.toggle('on',m==='B');
+  newRncQ();
+}
+
+function initRnc(){
+  updateRncBar();
+  newRncQ();
+}
+
+function updateRncBar(){
+  document.getElementById('rnc-pts').textContent=S.rncPts;
+  document.getElementById('rnc-streak').textContent=S.rncStreak;
+  document.getElementById('rnc-corr').textContent=S.rncCorr;
+  document.getElementById('rnc-tot').textContent=S.rncTot;
+  document.getElementById('rnc-max-lbl').textContent=PLACES[S.maxPlace].label;
+}
+
+function newRncQ(){
+  S.rncDone=false;
+  var fb=document.getElementById('rnc-fb');
+  fb.textContent='';fb.className='feedback';
+  var rev=document.getElementById('rnc-reveal-txt');
+  if(rev){rev.textContent='';rev.className='reveal-txt';}
+  var num=genNum(S.maxPlace);
+  var reading=n2w(num);
+  S.rncQ={num:num,reading:reading};
+  // Display number (no highlight for RNC)
+  document.getElementById('rnc-num').textContent=fmt(num);
+  if(S.rncMode==='A'){
+    document.getElementById('rnc-body-a').style.display='';
+    document.getElementById('rnc-body-b').style.display='none';
+    renderRncChoices(num,reading);
+  }else{
+    document.getElementById('rnc-body-a').style.display='none';
+    document.getElementById('rnc-body-b').style.display='';
+  }
+  updateRncBar();
+}
+
+function renderRncChoices(num,correctReading){
+  var used=new Set([num]);
+  var opts=[{txt:correctReading,correct:true}];
+  var attempts=0;
+  while(opts.length<4&&attempts<60){
+    attempts++;
+    var d=genNum(S.maxPlace);
+    if(!used.has(d)){
+      used.add(d);
+      var r=n2w(d);
+      if(r!==correctReading)opts.push({txt:r,correct:false});
+    }
+  }
+  if(opts.length<4){
+    var fallbacks=genFallbackReadings(correctReading,num);
+    for(var i=0;i<fallbacks.length&&opts.length<4;i++){
+      if(!opts.some(function(o){return o.txt===fallbacks[i];})){
+        opts.push({txt:fallbacks[i],correct:false});
+      }
+    }
+  }
+  opts=shuffle(opts).slice(0,4);
+  var html='';
+  opts.forEach(function(o){
+    var cAttr=o.correct?'true':'false';
+    html+='<button class="ch" style="text-align:left;padding:14px 16px" '
+      +'data-correct="'+cAttr+'" onclick="checkRncChoice(this)">'+capitalize(o.txt)+'</button>';
+  });
+  document.getElementById('rnc-choices').innerHTML=html;
+}
+
+function genFallbackReadings(correct,num){
+  var parts=[];
+  // Swap million/thousand
+  var r1=correct.replace('million','thousand').replace('thousand','million');
+  if(r1!==correct)parts.push(r1);
+  // Replace a word
+  var words=correct.split(' ');
+  if(words.length>1){
+    var idx=ri(0,words.length-1);
+    var alt=['hundred','thousand','million','billion','twenty','fifty','sixty','ninety'];
+    var pick=alt[ri(0,alt.length-1)];
+    if(words[idx]!==pick){
+      var w2=words.slice();w2[idx]=pick;
+      parts.push(w2.join(' '));
+    }
+  }
+  // Completely different number
+  for(var i=0;i<5;i++){
+    var n2=genNum(S.maxPlace);
+    var r=n2w(n2);
+    if(r!==correct)parts.push(r);
+  }
+  return parts;
+}
+
+function checkRncChoice(el){
+  if(S.rncDone)return;
+  var isCorrect=(el.getAttribute('data-correct')==='true');
+  S.rncDone=true;S.rncTot++;
+  var fb=document.getElementById('rnc-fb');
+  var btns=document.querySelectorAll('#rnc-choices .ch');
+  btns.forEach(function(b){
+    b.disabled=true;
+    if(b===el){b.classList.add(isCorrect?'correct':'wrong');}
+    else if(b.getAttribute('data-correct')==='true'){b.classList.add('correct');}
+  });
+  if(isCorrect){
+    S.rncCorr++;S.rncStreak++;S.rncPts+=10+(S.rncStreak>1?S.rncStreak*2:0);
+    if(S.rncStreak>S.rncBest)S.rncBest=S.rncStreak;
+    fb.textContent='✅ Perfect! "'+capitalize(S.rncQ.reading)+'" — you\'re a reading star!';
+    fb.className='feedback fb-ok';
+    speakText('Correct! '+S.rncQ.reading,0.7);
+    if(S.rncStreak>0&&S.rncStreak%3===0)showCeleb(S.rncStreak);
+    else launchConfetti();
+  }else{
+    S.rncStreak=0;
+    fb.textContent='❌ Almost! It\'s "'+capitalize(S.rncQ.reading)+'". Try the next one!';
+    fb.className='feedback fb-no';
+    speakText(S.rncQ.reading,0.7);
+  }
+  updateRncBar();checkBadges();
+}
+
+function revealReading(){
+  var r=document.getElementById('rnc-reveal-txt');
+  r.textContent=capitalize(S.rncQ.reading);
+  r.classList.add('show');
+  speakText(S.rncQ.reading,0.68);
+}
+
+function nextRnc(){
+  newRncQ();
+}
+
+function capitalize(s){
+  if(!s)return s;
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+
+// ════════════════════════════════════════════════════
+// BADGES & PROGRESS
+// ════════════════════════════════════════════════════
+var BADGES=[
+  {id:'first',    label:'First Answer',   emoji:'🌱', cond:function(){return S.pvcTot+S.rncTot>=1}},
+  {id:'streak3',  label:'3-Streak',       emoji:'🔥', cond:function(){return S.pvcBest>=3||S.rncBest>=3}},
+  {id:'streak5',  label:'5-Streak',       emoji:'⚡', cond:function(){return S.pvcBest>=5||S.rncBest>=5}},
+  {id:'ten',      label:'10 Answers',     emoji:'🎯', cond:function(){return S.pvcTot+S.rncTot>=10}},
+  {id:'fifty',    label:'50 Answers',     emoji:'🏆', cond:function(){return S.pvcTot+S.rncTot>=50}},
+  {id:'pvchamp',  label:'Place Champion', emoji:'⭐', cond:function(){return S.pvcCorr>=20}},
+  {id:'rnchamp',  label:'Reading Star',   emoji:'🌟', cond:function(){return S.rncCorr>=20}},
+  {id:'legend',   label:'Legend',         emoji:'👑', cond:function(){return S.pvcPts+S.rncPts>=500}},
+];
+
+function checkBadges(){
+  BADGES.forEach(function(b){
+    if(S.badges.indexOf(b.id)<0&&b.cond()){
+      S.badges.push(b.id);
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+// LEARN SECTION
+// ════════════════════════════════════════════════════
+var learnRendered=false;
+
+function renderLearn(){
+  if(learnRendered)return;
+  learnRendered=true;
+  renderLearnChart();
+  renderLearnExpanded();
+  renderLearnExamples();
+}
+
+function renderLearnChart(){
+  var groups=[
+    {grp:'tri', name:'Trillions', cls:'gl-tri', cols:[
+      {lbl:'Trillions', dig:'1'}
+    ]},
+    {grp:'b', name:'Billions',  cls:'gl-b', cols:[
+      {lbl:'Hundred-billions', dig:'2'},
+      {lbl:'Ten-billions',     dig:'3'},
+      {lbl:'Billions',         dig:'4'},
+    ]},
+    {grp:'m', name:'Millions',  cls:'gl-m', cols:[
+      {lbl:'Hundred-millions', dig:'5'},
+      {lbl:'Ten-millions',     dig:'6'},
+      {lbl:'Millions',         dig:'7'},
+    ]},
+    {grp:'t', name:'Thousands', cls:'gl-t', cols:[
+      {lbl:'Hundred-thousands', dig:'8'},
+      {lbl:'Ten-thousands',     dig:'9'},
+      {lbl:'Thousands',         dig:'0'},
+    ]},
+    {grp:'o', name:'Ones',      cls:'gl-o', cols:[
+      {lbl:'Hundreds', dig:'1'},
+      {lbl:'Tens',     dig:'2'},
+      {lbl:'Ones',     dig:'3'},
+    ]},
+  ];
+  var html='<div style="display:inline-flex;align-items:flex-start;gap:0">';
+  groups.forEach(function(g,gi){
+    if(gi>0)html+='<div class="lc-sep" style="align-self:flex-start;padding-top:22px">,</div>';
+    html+='<div style="display:flex;flex-direction:column;align-items:center">';
+    html+='<div style="display:flex;gap:0">';
+    g.cols.forEach(function(col){
+      html+='<div class="lc-col">';
+      html+='<div class="lc-label">'+col.lbl+'</div>';
+      html+='<div class="lc-box lc-'+g.grp+'">'+col.dig+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+    html+='<div class="lc-glab '+g.cls+'" style="margin-top:5px">'+g.name+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById('learn-chart').innerHTML=html;
+}
+
+function renderLearnExpanded(){
+  var examples=[
+    {n:45},
+    {n:726},
+    {n:3804},
+    {n:250000},
+    {n:4700502},
+  ];
+  var html='';
+  examples.forEach(function(ex){
+    html+='<div class="ex-row">';
+    html+='<div class="ex-label">Number</div>';
+    html+='<div class="ex-num">'+fmt(ex.n)+'</div>';
+    html+='<div class="ex-label">Expanded Form</div>';
+    html+='<div class="ex-expanded">'+expandedForm(ex.n)+'</div>';
+    html+='</div>';
+  });
+  document.getElementById('learn-expanded').innerHTML=html;
+}
+
+function renderLearnExamples(){
+  var examples=[
+    {n:7},
+    {n:63},
+    {n:409},
+    {n:5200},
+    {n:84000},
+    {n:312750},
+    {n:1500000},
+    {n:47300000},
+    {n:500000000},
+    {n:1000000000},
+    {n:7500000000},
+    {n:1000000000000},
+  ];
+  var html='';
+  examples.forEach(function(ex,i){
+    var reading=n2w(ex.n);
+    html+='<div class="ex-row">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">';
+    html+='<div>';
+    html+='<div class="ex-label">Example '+(i+1)+'</div>';
+    html+='<div class="ex-num">'+fmt(ex.n)+'</div>';
+    html+='<div class="ex-reading">'+capitalize(reading)+'</div>';
+    html+='</div>';
+    html+='<button class="btn btn-teal btn-sm" style="align-self:flex-end" onclick="speakText(\''+reading.replace(/'/g,"\\'")+"',0.68)\">🔊 Hear</button>";
+    html+='</div>';
+    html+='</div>';
+  });
+  document.getElementById('learn-examples').innerHTML=html;
+}
+
+// ════════════════════════════════════════════════════
+// LEVEL SECTION
+// ════════════════════════════════════════════════════
+function renderLevel(){
+  // Presets
+  var html='';
+  LEVEL_PRESETS.forEach(function(lv,i){
+    var sel=lv.placeIdx===S.maxPlace?' sel':'';
+    html+='<div class="lv-card'+sel+'" onclick="setLevel('+lv.placeIdx+',this)">';
+    html+='<div class="lv-num">'+lv.emoji+' '+lv.name+'</div>';
+    html+='<div class="lv-range">Max: '+PLACES[lv.placeIdx].label+'</div>';
+    html+='<div class="lv-range muted" style="font-size:.8rem">'+lv.desc+'</div>';
+    html+='</div>';
+  });
+  document.getElementById('lv-presets').innerHTML=html;
+
+  // Custom
+  var html2='';
+  PLACES.forEach(function(p,i){
+    var sel=i===S.maxPlace?' sel':'';
+    html2+='<div class="lv-card'+sel+'" onclick="setLevel('+i+',this)">';
+    html2+='<div class="lv-num">Place '+(i+1)+'</div>';
+    html2+='<div class="lv-name">'+p.label+'</div>';
+    html2+='<div class="lv-range">Up to '+fmt(p.max)+'</div>';
+    html2+='</div>';
+  });
+  document.getElementById('lv-custom').innerHTML=html2;
+
+  // Stats
+  var totalQ=S.pvcTot+S.rncTot;
+  var totalC=S.pvcCorr+S.rncCorr;
+  var acc=totalQ>0?Math.round(totalC/totalQ*100):0;
+  var html3='';
+  html3+='<div class="fc" style="gap:24px;flex-wrap:wrap;margin-bottom:12px">';
+  html3+='<div style="text-align:center"><div style="font-size:2rem;font-weight:900;color:var(--gold)">'+S.pvcPts+S.rncPts+'</div><div class="muted" style="font-size:.82rem;font-weight:700">Total Points</div></div>';
+  html3+='<div style="text-align:center"><div style="font-size:2rem;font-weight:900;color:var(--teal)">'+totalQ+'</div><div class="muted" style="font-size:.82rem;font-weight:700">Questions Answered</div></div>';
+  html3+='<div style="text-align:center"><div style="font-size:2rem;font-weight:900;color:var(--green)">'+acc+'%</div><div class="muted" style="font-size:.82rem;font-weight:700">Accuracy</div></div>';
+  html3+='<div style="text-align:center"><div style="font-size:2rem;font-weight:900;color:var(--purple)">'+Math.max(S.pvcBest,S.rncBest)+'</div><div class="muted" style="font-size:.82rem;font-weight:700">Best Streak</div></div>';
+  html3+='</div>';
+  // Progress bar
+  var progPct=Math.min(100,Math.round((S.pvcPts+S.rncPts)/500*100));
+  html3+='<div class="muted" style="font-size:.82rem;font-weight:700;margin-bottom:4px">Progress to Legend ('+progPct+'%)</div>';
+  html3+='<div class="prog-track"><div class="prog-fill" style="width:'+progPct+'%"></div></div>';
+  document.getElementById('lv-stats').innerHTML=html3;
+
+  // Badges
+  checkBadges();
+  var bhtml='';
+  BADGES.forEach(function(b){
+    var earned=S.badges.indexOf(b.id)>=0;
+    var style=earned
+      ?'border-color:var(--gold);color:var(--gold);background:var(--gold-bg)'
+      :'border-color:var(--dim);color:var(--dim)';
+    bhtml+='<span class="badge" style="'+style+'">'+(earned?b.emoji:'🔒')+' '+b.label+'</span>';
+  });
+  document.getElementById('lv-stats').innerHTML+=
+    '<div style="font-size:.9rem;font-weight:700;color:var(--muted);margin-top:16px;margin-bottom:8px">Badges</div>'+
+    '<div class="badge-row">'+bhtml+'</div>';
+}
+
+function setLevel(idx,clickedEl){
+  S.maxPlace=idx;
+  // Update all selected states in presets
+  document.querySelectorAll('#lv-presets .lv-card').forEach(function(c){c.classList.remove('sel')});
+  document.querySelectorAll('#lv-custom .lv-card').forEach(function(c){c.classList.remove('sel')});
+  // Re-render to update all selections correctly
+  renderLevel();
+  // Re-init challenges with new level if they're currently loaded
+  // (they'll re-init when navigated to)
+}
+
+// ════════════════════════════════════════════════════
+// GROUP DIGITS / COMMA CHALLENGE (CC)
+// ════════════════════════════════════════════════════
+var CC = {
+  num: 0, numStr: '',
+  slots: [],    // boolean[], length = numStr.length - 1 (true = comma placed)
+  lzones: [],   // string[], placed label per label zone (indexed from right, 0 = rightmost group)
+  pts: 0, streak: 0, best: 0, corr: 0, tot: 0,
+  done: false,
+  selTool: null,  // null | {type:'comma'} | {type:'label', value:'—'}
+};
+
+// Drag state
+var _ccPtrStart = null;
+var _ccDragging = false;
+var _ccGhost = null;
+
+var CC_LABELS = ['—', 'Thousands', 'Millions', 'Billions', 'Trillions'];
+
+function ccGroupCount(numStr) {
+  return Math.ceil(numStr.length / 3);
+}
+
+function getCorrectCommas(numStr) {
+  var n = numStr.length, c = [];
+  for (var i = 0; i < n - 1; i++) if ((n - 1 - i) % 3 === 0) c.push(i);
+  return c; // slot indices (0 = between digit[0] and digit[1])
+}
+
+function getGroupLabel(groupIdx, totalGroups) {
+  // groupIdx 0 = rightmost group
+  return CC_LABELS[groupIdx] || ('Group ' + (groupIdx + 1));
+}
+
+function initCC() {
+  updateCCBar();
+  newCCQ();
+}
+
+function updateCCBar() {
+  document.getElementById('cc-pts').textContent = CC.pts;
+  document.getElementById('cc-streak').textContent = CC.streak;
+  document.getElementById('cc-corr').textContent = CC.corr;
+  document.getElementById('cc-tot').textContent = CC.tot;
+  document.getElementById('cc-max-lbl').textContent = PLACES[S.maxPlace].label;
+}
+
+function newCCQ() {
+  CC.done = false;
+  var num = genNum(S.maxPlace);
+  CC.num = num;
+  CC.numStr = num.toString();
+  var n = CC.numStr.length;
+  CC.slots = [];
+  for (var i = 0; i < n - 1; i++) CC.slots.push(false);
+  var groups = ccGroupCount(CC.numStr);
+  CC.lzones = [];
+  for (var j = 0; j < groups; j++) CC.lzones.push('');
+  CC.selTool = null;
+  var fb = document.getElementById('cc-fb');
+  fb.textContent = ''; fb.className = 'feedback';
+  renderCCArea();
+  renderCCPalette();
+  updateCCBar();
+}
+
+function ccBoxSizes(digitCount) {
+  // Compute box width, slot width, font-size, box height to fit within ~780px
+  // total = n*bw + (n-1)*sw,  sw/bw = 28/48 = 0.583
+  var AVAIL = 780;
+  var ratio = 28 / 48;
+  var bw = Math.floor(AVAIL / (digitCount + Math.max(0, digitCount - 1) * ratio));
+  bw = Math.max(26, Math.min(48, bw));          // clamp 26–48 px
+  var sw = Math.round(bw * ratio);              // slot width ∝ box width
+  var bh = Math.round(bw * 1.2);               // box height
+  var fz = (bw / 26).toFixed(2) + 'rem';       // font-size (1rem at 26px)
+  return { bw: bw, sw: sw, bh: bh, fz: fz };
+}
+
+function renderCCArea() {
+  var ns = CC.numStr;
+  var n = ns.length;
+  var sz = ccBoxSizes(n);
+  var bw = sz.bw, sw = sz.sw, bh = sz.bh, fz = sz.fz;
+
+  // ---- Digit + slot row ----
+  var dboxStyle = 'width:' + bw + 'px;height:' + bh + 'px;font-size:' + fz + ';';
+  var slotStyle = 'width:' + sw + 'px;height:' + bh + 'px;';
+  var digitRow = '<div class="cc-row" id="cc-digit-row">';
+  for (var i = 0; i < n; i++) {
+    digitRow += '<div class="cc-dbox" style="' + dboxStyle + '">' + ns[i] + '</div>';
+    if (i < n - 1) {
+      var filled = CC.slots[i] ? ' filled' : '';
+      digitRow += '<div class="cc-slot' + filled + '" data-slot="' + i
+        + '" style="' + slotStyle + '" onclick="ccClickSlot(' + i
+        + ')" onpointerdown="ccPointerDown(event,\'comma\',\'\',\'slot\',' + i + ')">'
+        + '<div class="cc-slot-hint"></div></div>';
+    }
+  }
+  digitRow += '</div>';
+
+  // ---- Label zone row ----
+  // groups[0] = leftmost (most significant); rightmost gets labelIdx 0 ("—")
+  var groups = computeCCGroups(ns, CC.slots);
+  var labelRow = '<div class="cc-lrow" id="cc-label-row">';
+  for (var g = 0; g < groups.length; g++) {
+    var labelIdx = groups.length - 1 - g;
+    var grpDigits = groups[g].count;
+    var filled2 = CC.lzones[labelIdx] ? ' filled' : '';
+    var txt = CC.lzones[labelIdx] || 'tap to label';
+    // Match digit row: grpDigits boxes + (grpDigits-1) inner slots
+    var w = grpDigits * bw + Math.max(0, grpDigits - 1) * sw;
+    labelRow += '<div class="cc-lzone' + filled2 + '" data-lzone="' + labelIdx
+      + '" style="width:' + w + 'px" onclick="ccClickLzone(' + labelIdx
+      + ')" onpointerdown="ccPointerDown(event,\'lzone\',\'\',\'lzone\',' + labelIdx + ')">'
+      + txt + '</div>';
+    if (g < groups.length - 1) {
+      labelRow += '<div class="cc-lsep" style="width:' + sw + 'px">│</div>';
+    }
+  }
+  labelRow += '</div>';
+
+  document.getElementById('cc-area').innerHTML = digitRow + labelRow;
+}
+
+function computeCCGroups(ns, slots) {
+  // Returns array of groups (left to right), each with {start, count}
+  var groups = [];
+  var start = 0;
+  for (var i = 0; i < slots.length; i++) {
+    if (slots[i]) {
+      groups.push({ start: start, count: i - start + 1 });
+      start = i + 1;
+    }
+  }
+  groups.push({ start: start, count: ns.length - start });
+  return groups;
+}
+
+function renderCCPalette() {
+  var ns = CC.numStr;
+  var groups = ccGroupCount(ns);
+  var html = '';
+  // Comma chip
+  var commaSel = (CC.selTool && CC.selTool.type === 'comma') ? ' sel' : '';
+  html += '<div class="cc-ptool' + commaSel + '" onpointerdown="ccPointerDown(event,\'comma\',\',\',\'palette\',-1)" onclick="ccSelectTool(\'comma\',\',\')">, comma</div>';
+  // Label chips (only show what's needed for this number)
+  for (var i = 0; i < groups; i++) {
+    var val = CC_LABELS[i] || ('Group ' + (i + 1));
+    var isSel = (CC.selTool && CC.selTool.type === 'label' && CC.selTool.value === val) ? ' sel' : '';
+    // Mark as used if already placed in any zone
+    var isUsed = CC.lzones.indexOf(val) >= 0 ? ' used' : '';
+    html += '<div class="cc-ptool' + isSel + isUsed + '" '
+      + 'onpointerdown="ccPointerDown(event,\'label\',\'' + val + '\',\'palette\',-1)" '
+      + 'onclick="ccSelectTool(\'label\',\'' + val + '\')">' + val + '</div>';
+  }
+  document.getElementById('cc-palette').innerHTML = html;
+}
+
+function ccSelectTool(type, value) {
+  if (CC.done) return;
+  // Toggle off if same tool clicked
+  if (CC.selTool && CC.selTool.type === type && CC.selTool.value === value) {
+    CC.selTool = null;
+  } else {
+    CC.selTool = { type: type, value: value };
+  }
+  renderCCPalette();
+}
+
+function ccClickSlot(idx) {
+  if (CC.done) return;
+  if (!CC.selTool || CC.selTool.type !== 'comma') {
+    // Toggle existing comma
+    CC.slots[idx] = !CC.slots[idx];
+  } else {
+    // Place or remove comma
+    CC.slots[idx] = !CC.slots[idx];
+  }
+  // Recompute label zones count
+  var groups = computeCCGroups(CC.numStr, CC.slots);
+  // Resize lzones array to match group count
+  while (CC.lzones.length < groups.length) CC.lzones.push('');
+  while (CC.lzones.length > groups.length) CC.lzones.pop();
+  renderCCArea();
+  renderCCPalette();
+}
+
+function ccClickLzone(idx) {
+  if (CC.done) return;
+  if (!CC.selTool || CC.selTool.type !== 'label') {
+    // Clear existing label
+    if (CC.lzones[idx]) CC.lzones[idx] = '';
+  } else {
+    var val = CC.selTool.value;
+    // Remove from any other zone first
+    for (var i = 0; i < CC.lzones.length; i++) {
+      if (CC.lzones[i] === val) CC.lzones[i] = '';
+    }
+    CC.lzones[idx] = (CC.lzones[idx] === val) ? '' : val;
+  }
+  renderCCArea();
+  renderCCPalette();
+}
+
+// ── Pointer drag support ──
+function ccPointerDown(e, toolType, toolValue, targetType, targetIdx) {
+  if (CC.done) return;
+  _ccPtrStart = { x: e.clientX, y: e.clientY, toolType: toolType, toolValue: toolValue, targetType: targetType, targetIdx: targetIdx };
+  _ccDragging = false;
+  document.addEventListener('pointermove', _ccPtrMove, { passive: false });
+  document.addEventListener('pointerup', _ccPtrUp, { once: true });
+}
+
+function _ccPtrMove(e) {
+  if (!_ccPtrStart) return;
+  var dx = e.clientX - _ccPtrStart.x, dy = e.clientY - _ccPtrStart.y;
+  if (!_ccDragging && Math.sqrt(dx * dx + dy * dy) > 8) {
+    _ccDragging = true;
+    var ghost = document.getElementById('drag-ghost');
+    ghost.textContent = _ccPtrStart.toolType === 'comma' ? ',' : _ccPtrStart.toolValue;
+    ghost.style.display = 'block';
+    _ccGhost = ghost;
+  }
+  if (_ccDragging) {
+    e.preventDefault();
+    var ghost = document.getElementById('drag-ghost');
+    ghost.style.left = e.clientX + 'px';
+    ghost.style.top = e.clientY + 'px';
+    // Highlight drop target
+    ghost.style.display = 'none';
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    ghost.style.display = 'block';
+    _highlightDropTarget(el);
+  }
+}
+
+function _highlightDropTarget(el) {
+  document.querySelectorAll('.cc-slot.drop-active,.cc-lzone.drop-active').forEach(function (x) {
+    x.classList.remove('drop-active');
+  });
+  var t = el;
+  while (t && t !== document.body) {
+    if (t.classList && (t.classList.contains('cc-slot') || t.classList.contains('cc-lzone'))) {
+      t.classList.add('drop-active');
+      break;
+    }
+    t = t.parentElement;
+  }
+}
+
+function _ccPtrUp(e) {
+  document.removeEventListener('pointermove', _ccPtrMove);
+  document.querySelectorAll('.cc-slot.drop-active,.cc-lzone.drop-active').forEach(function (x) {
+    x.classList.remove('drop-active');
+  });
+  if (_ccDragging) {
+    // Hide ghost and find drop target
+    var ghost = document.getElementById('drag-ghost');
+    ghost.style.display = 'none';
+    _ccGhost = null;
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    // Walk up to find slot/lzone
+    var t = el;
+    while (t && t !== document.body) {
+      if (t.classList) {
+        if (t.classList.contains('cc-slot') && _ccPtrStart.toolType === 'comma') {
+          var idx = parseInt(t.getAttribute('data-slot'));
+          CC.slots[idx] = true;
+          var groups = computeCCGroups(CC.numStr, CC.slots);
+          while (CC.lzones.length < groups.length) CC.lzones.push('');
+          while (CC.lzones.length > groups.length) CC.lzones.pop();
+          renderCCArea();
+          renderCCPalette();
+          break;
+        }
+        if (t.classList.contains('cc-lzone') && _ccPtrStart.toolType === 'label') {
+          var lIdx = parseInt(t.getAttribute('data-lzone'));
+          var val = _ccPtrStart.toolValue;
+          for (var i = 0; i < CC.lzones.length; i++) if (CC.lzones[i] === val) CC.lzones[i] = '';
+          CC.lzones[lIdx] = val;
+          renderCCArea();
+          renderCCPalette();
+          break;
+        }
+      }
+      t = t.parentElement;
+    }
+  }
+  // small drag = click — already handled by onclick
+  _ccPtrStart = null;
+  _ccDragging = false;
+}
+
+function checkCC() {
+  if (CC.done) return;
+  var ns = CC.numStr;
+  var correctCommas = getCorrectCommas(ns);
+  var groups = computeCCGroups(ns, CC.slots);
+  var totalGroups = ccGroupCount(ns);
+
+  // Check commas
+  var commaOk = true;
+  var placedCommas = [];
+  for (var i = 0; i < CC.slots.length; i++) if (CC.slots[i]) placedCommas.push(i);
+  if (placedCommas.length !== correctCommas.length) commaOk = false;
+  else {
+    for (var k = 0; k < correctCommas.length; k++) {
+      if (placedCommas.indexOf(correctCommas[k]) < 0) { commaOk = false; break; }
+    }
+  }
+
+  // Check labels
+  var labelOk = true;
+  if (groups.length !== totalGroups) { labelOk = false; }
+  else {
+    for (var g = 0; g < groups.length; g++) {
+      var labelIdx = groups.length - 1 - g; // rightmost group = index 0
+      var expected = CC_LABELS[labelIdx] || ('Group ' + (labelIdx + 1));
+      var placed = CC.lzones[labelIdx] || '';
+      if (placed !== expected) { labelOk = false; break; }
+    }
+  }
+
+  CC.done = true;
+  CC.tot++;
+  var fb = document.getElementById('cc-fb');
+  var isCorrect = commaOk && labelOk;
+
+  if (isCorrect) {
+    CC.corr++; CC.streak++; CC.pts += 10 + (CC.streak > 1 ? CC.streak * 2 : 0);
+    if (CC.streak > CC.best) CC.best = CC.streak;
+    fb.textContent = '✅ Perfect! ' + fmt(CC.num) + ' — ' + capitalize(n2w(CC.num)) + '!';
+    fb.className = 'feedback fb-ok';
+    speakText('Correct! ' + n2w(CC.num), 0.68);
+    if (CC.streak > 0 && CC.streak % 3 === 0) showCeleb(CC.streak);
+    else launchConfetti();
+    checkBadges();
+  } else {
+    CC.streak = 0;
+    var hint = '';
+    if (!commaOk) {
+      hint += ' Commas go every 3 digits from the right (at position' + (correctCommas.length > 1 ? 's' : '') + ' ';
+      hint += correctCommas.map(function (c) { return c + 1; }).join(', ') + ' from left).';
+    }
+    if (!labelOk) hint += ' Check your group names below the number.';
+    fb.textContent = '❌ Not quite!' + hint;
+    fb.className = 'feedback fb-no';
+  }
+  updateCCBar();
+  // Show correct answer overlay on the number
+  _showCCAnswer(correctCommas, totalGroups);
+}
+
+function _showCCAnswer(correctCommas, totalGroups) {
+  // Highlight correct comma slots
+  var slots = document.querySelectorAll('.cc-slot');
+  slots.forEach(function (s) {
+    var idx = parseInt(s.getAttribute('data-slot'));
+    var isCorrect = correctCommas.indexOf(idx) >= 0;
+    var wasPlaced = CC.slots[idx];
+    if (isCorrect) s.style.outline = '2px solid var(--green)';
+    else if (wasPlaced) s.style.outline = '2px solid var(--red)';
+  });
+}
+
+function nextCC() {
+  newCCQ();
+}
+
+function ccHearNumber() {
+  if (CC.num) speakText(n2w(CC.num), 0.68);
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+// Pre-load voices
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices()};
+}
+
+// Render learn section on first load
+renderLearn();
+
+</script>
+</body>
+</html>
